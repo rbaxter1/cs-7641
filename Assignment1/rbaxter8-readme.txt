@@ -2,14 +2,12 @@ Code and supporting files are here:
 https://github.com/rbaxter1/CS7641/tree/master/Assignment1
 
 The code is written for python 3.4 and the following packages are required to run it:
-	scikit-learn 0.18.dev0
+	scikit-learn 0.18.dev0 <- Please note this is a development version
 	matplotlib 1.5.1
 	pandas 0.17.1
 	mlextend 0.3.0
 	pydotplus 2.0.2
 	timeit 2.3
-	theano 0.7.0
-	lasagne 0.1
 
 Additionally, graphviz must be installed
 

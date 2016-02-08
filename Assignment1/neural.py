@@ -106,7 +106,7 @@ class rb_neural:
         
         # plot the validation curves
         plt.clf()
-        param_range = range(1,500)
+        param_range = range(200,300)
         
         train_scores, test_scores = validation_curve(estimator=pipe_clf,
                                                      X=x_train,

@@ -326,6 +326,13 @@ def main():
     end = timer()
     print('titanic_boost took ', end - start)   
     
+    start = timer()
+    myNeural = rb_neural(x, y, cols, 5, 'titanic_neural')
+    myNeural.run()   
+    end = timer()
+    print('titanic_neural took ', end - start)      
+
+    
 if __name__ == "__main__":
     main()
     

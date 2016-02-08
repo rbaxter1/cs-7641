@@ -76,7 +76,9 @@ class rb_tree:
             scores.append(score)
             print('Fold:', k+1, ', Class dist.:', np.bincount(y_train[test]), 'Acc:', score)        
             
-
+        a = np.mean(scores)
+        print('CV avg:', a)
+        
         # run the model on the whole training set
         tree = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=0)
         #tree = DecisionTreeRegressor(criterion='mse', max_depth=self.max_depth, random_state=0)

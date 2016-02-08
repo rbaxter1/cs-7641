@@ -20,6 +20,7 @@ from tree import *
 from knn import *
 from svm import *
 from boost import *
+from neural import *
 
 from timeit import default_timer as timer
 
@@ -231,6 +232,12 @@ def main():
     end = timer()
     print('redwine_boost took ', end - start)      
 
+    start = timer()
+    myNeural = rb_neural(x, y, cols, 5, 'redwine_neural')
+    myNeural.run()   
+    end = timer()
+    print('redwine_neural took ', end - start)      
+    
     
     #
     #

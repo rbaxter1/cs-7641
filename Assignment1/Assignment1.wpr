@@ -7,6 +7,7 @@
 proj.file-list = [loc('boost.py'),
                   loc('knn.py'),
                   loc('main.py'),
+                  loc('neural.py'),
                   loc('svm.py'),
                   loc('tree.py')]
 proj.file-type = 'shared'

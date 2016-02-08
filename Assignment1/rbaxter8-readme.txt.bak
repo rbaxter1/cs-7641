@@ -7,6 +7,9 @@ The code is written for python 3.4 and the following packages are required to ru
 	pandas 0.17.1
 	mlextend 0.3.0
 	pydotplus 2.0.2
+	timeit 2.3
+	theano 0.7.0
+	lasagne 0.1
 
 Additionally, graphviz must be installed
 

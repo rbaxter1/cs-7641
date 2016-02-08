@@ -17,6 +17,12 @@ import pydotplus
 from ggplot import *
 
 from tree import *
+from knn import *
+from svm import *
+from boost import *
+
+from timeit import default_timer as timer
+
 
 # references:
 # Raschka, Sebatian "Python Machine Learning"
@@ -170,17 +176,61 @@ def main():
     # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
     # source abstract: https://archive.ics.uci.edu/ml/datasets/Wine+Quality
     df = pd.read_csv('./winequality-red.csv', sep=';')
+    
+    p = ggplot(aes(x='quality'), data=df) + \
+        geom_histogram(binwidth=1) + ggtitle('Red Wine Quality') + labs('Quality', 'Freq') 
+    
+    fn = 'redwine_quality_before.pdf'
+    ggsave(p, file=fn)
+    
+    
+    
+    #p = ggplot(aes(x='quality'), data=df)
+    #p + geom_histogram(binwidth=1) + ggtitle('Red Wine Quality') + labs('Quality', 'Freq')        
+
 
     # separate the x and y data
     # y = quality, x = all other features in the file
-    # update: using just volatile acid, ph and alcohol
-    x, y = df.iloc[:,[1,8,10]].values, df.iloc[:,11].values    
-    cols = df.iloc[:,[1,8,10]].columns
+    # update: using just fixed and volatile acid and alcohol
+    # also, grouping the quality into worst, average and best
+    df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
+    df.loc[(df['quality'] >= 6), 'quality'] = 100
+    
+    p = ggplot(aes(x='quality'), data=df) + \
+            geom_histogram(binwidth=1) + ggtitle('Red Wine Quality') + labs('Quality', 'Freq') 
+        
+    fn = 'redwine_quality_after.pdf'
+    ggsave(p, file=fn)    
 
-    myTree = rb_tree(x, y, cols, 'redwine')
+    
+    x, y = df.iloc[:,[0,1,10]].values, df.iloc[:,11].values #.astype(float)
+    cols = df.iloc[:,[0,1,10]].columns
+
+    start = timer()
+    myTree = rb_tree(x, y, cols, 5, 'redwine_tree')
     myTree.run()
+
+    end = timer()
+    print('redwine_tree took ', end - start)    
+
+    start = timer()
+    myKNN = rb_knn(x, y, cols, 5, 'redwine_knn')
+    myKNN.run()    
+    end = timer()
+    print('redwine_knn took ', end - start)    
+
+    start = timer()
+    mySVM = rb_svm(x, y, cols, 5, 'redwine_svm')
+    mySVM.run()    
+    end = timer()
+    print('redwine_svm took ', end - start)     
     
-    
+    start = timer()
+    myBoost = rb_boost(x, y, cols, 5, 'redwine_boost')
+    myBoost.run()   
+    end = timer()
+    print('redwine_boost took ', end - start)      
+
     
     #
     #
@@ -197,6 +247,17 @@ def main():
     #myTree = rb_tree(x, y, cols, 'whitewine')
     #myTree.run()    
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     #
     # TITANIC
     #
@@ -205,6 +266,7 @@ def main():
     df = pd.read_csv('./titanic_train.csv', sep=',')
     
     
+
     # we need to encode sex. using the sklearn label encoder is
     # one way. however one consideration is that the learning
     # algorithm may make assumptions about the magnitude of the
@@ -232,10 +294,30 @@ def main():
     #x, y = df.iloc[:,[2,10]].values, df.iloc[:,1].values
     cols = df.iloc[:,[0,1,3,4]].columns
 
-    myTree = rb_tree(x, y, cols, 'titanic')
+    start = timer()
+    myTree = rb_tree(x, y, cols, 10, 'titanic_tree')
     myTree.run()    
+    end = timer()
+    print('titanic_tree took ', end - start)     
+
     
+    start = timer()
+    myKNN = rb_knn(x, y, cols, 5, 'titanic_knn')
+    myKNN.run()      
+    end = timer()
+    print('titanic_knn took ', end - start)       
+
+    start = timer()
+    mySVM = rb_svm(x, y, cols, 5, 'titanic_svm')
+    mySVM.run()     
+    end = timer()
+    print('titanic_svm took ', end - start)       
     
+    start = timer()
+    myBoost = rb_boost(x, y, cols, 5, 'titanic_boost')
+    myBoost.run()       
+    end = timer()
+    print('titanic_boost took ', end - start)   
     
 if __name__ == "__main__":
     main()

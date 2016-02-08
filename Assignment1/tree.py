@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.tree import DecisionTreeClassifier, export_graphviz, DecisionTreeRegressor
 from sklearn.cross_validation import StratifiedKFold, cross_val_score, cross_val_predict, train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics import accuracy_score
@@ -17,13 +17,14 @@ import pydotplus
 
 class rb_tree:
     
-    def __init__(self, x, y, cols, data_label, max_depth=3, test_size=0.3):
+    def __init__(self, x, y, cols, cv, data_label, max_depth=3, test_size=0.3):
         self.max_depth = max_depth
         self.test_size = test_size
         self.x = x
         self.y = y
         self.cols = cols
         self.data_label = data_label
+        self.cv = cv
 
     def run(self):
         # load the red wine data
@@ -59,7 +60,7 @@ class rb_tree:
         # test a training set only once. (paraphrased from Raschka p.176)
         # In Stratified KFold, the features are evenly disributed such that each test and training
         # set is an accurate representation of the whole training set.
-        kfold = StratifiedKFold(y=y_train, n_folds=5, random_state=0)        
+        kfold = StratifiedKFold(y=y_train, n_folds=self.cv, random_state=0)        
         
         
         # do the cross validation
@@ -68,6 +69,8 @@ class rb_tree:
             # run the learning algorithm
             # Supported criteria are gini for the Gini impurity and entropy for the information gain.
             tree = DecisionTreeClassifier(criterion='entropy', max_depth=self.max_depth, random_state=0)
+            #tree = DecisionTreeRegressor(criterion='mse', max_depth=self.max_depth, random_state=0)
+            
             tree.fit(x_train[train], y_train[train])
             score = tree.score(x_train[test], y_train[test])
             scores.append(score)
@@ -76,6 +79,7 @@ class rb_tree:
 
         # run the model on the whole training set
         tree = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=0)
+        #tree = DecisionTreeRegressor(criterion='mse', max_depth=self.max_depth, random_state=0)
         tree.fit(x_train, y_train)        
     
         
@@ -108,7 +112,7 @@ class rb_tree:
         train_sizes, train_scores, test_scores = learning_curve(estimator=tree,
                                                                  X=x_train,
                                                                  y=y_train,
-                                                                 cv=5,
+                                                                 cv=self.cv,
                                                                  n_jobs=-1)
         
         train_mean = np.mean(train_scores, axis=1)
@@ -141,7 +145,7 @@ class rb_tree:
         plt.xlabel('Number of training samples')
         plt.ylabel('Accurancy')
         plt.legend(loc='lower right')
-        fn = self.data_label + '_learncurve.png'
+        fn = self.data_label + '_tree_learncurve.png'
         plt.savefig(fn)
         
         
@@ -156,7 +160,7 @@ class rb_tree:
                                                      y=y_train, 
                                                      param_name='max_depth', 
                                                      param_range=param_range, 
-                                                     cv=5,
+                                                     cv=self.cv,
                                                      n_jobs=-1)
         
         train_mean = np.mean(train_scores, axis=1)
@@ -192,6 +196,6 @@ class rb_tree:
         plt.xlabel('Max Depth')
         plt.ylabel('Accurancy')
         plt.legend(loc='lower right')
-        fn = self.data_label + '_validationcurve.png'
+        fn = self.data_label + '_tree_validationcurve.png'
         plt.savefig(fn)
         

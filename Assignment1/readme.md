@@ -1,16 +1,5 @@
 TODOD Assignment 1 Readme
 
 
-titanic_neural plot_validation_curve took: 194.33018713361741
-      Data    Algo     Train      Test       Time
-0     Wine    Tree  0.729274  0.720417   2.206698
-1     Wine     Knn  0.721226  0.721250   4.197155
-2     Wine     SVM  0.733738  0.724167   2.346238
-3     Wine   Boost  0.733742  0.707083  10.544635
-4     Wine  Neural  0.725678  0.728333   9.015970
-5  Titanic    Tree  0.789723  0.794030   2.136910
-6  Titanic     Knn  0.796188  0.796269   4.210416
-7  Titanic     SVM  0.802614  0.803731   2.147640
-8  Titanic   Boost  0.762547  0.800746   9.964252
-9  Titanic  Neural  0.796162  0.797015   9.347967
+'<table border="1" class="dataframe">\n  <thead>\n    <tr style="text-align: right;">\n      <th></th>\n      <th>Data</th>\n      <th>Algo</th>\n      <th>Train</th>\n      <th>Test</th>\n      <th>Time</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>Wine</td>\n      <td>Tree</td>\n      <td>0.729274</td>\n      <td>0.720417</td>\n      <td>2.132454</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>Wine</td>\n      <td>Knn</td>\n      <td>0.721226</td>\n      <td>0.721250</td>\n      <td>4.314683</td>\n    </tr>\n    <tr>\n      <th>2</th>\n      <td>Wine</td>\n      <td>SVM</td>\n      <td>0.733738</td>\n      <td>0.724167</td>\n      <td>2.518496</td>\n    </tr>\n    <tr>\n      <th>3</th>\n      <td>Wine</td>\n      <td>Boost</td>\n      <td>0.733742</td>\n      <td>0.707083</td>\n      <td>10.871403</td>\n    </tr>\n    <tr>\n      <th>4</th>\n      <td>Wine</td>\n      <td>Neural</td>\n      <td>0.727468</td>\n      <td>0.728333</td>\n      <td>7.616891</td>\n    </tr>\n    <tr>\n      <th>5</th>\n      <td>Titanic</td>\n      <td>Tree</td>\n      <td>0.789723</td>\n      <td>0.794030</td>\n      <td>2.002258</td>\n    </tr>\n    <tr>\n      <th>6</th>\n      <td>Titanic</td>\n      <td>Knn</td>\n      <td>0.796188</td>\n      <td>0.796269</td>\n      <td>4.070408</td>\n    </tr>\n    <tr>\n      <th>7</th>\n      <td>Titanic</td>\n      <td>SVM</td>\n      <td>0.802614</td>\n      <td>0.803731</td>\n      <td>2.370587</td>\n    </tr>\n    <tr>\n      <th>8</th>\n      <td>Titanic</td>\n      <td>Boost</td>\n      <td>0.762547</td>\n      <td>0.800746</td>\n      <td>9.965048</td>\n    </tr>\n    <tr>\n      <th>9</th>\n      <td>Titanic</td>\n      <td>Neural</td>\n      <td>0.792949</td>\n      <td>0.797015</td>\n      <td>6.507090</td>\n    </tr>\n  </tbody>\n</table>'
 

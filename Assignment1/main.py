@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.learning_curve import learning_curve
 from sklearn.pipeline import Pipeline
 
-from mlxtend.evaluate import plot_decision_regions, plot_learning_curves
+#from mlxtend.evaluate import plot_decision_regions, plot_learning_curves
 
 import io
 import pydotplus
@@ -21,6 +21,8 @@ from knn import *
 from svm import *
 from boost import *
 from neural import *
+
+from tree_test import *
 
 from timeit import default_timer as timer
 
@@ -332,6 +334,54 @@ def main():
     end = timer()
     print('titanic_neural took ', end - start)      
 
+
+def main2():
+    
+    
+    #
+    #
+    # RED WINE
+    #
+    #    
+    
+    # load the red wine data
+    # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
+    df = pd.read_csv('./winequality-red.csv', sep=';')
+    
+    # group the quality into binary good or bad
+    df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
+    df.loc[(df['quality'] >= 6), 'quality'] = 100
+    
+    # separate the x and y data
+    # y = quality, x = features (using fixed acid, volatile acid and alcohol)
+    x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol']
+    x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
+    
+    # split the data into training and test data
+    # for the wine data using 30% of the data for testing
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+    
+    #
+    # TREE
+    #
+    myTree = rb_tree_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_tree', cv=5)
+    
+    start = timer()
+    myTree.run_model()
+    end = timer()
+    print('redwine_tree run_model took:', end - start)
+    
+    start = timer()
+    myTree.run_cv_model()
+    end = timer()
+    print('redwine_tree run_cv_model took:', end - start)
+    
+    start = timer()
+    myTree.plot_validation_curve()
+    end = timer()
+    print('redwine_tree plot_validation_curve took:', end - start)
+    
+    
     
 if __name__ == "__main__":
     main()

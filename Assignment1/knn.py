@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.learning_curve import learning_curve, validation_curve
 from sklearn.pipeline import Pipeline
 
-from mlxtend.evaluate import plot_decision_regions, plot_learning_curves
+#from mlxtend.evaluate import plot_decision_regions, plot_learning_curves
 
 import io
 import pydotplus

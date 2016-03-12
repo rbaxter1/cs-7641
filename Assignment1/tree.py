@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.learning_curve import learning_curve, validation_curve
 from sklearn.pipeline import Pipeline
 
-from mlxtend.evaluate import plot_decision_regions, plot_learning_curves
+#from mlxtend.evaluate import plot_decision_regions, plot_learning_curves
 
 import io
 import pydotplus
@@ -60,7 +60,7 @@ class rb_tree:
         # test a training set only once. (paraphrased from Raschka p.176)
         # In Stratified KFold, the features are evenly disributed such that each test and training
         # set is an accurate representation of the whole training set.
-        kfold = StratifiedKFold(y=y_train, n_folds=self.cv, random_state=0)        
+        kfold = StratifiedKFold(y=y_train, n_folds=self.cv, random_state=0)
         
         
         # do the cross validation

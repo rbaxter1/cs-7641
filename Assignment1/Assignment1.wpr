@@ -5,11 +5,15 @@
 ##################################################################
 [project attributes]
 proj.file-list = [loc('boost.py'),
+                  loc('boost_test.py'),
                   loc('knn.py'),
+                  loc('knn_test.py'),
                   loc('main.py'),
                   loc('neural.py'),
+                  loc('neural_test.py'),
                   loc('plot_curves.py'),
                   loc('svm.py'),
+                  loc('svm_test.py'),
                   loc('tree.py'),
                   loc('tree_test.py')]
 proj.file-type = 'shared'

@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.learning_curve import learning_curve, validation_curve
+from sklearn.model_selection import learning_curve, validation_curve
 
 class rb_plot_curves:
     
-    def __init__(self):
-        pass
+    def __init__(self, save_path='./output/'):
+        self.save_path = save_path
 
     def plot_learning_curve(self, estimator, x_train, y_train, cv, data_label, n_jobs=-1):
             
@@ -47,7 +47,7 @@ class rb_plot_curves:
         plt.xlabel('Number of training samples')
         plt.ylabel('Accurancy')
         plt.legend(loc='lower right')
-        fn = data_label + '_learncurve.png'
+        fn = self.save_path + data_label + '_learncurve.png'
         plt.savefig(fn)
     
     
@@ -94,5 +94,5 @@ class rb_plot_curves:
         plt.xlabel(param_name)
         plt.ylabel('Accurancy')
         plt.legend(loc='lower right')
-        fn = data_label + '_' + param_name + '_validationcurve.png'
+        fn = self.save_path + data_label + '_' + param_name + '_validationcurve.png'
         plt.savefig(fn)

@@ -23,6 +23,10 @@ from boost import *
 from neural import *
 
 from tree_test import *
+from knn_test import *
+from svm_test import *
+from boost_test import *
+from neural_test import *
 
 from timeit import default_timer as timer
 
@@ -335,7 +339,7 @@ def main():
     print('titanic_neural took ', end - start)      
 
 
-def main2():
+def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True):
     
     
     #
@@ -346,7 +350,7 @@ def main2():
     
     # load the red wine data
     # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
-    df = pd.read_csv('./winequality-red.csv', sep=';')
+    df = pd.read_csv('./data/winequality-red.csv', sep=';')
     
     # group the quality into binary good or bad
     df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
@@ -364,27 +368,116 @@ def main2():
     #
     # TREE
     #
-    myTree = rb_tree_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_tree', cv=5)
+    if runTree:
+        myModel = rb_tree_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_tree', cv=5)
+        
+        start = timer()
+        myModel.run_model(max_depth=4, criterion='entropy')
+        end = timer()
+        print('redwine_tree run_model took:', end - start)
+        
+        start = timer()
+        myModel.run_cv_model(max_depth=4, criterion='entropy')
+        end = timer()
+        print('redwine_tree run_cv_model took:', end - start)
+        
+        start = timer()
+        myModel.plot_validation_curve(max_depth=4, criterion='entropy')
+        end = timer()
+        print('redwine_tree plot_validation_curve took:', end - start)
+        
     
-    start = timer()
-    myTree.run_model()
-    end = timer()
-    print('redwine_tree run_model took:', end - start)
     
-    start = timer()
-    myTree.run_cv_model()
-    end = timer()
-    print('redwine_tree run_cv_model took:', end - start)
+    #
+    # KNN
+    #
+    if runKnn:
+        myModel = rb_knn_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_knn', cv=5)
+        
+        start = timer()
+        myModel.run_model(n_neighbors=20, leaf_size=30, p=5)
+        end = timer()
+        print('redwine_knn run_model took:', end - start)
+        
+        start = timer()
+        myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=5)
+        end = timer()
+        print('redwine_knn run_cv_model took:', end - start)
+        
+        start = timer()
+        myModel.plot_validation_curve(n_neighbors=20, leaf_size=30, p=5)
+        end = timer()
+        print('redwine_knn plot_validation_curve took:', end - start)
     
-    start = timer()
-    myTree.plot_validation_curve()
-    end = timer()
-    print('redwine_tree plot_validation_curve took:', end - start)
+    
+    #
+    # SVM
+    #
+    if runSvm:
+        myModel = rb_svm_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_svm', cv=5)
+        
+        start = timer()
+        myModel.run_model(C=4.0, degree=3, cache_size=200)
+        end = timer()
+        print('redwine_svm run_model took:', end - start)
+        
+        start = timer()
+        myModel.run_cv_model(C=4.0, degree=3, cache_size=200)
+        end = timer()
+        print('redwine_svm run_cv_model took:', end - start)
+        
+        start = timer()
+        myModel.plot_validation_curve(C=4.0, degree=3, cache_size=200)
+        end = timer()
+        print('redwine_svm plot_validation_curve took:', end - start)
+        
+        
+    #
+    # Boost
+    #
+    if runBoost:
+        myModel = rb_boost_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_boost', cv=5)
+        
+        start = timer()
+        myModel.run_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+        end = timer()
+        print('redwine_boost run_model took:', end - start)
+        
+        start = timer()
+        myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+        end = timer()
+        print('redwine_boost run_cv_model took:', end - start)
+        
+        start = timer()
+        myModel.plot_validation_curve(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+        end = timer()
+        print('redwine_boost plot_validation_curve took:', end - start)
     
     
-    
+    #
+    # Neural
+    #
+    if runNeural:
+        myModel = rb_neural_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_neural', cv=5)
+        
+        start = timer()
+        myModel.run_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+        end = timer()
+        print('redwine_neural run_model took:', end - start)
+        
+        start = timer()
+        myModel.run_cv_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+        end = timer()
+        print('redwine_neural run_cv_model took:', end - start)
+        
+        start = timer()
+        myModel.plot_validation_curve(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+        end = timer()
+        print('redwine_neural plot_validation_curve took:', end - start)
+        
 if __name__ == "__main__":
     main()
+    #main2(False, False, False, False, True)
     
     
     

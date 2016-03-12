@@ -132,4 +132,4 @@ class rb_neural_test:
             
             plc.plot_validation_curve(estimator, self.x_train, self.y_train,
                                       self.cv, data_label, 
-                                      param_range, param_name, n_jobs=1)
+                                      param_range, param_name, n_jobs=-1)

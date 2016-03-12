@@ -2,25 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from sklearn.cross_validation import StratifiedKFold, cross_val_score, cross_val_predict, train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder, Imputer
-from sklearn.metrics import accuracy_score
-from sklearn.learning_curve import learning_curve
-from sklearn.pipeline import Pipeline
-
-#from mlxtend.evaluate import plot_decision_regions, plot_learning_curves
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, Imputer
 
 import io
 import pydotplus
-
-from ggplot import *
-
-from tree import *
-from knn import *
-from svm import *
-from boost import *
-from neural import *
 
 from tree_test import *
 from knn_test import *
@@ -31,487 +17,305 @@ from neural_test import *
 from timeit import default_timer as timer
 
 
-# references:
-# Raschka, Sebatian "Python Machine Learning"
+def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True, runWine=True, runTitanic=True, ):
     
-# this method is left here for reference. I used it for testing and documenting steps 
-def main_old():
-    
-    # 
-    use_normalized = False #not used
-    use_standardized = True
-    
-    # load the red wine data
-    # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
-    # source abstract: https://archive.ics.uci.edu/ml/datasets/Wine+Quality
-    df = pd.read_csv('./winequality-red.csv', sep=';')
-    #print(df)
-    
-    # split the data into training and test data using 60:40 split
-    # y = quality, x = all features
-    #x, y = df.iloc[:, :11].values, df.iloc[:,11].values
-    x, y = df.iloc[:,[1,10]].values, df.iloc[:,11].values
-    
-    # assign 30% of values to test
-    # setting random_state so the split is reproducible for subsequent iterations
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=.3, random_state=0)
-    
-    # with decision trees and randoms we don't need to worry about feature scaling
-    # every other algorithm will require feature scaling. we can either normalize
-    # or standardize
-    
-    # using normalization we get a bounded interval
-    if use_normalized:
-        mms = MinMaxScaler
-        x_train_norm = mms.fit_transform(x_train)
-        x_test_norm = mms.fit_transform(x_test)
-    
-    # using standardization we often "center a feature around 0 with
-    # a standard deviation of 1 so the feature takes on the form of
-    # a normal distribution... furthermore standardization maintains
-    # usefule information about the outliers" (Raschka, p. 111)
-    # for logistic and svm use standardization
-    if use_standardized:
-        stdsc = StandardScaler()
-        x_train = stdsc.fit_transform(x_train)
-        x_test = stdsc.fit_transform(x_test)
-    
-    
-    
-    # k-fold cross validation    
-    # resample the test data without replacement. This means that each data
-    # point is part of a test a training set only once. (paraphrased from Raschka p.176)
-    # In Stratified KFold, the features are evenly disributed such that each test and 
-    # training set is an accurate representation of the whole
-    kfold = StratifiedKFold(y=y_train,
-                            n_folds=5,
-                            random_state=0)
-    
-    # method 1: In this case we are not scaling any data, so the job
-    # is simplified. If we needed to standardize the data, we would 
-    # need to do so explicitly in each iteration. But sklean has a
-    # method to simplify this using pipelining which is shown in 
-    # the second method below.
-    if not use_standardized:
-        scores1 = []
-        for k, (train, test) in enumerate(kfold):
-            # run the learning algorithm
-            # Supported criteria are gini for the Gini impurity and entropy for the information gain.
-            tree = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=0)
-            tree.fit(x_train[train], y_train[train])
-            score = tree.score(x_train[test], y_train[test])
-            scores1.append(score)
-            print('Fold:', k+1, ', Class dist.:', np.bincount(y_train[test]), 'Acc:', score)
-        
-    
-    # method 2: use pipelining in the case where need to scale (or do dimensionality reduction)
-    if use_standardized:
-        pipe_tree = Pipeline([('scl', StandardScaler()),
-                              ('clf', DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=0))])
-        
-        # test it: this should match the non-pipelined call
-        pipe_tree.fit(x_train, y_train)
-        print('Test accuracy:', pipe_tree.score(x_test, y_test))
-        
-        # use with cross validation
-        # one useful performance feature of using pipelines and cross validation is the option
-        # to distribute the work across multiple CPUs using the n_jobs argument. -1 would use
-        # all CPUs.
-        scores2 = cross_val_score(estimator=pipe_tree,
-                                  X=x_train,
-                                  y=y_train,
-                                  cv=5,
-                                  n_jobs=-1)
-        
-        print('CV accuracy scores:', scores2)
-        print('CV accuracy:', np.mean(scores2), '+/-', np.std(scores2))
-
-    tree = DecisionTreeClassifier(criterion='entropy', max_depth=3, random_state=0)
-    tree.fit(x_train, y_train)        
-
-    # (Raschka, p.52)
-    y_pred = tree.predict(x_test)
-    ms = (y_test != y_pred).sum()
-    print('Misclassified samples:', ms)
-    
-    # sklearn has a bunch of performance metrics, for example
-    acc = accuracy_score(y_test, y_pred)
-    print('Accuracy is', acc)
-    
-    # plot the learning curves for the pipeline and non-pipelined models
-    plot_learning_curves(x_train, y_train, x_test, y_test, tree)
-    plt.show()
-    
-    plot_learning_curves(x_train, y_train, x_test, y_test, pipe_tree)
-    plt.show()
-
-    
-    # visualize the decision boundaries by looking at the rectangles which 
-    # divide up the space.
-    # TODO Would like to get this working
-#    x_combined = np.vstack((x_train, x_test))
-#    y_combined = np.hstack((y_train, y_test))
-#    plot_decision_regions(X=x_combined, y=y_combined, clf=tree) #test_idx=range(105,150)
-    #plot_decision_regions(x_train, y_train, clf=tree)
-    #plt.xlabel('xxx')
-    #plt.ylabel('quality')
-#    plt.show()
-    
-    
-    dot_data = io.StringIO()
-    export_graphviz(tree,
-                    out_file=dot_data,
-                    feature_names=df.iloc[:, :11].columns)
-    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-    graph.write_pdf("tree1.pdf")    
-
-def main():
-    
-    
-    #
-    # DECISION TREE
-    #
     
     #
     #
     # RED WINE
     #
     #    
-
-    #
-    # load the red wine data
-    # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
-    # source abstract: https://archive.ics.uci.edu/ml/datasets/Wine+Quality
-    df = pd.read_csv('./winequality-red.csv', sep=';')
-    
-    p = ggplot(aes(x='quality'), data=df) + \
-        geom_histogram(binwidth=1) + ggtitle('Red Wine Quality') + labs('Quality', 'Freq') 
-    
-    fn = 'redwine_quality_before.pdf'
-    ggsave(p, file=fn)
-    
-    
-    
-    #p = ggplot(aes(x='quality'), data=df)
-    #p + geom_histogram(binwidth=1) + ggtitle('Red Wine Quality') + labs('Quality', 'Freq')        
-
-
-    # separate the x and y data
-    # y = quality, x = all other features in the file
-    # update: using just fixed and volatile acid and alcohol
-    # also, grouping the quality into worst, average and best
-    df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
-    df.loc[(df['quality'] >= 6), 'quality'] = 100
-    
-    p = ggplot(aes(x='quality'), data=df) + \
-            geom_histogram(binwidth=1) + ggtitle('Red Wine Quality') + labs('Quality', 'Freq') 
+    if runWine:
+            
+        # load the red wine data
+        # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
         
-    fn = 'redwine_quality_after.pdf'
-    ggsave(p, file=fn)    
-
-    
-    x, y = df.iloc[:,[0,1,10]].values, df.iloc[:,11].values #.astype(float)
-    cols = df.iloc[:,[0,1,10]].columns
-
-    start = timer()
-    myTree = rb_tree(x, y, cols, 5, 'redwine_tree')
-    myTree.run()
-
-    end = timer()
-    print('redwine_tree took ', end - start)    
-
-    start = timer()
-    myKNN = rb_knn(x, y, cols, 5, 'redwine_knn')
-    myKNN.run()    
-    end = timer()
-    print('redwine_knn took ', end - start)    
-
-    start = timer()
-    mySVM = rb_svm(x, y, cols, 5, 'redwine_svm')
-    mySVM.run()    
-    end = timer()
-    print('redwine_svm took ', end - start)     
-    
-    start = timer()
-    myBoost = rb_boost(x, y, cols, 5, 'redwine_boost')
-    myBoost.run()   
-    end = timer()
-    print('redwine_boost took ', end - start)      
-
-    start = timer()
-    myNeural = rb_neural(x, y, cols, 5, 'redwine_neural')
-    myNeural.run()   
-    end = timer()
-    print('redwine_neural took ', end - start)      
-    
-    
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
+        df.loc[(df['quality'] >= 6), 'quality'] = 100
+        
+        # separate the x and y data
+        # y = quality, x = features (using fixed acid, volatile acid and alcohol)
+        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol']
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        #
+        # TREE
+        #
+        if runTree:
+            myModel = rb_tree_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_tree', cv=5)
+            
+            start = timer()
+            myModel.run_model(max_depth=4, criterion='entropy')
+            end = timer()
+            print('redwine_tree run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(max_depth=4, criterion='entropy')
+            end = timer()
+            print('redwine_tree run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(max_depth=4, criterion='entropy')
+            end = timer()
+            print('redwine_tree plot_validation_curve took:', end - start)
+            
+        
+        
+        #
+        # KNN
+        #
+        if runKnn:
+            myModel = rb_knn_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_knn', cv=5)
+            
+            start = timer()
+            myModel.run_model(n_neighbors=20, leaf_size=30, p=5)
+            end = timer()
+            print('redwine_knn run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=5)
+            end = timer()
+            print('redwine_knn run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(n_neighbors=20, leaf_size=30, p=5)
+            end = timer()
+            print('redwine_knn plot_validation_curve took:', end - start)
+        
+        
+        #
+        # SVM
+        #
+        if runSvm:
+            myModel = rb_svm_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_svm', cv=5)
+            
+            start = timer()
+            myModel.run_model(C=4.0, degree=3, cache_size=200)
+            end = timer()
+            print('redwine_svm run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(C=4.0, degree=3, cache_size=200)
+            end = timer()
+            print('redwine_svm run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(C=4.0, degree=3, cache_size=200)
+            end = timer()
+            print('redwine_svm plot_validation_curve took:', end - start)
+            
+            
+        #
+        # Boost
+        #
+        if runBoost:
+            myModel = rb_boost_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_boost', cv=5)
+            
+            start = timer()
+            myModel.run_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            end = timer()
+            print('redwine_boost run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            end = timer()
+            print('redwine_boost run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            end = timer()
+            print('redwine_boost plot_validation_curve took:', end - start)
+        
+        
+        #
+        # Neural
+        #
+        if runNeural:
+            myModel = rb_neural_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_neural', cv=5)
+            
+            start = timer()
+            myModel.run_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            end = timer()
+            print('redwine_neural run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            end = timer()
+            print('redwine_neural run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            end = timer()
+            print('redwine_neural plot_validation_curve took:', end - start)
+            
+            
+            
+            
     #
-    #
-    # WHITE WINE
-    #
-    #
-    #df = pd.read_csv('./winequality-white.csv', sep=';')
-
-    # separate the x and y data
-    # y = quality, x = all other features in the file
-    #x, y = df.iloc[:, :11].values, df.iloc[:,11].values    
-    #cols = df.iloc[:, :11].columns
-
-    #myTree = rb_tree(x, y, cols, 'whitewine')
-    #myTree.run()    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     #
     # TITANIC
     #
-    #
-    # source: https://www.kaggle.com/c/titanic/data
-    df = pd.read_csv('./titanic_train.csv', sep=',')
-    
-    
-
-    # we need to encode sex. using the sklearn label encoder is
-    # one way. however one consideration is that the learning
-    # algorithm may make assumptions about the magnitude of the
-    # labels. for example, male is greater than female. use
-    # one hot encoder to get around this.
-    #ohe = OneHotEncoder(categorical_features=[0])
-    #ohe.fit_transform(x).toarray()
-    
-    # Even better pandas has a one hot encoding built in!
-    df = pd.get_dummies(df[['Sex', 'Pclass', 'Age', 'Survived']])    
-
-    # this data set is missing some ages. we could impute a value
-    # like the average or median. or remove the rows having missing
-    # data. the disadvantage of removing values is we may be taking
-    # away valuable information that the learning algorithm needs.
-    imr = Imputer(strategy='most_frequent')
-    imr.fit(df['Age'].reshape(-1, 1))
-    imputed_data = imr.transform(df['Age'].reshape(-1, 1))
-    
-    df['Age']  = imputed_data
-    
-    y = df['Survived'].values
-    x = df.iloc[:,[0,1,3,4]].values
-    
-    #x, y = df.iloc[:,[2,10]].values, df.iloc[:,1].values
-    cols = df.iloc[:,[0,1,3,4]].columns
-
-    start = timer()
-    myTree = rb_tree(x, y, cols, 10, 'titanic_tree')
-    myTree.run()    
-    end = timer()
-    print('titanic_tree took ', end - start)     
-
-    
-    start = timer()
-    myKNN = rb_knn(x, y, cols, 5, 'titanic_knn')
-    myKNN.run()      
-    end = timer()
-    print('titanic_knn took ', end - start)       
-
-    start = timer()
-    mySVM = rb_svm(x, y, cols, 5, 'titanic_svm')
-    mySVM.run()     
-    end = timer()
-    print('titanic_svm took ', end - start)       
-    
-    start = timer()
-    myBoost = rb_boost(x, y, cols, 5, 'titanic_boost')
-    myBoost.run()       
-    end = timer()
-    print('titanic_boost took ', end - start)   
-    
-    start = timer()
-    myNeural = rb_neural(x, y, cols, 5, 'titanic_neural')
-    myNeural.run()   
-    end = timer()
-    print('titanic_neural took ', end - start)      
-
-
-def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True):
-    
-    
-    #
-    #
-    # RED WINE
-    #
     #    
+    if runTitanic:
+        # source: https://www.kaggle.com/c/titanic/data
+        df = pd.read_csv('./data/titanic_train.csv', sep=',')
+        
+        # we need to encode sex. using the sklearn label encoder is
+        # one way. however one consideration is that the learning
+        # algorithm may make assumptions about the magnitude of the
+        # labels. for example, male is greater than female. use
+        # one hot encoder to get around this.
+        #ohe = OneHotEncoder(categorical_features=[0])
+        #ohe.fit_transform(x).toarray()
+        
+        # Even better pandas has a one hot encoding built in!
+        df = pd.get_dummies(df[['Sex', 'Pclass', 'Age', 'Survived']])    
     
-    # load the red wine data
-    # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
-    df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        # this data set is missing some ages. we could impute a value
+        # like the average or median. or remove the rows having missing
+        # data. the disadvantage of removing values is we may be taking
+        # away valuable information that the learning algorithm needs.
+        imr = Imputer(strategy='most_frequent')
+        imr.fit(df['Age'].reshape(-1, 1))
+        imputed_data = imr.transform(df['Age'].reshape(-1, 1))
+        
+        df['Age']  = imputed_data
+        
+        y = df['Survived'].values
+        x = df.iloc[:,[0,1,3,4]].values
+        
+        x_col_names = df.iloc[:,[0,1,3,4]].columns
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        #y_train1 = y
+        #x_train1 = x
+        
+        #df_test = pd.read_csv('./data/titanic_test.csv', sep=',')
+        #df_test = pd.get_dummies(df_test[['Sex', 'Pclass', 'Age', 'Survived']])        
+
+        #x_test1 = df_test.iloc[:,[0,1,3,4]].values
+        
+        
+        
+        #
+        # TREE
+        #
+        if runTree:
+            myModel = rb_tree_test(x_train, x_test, y_train, y_test, x_col_names, 'titanic_tree', cv=5)
+            
+            start = timer()
+            myModel.run_model(max_depth=4, criterion='entropy')
+            end = timer()
+            print('titanic_tree run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(max_depth=4, criterion='entropy')
+            end = timer()
+            print('titanic_tree run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(max_depth=4, criterion='entropy')
+            end = timer()
+            print('titanic_tree plot_validation_curve took:', end - start)
+            
+        
+        
+        #
+        # KNN
+        #
+        if runKnn:
+            myModel = rb_knn_test(x_train, x_test, y_train, y_test, x_col_names, 'titanic_knn', cv=5)
+            
+            start = timer()
+            myModel.run_model(n_neighbors=20, leaf_size=30, p=4)
+            end = timer()
+            print('titanic_knn run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=4)
+            end = timer()
+            print('titanic_knn run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(n_neighbors=20, leaf_size=30, p=4)
+            end = timer()
+            print('titanic_knn plot_validation_curve took:', end - start)
+        
+        
+        #
+        # SVM
+        #
+        if runSvm:
+            myModel = rb_svm_test(x_train, x_test, y_train, y_test, x_col_names, 'titanic_svm', cv=5)
+            
+            start = timer()
+            myModel.run_model(C=2.0, degree=3, cache_size=200)
+            end = timer()
+            print('titanic_svm run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(C=2.0, degree=3, cache_size=200)
+            end = timer()
+            print('titanic_svm run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(C=2.0, degree=3, cache_size=200)
+            end = timer()
+            print('titanic_svm plot_validation_curve took:', end - start)
+            
+            
+        #
+        # Boost
+        #
+        if runBoost:
+            myModel = rb_boost_test(x_train, x_test, y_train, y_test, x_col_names, 'titanic_boost', cv=5)
+            
+            start = timer()
+            myModel.run_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            end = timer()
+            print('titanic_boost run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            end = timer()
+            print('titanic_boost run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            end = timer()
+            print('titanic_boost plot_validation_curve took:', end - start)
+        
+        
+        #
+        # Neural
+        #
+        if runNeural:
+            myModel = rb_neural_test(x_train, x_test, y_train, y_test, x_col_names, 'titanic_neural', cv=5)
+            
+            start = timer()
+            myModel.run_model(alpha=0.0001, batch_size=100, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            end = timer()
+            print('titanic_neural run_model took:', end - start)
+            
+            start = timer()
+            myModel.run_cv_model(alpha=0.0001, batch_size=100, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            end = timer()
+            print('titanic_neural run_cv_model took:', end - start)
+            
+            start = timer()
+            myModel.plot_validation_curve(alpha=0.0001, batch_size=100, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            end = timer()
+            print('titanic_neural plot_validation_curve took:', end - start)
+            
     
-    # group the quality into binary good or bad
-    df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
-    df.loc[(df['quality'] >= 6), 'quality'] = 100
-    
-    # separate the x and y data
-    # y = quality, x = features (using fixed acid, volatile acid and alcohol)
-    x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol']
-    x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
-    
-    # split the data into training and test data
-    # for the wine data using 30% of the data for testing
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
-    
-    #
-    # TREE
-    #
-    if runTree:
-        myModel = rb_tree_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_tree', cv=5)
-        
-        start = timer()
-        myModel.run_model(max_depth=4, criterion='entropy')
-        end = timer()
-        print('redwine_tree run_model took:', end - start)
-        
-        start = timer()
-        myModel.run_cv_model(max_depth=4, criterion='entropy')
-        end = timer()
-        print('redwine_tree run_cv_model took:', end - start)
-        
-        start = timer()
-        myModel.plot_validation_curve(max_depth=4, criterion='entropy')
-        end = timer()
-        print('redwine_tree plot_validation_curve took:', end - start)
-        
-    
-    
-    #
-    # KNN
-    #
-    if runKnn:
-        myModel = rb_knn_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_knn', cv=5)
-        
-        start = timer()
-        myModel.run_model(n_neighbors=20, leaf_size=30, p=5)
-        end = timer()
-        print('redwine_knn run_model took:', end - start)
-        
-        start = timer()
-        myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=5)
-        end = timer()
-        print('redwine_knn run_cv_model took:', end - start)
-        
-        start = timer()
-        myModel.plot_validation_curve(n_neighbors=20, leaf_size=30, p=5)
-        end = timer()
-        print('redwine_knn plot_validation_curve took:', end - start)
-    
-    
-    #
-    # SVM
-    #
-    if runSvm:
-        myModel = rb_svm_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_svm', cv=5)
-        
-        start = timer()
-        myModel.run_model(C=4.0, degree=3, cache_size=200)
-        end = timer()
-        print('redwine_svm run_model took:', end - start)
-        
-        start = timer()
-        myModel.run_cv_model(C=4.0, degree=3, cache_size=200)
-        end = timer()
-        print('redwine_svm run_cv_model took:', end - start)
-        
-        start = timer()
-        myModel.plot_validation_curve(C=4.0, degree=3, cache_size=200)
-        end = timer()
-        print('redwine_svm plot_validation_curve took:', end - start)
-        
-        
-    #
-    # Boost
-    #
-    if runBoost:
-        myModel = rb_boost_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_boost', cv=5)
-        
-        start = timer()
-        myModel.run_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
-        end = timer()
-        print('redwine_boost run_model took:', end - start)
-        
-        start = timer()
-        myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
-        end = timer()
-        print('redwine_boost run_cv_model took:', end - start)
-        
-        start = timer()
-        myModel.plot_validation_curve(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
-        end = timer()
-        print('redwine_boost plot_validation_curve took:', end - start)
-    
-    
-    #
-    # Neural
-    #
-    if runNeural:
-        myModel = rb_neural_test(x_train, x_test, y_train, y_test, x_col_names, 'redwine_neural', cv=5)
-        
-        start = timer()
-        myModel.run_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
-        end = timer()
-        print('redwine_neural run_model took:', end - start)
-        
-        start = timer()
-        myModel.run_cv_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
-        end = timer()
-        print('redwine_neural run_cv_model took:', end - start)
-        
-        start = timer()
-        myModel.plot_validation_curve(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
-        end = timer()
-        print('redwine_neural plot_validation_curve took:', end - start)
-        
 if __name__ == "__main__":
-    main()
-    #main2(False, False, False, False, True)
-    
-    
-    
-    
-    
-'''
-p = ggplot(aes(x='quality'), data=df) + \
-    geom_histogram(binwidth=1) + ggtitle('Red Wine Quality') + labs('Quality', 'Freq')
-
-
-ggplot(df, aes(x='density')) + \ 
-    geom_histogram(aes(y=..density..), \
-                   binwidth=.5, \
-                   colour="black", fill="white") + \
-    geom_density(alpha=.2, fill="#FF6666")
-
-
-ggplot(aes(x='quality', y='alcohol', colour='quality'), data=df) + \
-    geom_point()
-
-
-p = ggplot(aes(x='quality', y='fixed acidity'), data=df)
-p + geom_point(shape=1)
-
-+ geom_smooth(method=lm, se=FALSE)
-
-#ggplot(df, aes(x='fixed acidity', y='citric acid', color='quality')) +
-#geom_point(shape=1) +
-#geom_smooth()
-    
-    
-ggplot(df, aes(x=xvar, y=yvar, color=cond)) +
-    geom_point(shape=1) +
-    scale_colour_hue(l=50) + # Use a slightly darker palette than normal
-    geom_smooth(method=lm,   # Add linear regression lines
-                se=FALSE)    # Don't add shaded confidence region
-'''
+    main2()

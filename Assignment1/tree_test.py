@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.model_selection import StratifiedKFold
-#from sklearn.metrics import accuracy_score
 
 from plot_curves import *
 
@@ -97,6 +96,7 @@ class rb_tree_test:
         
         if do_plot:
             self.__plot_learning_curve(tree)
+            self.__plot_decision_boundaries(tree)
         
         return train_score, test_score
         
@@ -120,3 +120,10 @@ class rb_tree_test:
                 plc.plot_validation_curve(estimator, self.x_train, self.y_train,
                                           self.cv, data_label, 
                                           param_range, param_name)
+                
+    def __plot_decision_boundaries(self, estimator):
+        plc = rb_plot_curves()
+        features = pd.DataFrame(self.x_train)
+        features.columns = self.x_col_names
+    
+        plc.plot_decision_boundaries(estimator, features, self.y_train, self.data_label)

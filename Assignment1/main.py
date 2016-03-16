@@ -7,7 +7,6 @@ from sklearn.preprocessing import OneHotEncoder, Imputer
 
 import io
 import pydotplus
-
 from tree_test import *
 from knn_test import *
 from svm_test import *

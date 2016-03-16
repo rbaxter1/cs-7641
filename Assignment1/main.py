@@ -19,7 +19,14 @@ from timeit import default_timer as timer
 
 def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True, runWine=True, runTitanic=True, ):
     
-    
+    #arrays = [['Wine', 'Wine', 'Wine', 'Wine',  'Wine',   'Titanic', 'Titanic', 'Titanic', 'Titanic',  'Titanic'],
+    #          ['Tree', 'Knn',  'SVM',  'Boost', 'Neural', 'Tree',    'Knn',     'SVM',     'Boost',    'Neural']]
+    #tuples = list(zip(*arrays))
+    #index = pd.MultiIndex.from_tuples(tuples, names=['first', 'second'])
+    perf = pd.DataFrame(columns=['Data', 'Algo', 'Train', 'Test', 'Time'])
+    perf.set_index = ['Data', 'Algo']
+        
+
     #
     #
     # RED WINE
@@ -56,9 +63,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('redwine_tree run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(max_depth=4, criterion='entropy')
+            train, test = myModel.run_cv_model(max_depth=4, criterion='entropy')
             end = timer()
-            print('redwine_tree run_cv_model took:', end - start)
+            t = end - start
+            print('redwine_tree run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Wine', 'Tree', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(max_depth=4, criterion='entropy')
@@ -79,9 +89,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('redwine_knn run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=5)
+            train, test = myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=5)
             end = timer()
-            print('redwine_knn run_cv_model took:', end - start)
+            t = end - start
+            print('redwine_knn run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Wine', 'Knn', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(n_neighbors=20, leaf_size=30, p=5)
@@ -101,9 +114,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('redwine_svm run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(C=4.0, degree=3, cache_size=200)
+            train, test = myModel.run_cv_model(C=4.0, degree=3, cache_size=200)
             end = timer()
-            print('redwine_svm run_cv_model took:', end - start)
+            t = end - start
+            print('redwine_svm run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Wine', 'SVM', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(C=4.0, degree=3, cache_size=200)
@@ -123,9 +139,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('redwine_boost run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            train, test = myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
             end = timer()
-            print('redwine_boost run_cv_model took:', end - start)
+            t = end - start
+            print('redwine_boost run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Wine', 'Boost', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
@@ -145,9 +164,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('redwine_neural run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            train, test = myModel.run_cv_model(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
             end = timer()
-            print('redwine_neural run_cv_model took:', end - start)
+            t = end - start
+            print('redwine_neural run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Wine', 'Neural', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(alpha=0.0001, batch_size=200, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
@@ -196,15 +218,6 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
         # for the wine data using 30% of the data for testing
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
         
-        #y_train1 = y
-        #x_train1 = x
-        
-        #df_test = pd.read_csv('./data/titanic_test.csv', sep=',')
-        #df_test = pd.get_dummies(df_test[['Sex', 'Pclass', 'Age', 'Survived']])        
-
-        #x_test1 = df_test.iloc[:,[0,1,3,4]].values
-        
-        
         
         #
         # TREE
@@ -218,9 +231,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('titanic_tree run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(max_depth=4, criterion='entropy')
+            train, test = myModel.run_cv_model(max_depth=4, criterion='entropy')
             end = timer()
-            print('titanic_tree run_cv_model took:', end - start)
+            t = end - start
+            print('titanic_tree run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Titanic', 'Tree', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(max_depth=4, criterion='entropy')
@@ -241,9 +257,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('titanic_knn run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=4)
+            train, test = myModel.run_cv_model(n_neighbors=20, leaf_size=30, p=4)
             end = timer()
-            print('titanic_knn run_cv_model took:', end - start)
+            t = end - start
+            print('titanic_knn run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Titanic', 'Knn', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(n_neighbors=20, leaf_size=30, p=4)
@@ -263,9 +282,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('titanic_svm run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(C=2.0, degree=3, cache_size=200)
+            train, test = myModel.run_cv_model(C=2.0, degree=3, cache_size=200)
             end = timer()
-            print('titanic_svm run_cv_model took:', end - start)
+            t = end - start
+            print('titanic_svm run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Titanic', 'SVM', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(C=2.0, degree=3, cache_size=200)
@@ -285,9 +307,12 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('titanic_boost run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
+            train, test = myModel.run_cv_model(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
             end = timer()
-            print('titanic_boost run_cv_model took:', end - start)
+            t = end - start
+            print('titanic_boost run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Titanic', 'Boost', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(max_depth=1, criterion='entropy', learning_rate=1., n_estimators=300)
@@ -307,15 +332,20 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             print('titanic_neural run_model took:', end - start)
             
             start = timer()
-            myModel.run_cv_model(alpha=0.0001, batch_size=100, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
+            train, test = myModel.run_cv_model(alpha=0.0001, batch_size=100, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
             end = timer()
-            print('titanic_neural run_cv_model took:', end - start)
+            t = end - start
+            print('titanic_neural run_cv_model took:', t)
+            
+            perf.loc[len(perf)] = ['Titanic', 'Neural', train, test, t]
             
             start = timer()
             myModel.plot_validation_curve(alpha=0.0001, batch_size=100, learning_rate_init=0.001, power_t=0.5, max_iter=200, momentum=0.9, beta_1=0.9, beta_2=0.999, hidden_layer_sizes=(100,))
             end = timer()
             print('titanic_neural plot_validation_curve took:', end - start)
             
+    
+    print(perf)
     
 if __name__ == "__main__":
     main2()

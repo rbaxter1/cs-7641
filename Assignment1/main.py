@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import glob
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, Imputer
@@ -345,6 +346,15 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
             
     
     print(perf)
+
+    f = open('readme.md','w')
+    f.write(perf.to_html())
+    
+    # add perf table and all images to readme
+    for filename in glob.iglob('*.png'):
+        f.write('![Alt text](./output/' + filename + '.png?raw=true\n')
+        
+    f.close()
     
 if __name__ == "__main__":
     main2()

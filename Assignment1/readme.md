@@ -16,7 +16,7 @@
       <td>Tree</td>
       <td>0.729274</td>
       <td>0.720417</td>
-      <td>2.007754</td>
+      <td>1.991539</td>
     </tr>
     <tr>
       <th>1</th>
@@ -24,7 +24,7 @@
       <td>Knn</td>
       <td>0.721226</td>
       <td>0.721250</td>
-      <td>4.075975</td>
+      <td>4.078353</td>
     </tr>
     <tr>
       <th>2</th>
@@ -32,7 +32,7 @@
       <td>SVM</td>
       <td>0.733738</td>
       <td>0.724167</td>
-      <td>2.265377</td>
+      <td>2.318744</td>
     </tr>
     <tr>
       <th>3</th>
@@ -40,15 +40,15 @@
       <td>Boost</td>
       <td>0.733742</td>
       <td>0.707083</td>
-      <td>10.459686</td>
+      <td>10.449998</td>
     </tr>
     <tr>
       <th>4</th>
       <td>Wine</td>
       <td>Neural</td>
-      <td>0.726587</td>
-      <td>0.725833</td>
-      <td>15.296591</td>
+      <td>0.728377</td>
+      <td>0.728333</td>
+      <td>11.213264</td>
     </tr>
     <tr>
       <th>5</th>
@@ -56,7 +56,7 @@
       <td>Tree</td>
       <td>0.789723</td>
       <td>0.794030</td>
-      <td>2.038268</td>
+      <td>2.296460</td>
     </tr>
     <tr>
       <th>6</th>
@@ -64,7 +64,7 @@
       <td>Knn</td>
       <td>0.796188</td>
       <td>0.796269</td>
-      <td>4.056869</td>
+      <td>4.097998</td>
     </tr>
     <tr>
       <th>7</th>
@@ -72,7 +72,7 @@
       <td>SVM</td>
       <td>0.802614</td>
       <td>0.803731</td>
-      <td>2.205705</td>
+      <td>2.190203</td>
     </tr>
     <tr>
       <th>8</th>
@@ -80,15 +80,15 @@
       <td>Boost</td>
       <td>0.762547</td>
       <td>0.800746</td>
-      <td>9.858371</td>
+      <td>9.914329</td>
     </tr>
     <tr>
       <th>9</th>
       <td>Titanic</td>
       <td>Neural</td>
-      <td>0.796136</td>
-      <td>0.797761</td>
-      <td>14.013546</td>
+      <td>0.809040</td>
+      <td>0.794030</td>
+      <td>16.775022</td>
     </tr>
   </tbody>
 </table>![](./output/entropy_redwine_boost_learning_rate_validationcurve.png?raw=true)![](./output/entropy_redwine_boost_n_estimators_validationcurve.png?raw=true)![](./output/entropy_redwine_tree_max_depth_validationcurve.png?raw=true)![](./output/entropy_titanic_boost_learning_rate_validationcurve.png?raw=true)![](./output/entropy_titanic_boost_n_estimators_validationcurve.png?raw=true)![](./output/entropy_titanic_tree_max_depth_validationcurve.png?raw=true)![](./output/redwine_boost_0_decision_boundary.png?raw=true)![](./output/redwine_boost_1_decision_boundary.png?raw=true)![](./output/redwine_boost_2_decision_boundary.png?raw=true)![](./output/redwine_boost_learncurve.png?raw=true)![](./output/redwine_knn_0_decision_boundary.png?raw=true)![](./output/redwine_knn_1_decision_boundary.png?raw=true)![](./output/redwine_knn_2_decision_boundary.png?raw=true)![](./output/redwine_knn_clf__n_neighbors_validationcurve.png?raw=true)![](./output/redwine_knn_clf__p_validationcurve.png?raw=true)![](./output/redwine_knn_learncurve.png?raw=true)![](./output/redwine_neural_0_decision_boundary.png?raw=true)![](./output/redwine_neural_1_decision_boundary.png?raw=true)![](./output/redwine_neural_2_decision_boundary.png?raw=true)![](./output/redwine_neural_clf__batch_size_validationcurve.png?raw=true)![](./output/redwine_neural_clf__learning_rate_init_validationcurve.png?raw=true)![](./output/redwine_neural_clf__max_iter_validationcurve.png?raw=true)![](./output/redwine_neural_clf__power_t_validationcurve.png?raw=true)![](./output/redwine_neural_learncurve.png?raw=true)![](./output/redwine_svm_0_decision_boundary.png?raw=true)![](./output/redwine_svm_1_decision_boundary.png?raw=true)![](./output/redwine_svm_2_decision_boundary.png?raw=true)![](./output/redwine_svm_clf__C_validationcurve.png?raw=true)![](./output/redwine_svm_learncurve.png?raw=true)![](./output/redwine_tree_0_decision_boundary.png?raw=true)![](./output/redwine_tree_1_decision_boundary.png?raw=true)![](./output/redwine_tree_2_decision_boundary.png?raw=true)![](./output/redwine_tree_learncurve.png?raw=true)![](./output/titanic_boost_0_decision_boundary.png?raw=true)![](./output/titanic_boost_1_decision_boundary.png?raw=true)![](./output/titanic_boost_2_decision_boundary.png?raw=true)![](./output/titanic_boost_3_decision_boundary.png?raw=true)![](./output/titanic_boost_4_decision_boundary.png?raw=true)![](./output/titanic_boost_5_decision_boundary.png?raw=true)![](./output/titanic_boost_learncurve.png?raw=true)![](./output/titanic_knn_0_decision_boundary.png?raw=true)![](./output/titanic_knn_1_decision_boundary.png?raw=true)![](./output/titanic_knn_2_decision_boundary.png?raw=true)![](./output/titanic_knn_3_decision_boundary.png?raw=true)![](./output/titanic_knn_4_decision_boundary.png?raw=true)![](./output/titanic_knn_5_decision_boundary.png?raw=true)![](./output/titanic_knn_clf__n_neighbors_validationcurve.png?raw=true)![](./output/titanic_knn_clf__p_validationcurve.png?raw=true)![](./output/titanic_knn_learncurve.png?raw=true)![](./output/titanic_neural_0_decision_boundary.png?raw=true)![](./output/titanic_neural_1_decision_boundary.png?raw=true)![](./output/titanic_neural_2_decision_boundary.png?raw=true)![](./output/titanic_neural_3_decision_boundary.png?raw=true)![](./output/titanic_neural_4_decision_boundary.png?raw=true)![](./output/titanic_neural_5_decision_boundary.png?raw=true)![](./output/titanic_neural_clf__batch_size_validationcurve.png?raw=true)![](./output/titanic_neural_clf__learning_rate_init_validationcurve.png?raw=true)![](./output/titanic_neural_clf__max_iter_validationcurve.png?raw=true)![](./output/titanic_neural_clf__power_t_validationcurve.png?raw=true)![](./output/titanic_neural_learncurve.png?raw=true)![](./output/titanic_svm_0_decision_boundary.png?raw=true)![](./output/titanic_svm_1_decision_boundary.png?raw=true)![](./output/titanic_svm_2_decision_boundary.png?raw=true)![](./output/titanic_svm_3_decision_boundary.png?raw=true)![](./output/titanic_svm_4_decision_boundary.png?raw=true)![](./output/titanic_svm_5_decision_boundary.png?raw=true)![](./output/titanic_svm_clf__C_validationcurve.png?raw=true)![](./output/titanic_svm_learncurve.png?raw=true)![](./output/titanic_tree_0_decision_boundary.png?raw=true)![](./output/titanic_tree_1_decision_boundary.png?raw=true)![](./output/titanic_tree_2_decision_boundary.png?raw=true)![](./output/titanic_tree_3_decision_boundary.png?raw=true)![](./output/titanic_tree_4_decision_boundary.png?raw=true)![](./output/titanic_tree_5_decision_boundary.png?raw=true)![](./output/titanic_tree_learncurve.png?raw=true)

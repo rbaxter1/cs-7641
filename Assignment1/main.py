@@ -347,7 +347,7 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
     
     print(perf)
 
-    f = open('readme.md','w')
+    f = open('./readme.md','w')
     f.write(perf.to_html())
     
     # add perf table and all images to readme

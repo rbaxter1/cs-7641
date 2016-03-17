@@ -47,7 +47,7 @@ class rb_plot_curves:
                          alpha=0.15, color='green')
         
         plt.grid()
-        plt.title('Learning Curve')
+        plt.title("Learning curve: %s" % (data_label))
         plt.xlabel('Number of training samples')
         plt.ylabel('Accurancy')
         plt.legend(loc='lower right')
@@ -94,7 +94,7 @@ class rb_plot_curves:
                          alpha=0.15, color='green')
         
         plt.grid()
-        plt.title("Validation Curve")
+        plt.title("Validation curve: %s" % (data_label))
         plt.xlabel(param_name)
         plt.ylabel('Accurancy')
         plt.legend(loc='lower right')
@@ -103,7 +103,6 @@ class rb_plot_curves:
         
         
     def plot_decision_boundaries(self, estimator, features, y, data_label):
-        
         
         # pinched from http://scikit-learn.org/stable/auto_examples/neighbors/plot_classification.html
         # run this for each pairwise feature
@@ -139,7 +138,9 @@ class rb_plot_curves:
             plt.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap_bold)
             plt.xlim(xx.min(), xx.max())
             plt.ylim(yy.min(), yy.max())
-            plt.title("Decision boundaries (%s, %s)" % (p[0], p[1]))
+            plt.xlabel(p[0])
+            plt.ylabel(p[1])
+            plt.title("Decision boundaries: %s (%s, %s)" % (data_label, p[0], p[1]))
             
             fn = self.save_path + data_label + '_' + str(k) + '_decision_boundary.png'
             plt.savefig(fn)

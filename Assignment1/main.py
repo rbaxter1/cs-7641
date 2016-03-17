@@ -347,16 +347,14 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
     
     print(perf)
 
-    f = open('./readme.md','w')
-    f.write(perf.to_html())
-    
-    # add perf table and all images to readme
-    for filename in glob.iglob('./output/*.png'):
-        fn = filename.replace('./output\\', '')
-        tag = "![](./output/" + fn + "?raw=true)"
-        f.write(tag)
-            
-    f.close()
-    
+    with open('./readme.md') as f:
+        print(perf.to_html())
+
+        # add perf table and all images to readme
+        for filename in glob.iglob('./output/*.png'):
+            fn = filename.replace('./output\\', '')
+            tag = "![](./output/" + fn + "?raw=true)"
+            print(tag)
+                
 if __name__ == "__main__":
     main2()

@@ -351,9 +351,11 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
     f.write(perf.to_html())
     
     # add perf table and all images to readme
-    for filename in glob.iglob('*.png'):
-        f.write('![Alt text](./output/' + filename + '.png?raw=true\n')
-        
+    for filename in glob.iglob('./output/*.png'):
+        fn = filename.replace('./output\\', '')
+        tag = "![](./output/" + fn + "?raw=true)"
+        f.write(tag)
+            
     f.close()
     
 if __name__ == "__main__":

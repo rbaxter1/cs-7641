@@ -40,7 +40,7 @@ class rb_svm_test:
         #kfold = StratifiedKFold(y=self.y_train, n_folds=self.cv, random_state=0)
         
         # this is the 0.18dev version
-        skf = StratifiedKFold(n_folds=self.cv, random_state=0)
+        skf = StratifiedKFold(n_splits=self.cv, random_state=0)
         
         # do the cross validation
         train_scores = []

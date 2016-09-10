@@ -47,8 +47,8 @@ X_train, X_test, y_train, y_test = train_test_split(x,
 #                                      1.7, 2.0, 2.3, 2.6, 2.9, 3.2]}
 
 
-#params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01), 'max_depth': np.arange(1, 50, 1)}
-params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01)}
+params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01), 'max_depth': np.arange(1, 50, 1)}
+#params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01)}
 
 #param_name = 'max_depth'
 #param_name = 'min_impurity_split'

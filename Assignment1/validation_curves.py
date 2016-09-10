@@ -1,4 +1,4 @@
-from sklearn.datasets import load_boston
+#from sklearn.datasets import load_boston
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
@@ -8,7 +8,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.model_selection import StratifiedKFold
 
-
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -36,7 +37,7 @@ x, y = df.loc[:,x_col_names].values, df.loc[:,'SHOT_RESULT_ENC'].values
 # for the wine data using 30% of the data for testing
 #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
 
-boston = load_boston()
+#boston = load_boston()
 X_train, X_test, y_train, y_test = train_test_split(x,
                                                     y,
                                                     test_size=0.25,

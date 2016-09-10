@@ -62,7 +62,7 @@ class rb_tree_test:
             
         return train_score, test_score  
             
-    def run_model(self, max_depth=3, criterion='entropy', do_plot=True):
+    def run_model(self, params, max_depth=3, criterion='entropy', do_plot=True):
         
         # Supported criteria for tree are gini for the Gini impurity and entropy for the information gain.
         tree = DecisionTreeClassifier(criterion='entropy', max_depth=max_depth, random_state=0)
@@ -106,7 +106,7 @@ class rb_tree_test:
 
     def plot_validation_curve(self, max_depth=3, criterion='entropy'):
         #for criterion in ['entropy', 'gini']:
-        for criterion in ['entropy']:        
+        for criterion in ['gini']:        
             estimator = DecisionTreeClassifier(criterion=criterion, max_depth=max_depth)
             param_names = ['max_depth']
             param_ranges = [np.arange(1,30,1)]
@@ -120,6 +120,32 @@ class rb_tree_test:
                 plc.plot_validation_curve(estimator, self.x_train, self.y_train,
                                           self.cv, data_label, 
                                           param_range, param_name)
+     
+    def plot_validation_curve2(self, max_depth=3, criterion='entropy'):
+        #for criterion in ['entropy', 'gini']:
+        for criterion in ['gini']:
+            
+            #params_dict = {"min_impurity_split": [0.2, 0.5, 0.8, 1.1, 1.4,
+            #                          1.7, 2.0, 2.3, 2.6, 2.9, 3.2]}
+            
+            estimator = DecisionTreeClassifier(criterion=criterion)
+            param_names = ['max_depth',
+                           'min_impurity_split']
+            
+            param_ranges = [np.arange(1,30,1),
+                            np.arange(0, 0.25, 0.005)]
+            
+            data_label = criterion + '_' + self.data_label
+            plc = rb_plot_curves()
+            for i in range(len(param_names)):
+                
+                param_name = param_names[i]
+                param_range = param_ranges[i]
+                
+                plc.plot_validation_curve(estimator, self.x_train, self.y_train,
+                                          self.cv, data_label, 
+                                          param_range, param_name)
+     
                 
     def __plot_decision_boundaries(self, estimator):
         plc = rb_plot_curves()

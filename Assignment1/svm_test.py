@@ -11,7 +11,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder, Imputer
 #from sklearn.metrics import accuracy_score
 
-
 from plot_curves import *
 
 class rb_svm_test:

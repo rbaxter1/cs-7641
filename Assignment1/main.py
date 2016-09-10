@@ -33,10 +33,34 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
     #
     #    
     if runWine:
-            
+        '''
+        1 - fixed acidity
+        2 - volatile acidity
+        3 - citric acid
+        4 - residual sugar
+        5 - chlorides
+        6 - free sulfur dioxide
+        7 - total sulfur dioxide
+        8 - density
+        9 - pH
+        10 - sulphates
+        11 - alcohol
+        Output variable (based on sensory data):
+        12 - quality (score between 0 and 10)
+        '''
+        
         # load the red wine data
         # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
         df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        
+        df['phSugarRatio'] = df['pH'] / df['residual sugar']
+        df['phSugarRatioScore'] = df['phSugarRatio'] / df['phSugarRatio'].std() 
+        med = df['phSugarRatioScore'].median()
+        abs_med = abs(med)
+        df['phSugarRatioStd'] = df['phSugarRatioScore'] / abs_med
+        
+        df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
+        df.plot.scatter(x='quality', y='phSugarRatioStd')
         
         # group the quality into binary good or bad
         df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0

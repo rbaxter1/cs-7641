@@ -46,7 +46,7 @@ class validation_curves:
                        'min_samples_leaf': np.arange(2, 200, 5),
                        'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.05),
                        'max_leaf_nodes': np.arange(2, 100, 5)}
-        params_dict = {'max_depth': np.arange(1, 40, 1)}
+        #params_dict = {'max_depth': np.arange(1, 40, 1)}
         
         learner_name = 'DecisionTreeClassifier'
         

@@ -125,11 +125,11 @@ for param_name in params_dict.keys():
             #test_scores.append(test_score)
             print('Fold:', k+1, ', Training MSE:', train_MSE, ', Nodes: ', num_nodes_inner)
         
-        y_predicted_test = clf.predict(X_test)
-        test_MSE = mean_squared_error(y_test, y_predicted_test)
-        test_MSE2 = 1. - clf.score(X_test, y_test)
-        test_scores.append(test_MSE2)
-        print('Test MSE:', test_MSE2)
+            y_predicted_test = clf.predict(X_train[train])
+            test_MSE = mean_squared_error(y_train[test], y_predicted_test)
+            #test_MSE2 = 1. - clf.score(X_test, y_test)
+            test_scores.append(test_MSE)
+            print('Test MSE:', test_MSE2)
             
         
         train_score = np.mean(train_scores)

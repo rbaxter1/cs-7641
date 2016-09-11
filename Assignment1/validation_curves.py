@@ -128,8 +128,8 @@ for param_name in params_dict.keys():
         y_predicted_test = clf.predict(X_test)
         test_MSE = mean_squared_error(y_test, y_predicted_test)
         test_MSE2 = 1. - clf.score(X_test, y_test)
-        test_scores.append(test_MSE)
-        print('Test MSE:', test_MSE)
+        test_scores.append(test_MSE2)
+        print('Test MSE:', test_MSE2)
             
         
         train_score = np.mean(train_scores)

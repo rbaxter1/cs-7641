@@ -115,9 +115,9 @@ for param_name in params_dict.keys():
             
             num_nodes_inner = clf.tree_.node_count
             
-            y_predicted_train = clf.predict(X_train[test])
+            y_predicted_train = clf.predict(X_train[train])
             # should be the same
-            train_MSE = mean_squared_error(y_train[test], y_predicted_train)
+            train_MSE = mean_squared_error(y_train[train], y_predicted_train)
             #train_MSE2 = 1. - clf.score(X_train[test], y_train[test])
             train_scores.append(train_MSE)
             
@@ -125,8 +125,8 @@ for param_name in params_dict.keys():
             #test_scores.append(test_score)
             print('Fold:', k+1, ', Training MSE:', train_MSE, ', Nodes: ', num_nodes_inner)
         
-            y_predicted_test = clf.predict(X_train[train])
-            test_MSE = mean_squared_error(y_train[train], y_predicted_test)
+            y_predicted_test = clf.predict(X_train[test])
+            test_MSE = mean_squared_error(y_train[test], y_predicted_test)
             #test_MSE2 = 1. - clf.score(X_test, y_test)
             test_scores.append(test_MSE)
             print('Test MSE:', test_MSE)

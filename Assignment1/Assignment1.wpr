@@ -5,11 +5,15 @@
 ##################################################################
 [project attributes]
 proj.file-list = [loc('boost_test.py'),
+                  loc('impurity.py'),
                   loc('knn_test.py'),
                   loc('main.py'),
+                  loc('main_v2.py'),
                   loc('neural_test.py'),
                   loc('plot_curves.py'),
                   loc('svm_test.py'),
-                  loc('tree_test.py')]
+                  loc('tree_test.py'),
+                  loc('validation_curves.py'),
+                  loc('validation_curves_old.py')]
 proj.file-type = 'shared'
-proj.main-file = loc('main.py')
+proj.main-file = loc('validation_curves.py')

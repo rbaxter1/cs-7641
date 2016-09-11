@@ -48,7 +48,7 @@ class validation_curves:
         
         # group the quality into binary good or bad
         df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
-        df.loc[(df['quality'] >= 6), 'quality'] = 100
+        df.loc[(df['quality'] >= 6), 'quality'] = 1
         
         # separate the x and y data
         # y = quality, x = features (using fixed acid, volatile acid and alcohol)

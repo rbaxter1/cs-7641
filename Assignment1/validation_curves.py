@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.model_selection import StratifiedKFold
 
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -45,7 +45,7 @@ class validation_curves:
                        'min_samples_split': np.arange(1, 200, 5),
                        'min_samples_leaf': np.arange(2, 200, 5),
                        'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.05),
-                       'max_leaf_nodes': np.arange(2, 20, 5)}
+                       'max_leaf_nodes': np.arange(2, 100, 5)}
         params_dict = {'max_depth': np.arange(1, 40, 1)}
         
         learner_name = 'DecisionTreeClassifier'

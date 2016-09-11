@@ -51,10 +51,9 @@ params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01),
                'max_depth': np.arange(1, 50, 1),
                'min_samples_split': np.arange(1, 10, 1),
                'min_samples_split': np.arange(0.1, 1.0, 0.1),
-               'min_samples_leaf': np.arange(1, 10, 1),
-               'min_samples_leaf': np.arange(0.1, 1.0, 0.1),
-               'min_weight_fraction_leaf': np.arange(0.0, 1.0, 0.1),
-               'max_leaf_nodes': np.arange(1, 50, 1)}
+               'min_samples_leaf': np.arange(2, 10, 1),
+               'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.1),
+               'max_leaf_nodes': np.arange(2, 10, 1)}
 #params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01)}
 
 #param_name = 'max_depth'

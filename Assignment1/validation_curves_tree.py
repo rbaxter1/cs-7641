@@ -43,8 +43,8 @@ class validation_curves:
         abs_med = abs(med)
         df['phSugarRatioStd'] = df['phSugarRatioScore'] / abs_med
         
-        df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
-        df.plot.scatter(x='quality', y='phSugarRatioStd')
+        #df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
+        #df.plot.scatter(x='quality', y='phSugarRatioStd')
         
         # group the quality into binary good or bad
         df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
@@ -57,8 +57,10 @@ class validation_curves:
         
         # split the data into training and test data
         # for the wine data using 30% of the data for testing
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
         
+        return X_train, X_test, y_train, y_test
+    
     def loadData(self):
         df = pd.read_csv('./data/shot_logs.csv', sep=',')
         

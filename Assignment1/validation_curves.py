@@ -92,7 +92,7 @@ for param_name in params_dict.keys():
     for param_value in params_dict[param_name]:
         print(param_value)
         
-        clf = DecisionTreeClassifier(random_state=0)
+        clf = DecisionTreeClassifier(criterion='entropy', random_state=0)
         params = clf.get_params()
         params[param_name] = param_value
         clf.set_params(**params)

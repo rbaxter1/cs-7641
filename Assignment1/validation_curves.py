@@ -48,7 +48,7 @@ X_train, X_test, y_train, y_test = train_test_split(x,
 
 
 params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01),
-               'max_depth': np.arange(1, 50, 1),
+               'max_depth': np.arange(1, 100, 1),
                'min_samples_split': np.arange(1, 50, 1),
                'min_samples_leaf': np.arange(2, 50, 1),
                'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.05),

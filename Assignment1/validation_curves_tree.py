@@ -233,33 +233,6 @@ class validation_curves:
             fn = save_path + learner_name + '_' + param_name + '_validation.png'
             plt.savefig(fn)
             
-            '''
-            plt.cla()
-            plt.clf()
-            
-            nodes_mean = np.array(avg_num_nodes)
-            nodes_std = np.array(std_num_nodes)
-            
-            plt.plot(param_range, nodes_mean,
-                        color='blue', marker='o',
-                        markersize=5,
-                        label='node count')
-            
-            plt.fill_between(param_range,
-                             nodes_mean + nodes_std,
-                             nodes_mean - nodes_std,
-                             alpha=0.15, color='blue')
-            
-            plt.grid()
-            plt.title("%s:\nNumber of tree nodes versus %s" % (learner_name, param_name))
-            plt.xlabel(param_name)
-            plt.ylabel('Node Count')
-            plt.legend(loc='lower right')
-            
-            fn = save_path + learner_name + '_' + param_name + 'nodes.png'
-            plt.savefig(fn)
-            '''
-            
 if __name__ == "__main__":
     vc = validation_curves()
     vc.run()

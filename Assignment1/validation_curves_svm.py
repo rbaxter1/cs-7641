@@ -4,17 +4,18 @@ from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import Imputer, LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from sklearn.model_selection import StratifiedKFold
 from sklearn.svm import SVC
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder, Imputer
+from sklearn.metrics import classification_report
 
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from timeit import default_timer as timer
 
 class validation_curves:
     def __init__(self):
@@ -51,8 +52,8 @@ class validation_curves:
         #df.plot.scatter(x='quality', y='phSugarRatioStd')
         
         # group the quality into binary good or bad
-        df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
-        df.loc[(df['quality'] >= 6), 'quality'] = 1
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0.
+        df.loc[(df['quality'] >= 6), 'quality'] = 1.
         
         # separate the x and y data
         # y = quality, x = features (using fixed acid, volatile acid and alcohol)
@@ -90,24 +91,96 @@ class validation_curves:
 
         return X_train, X_test, y_train, y_test
     
+    
+    def gridSearch2(self):
+        X_train, X_test, y_train, y_test =  self.loadWineData()
+
+        pipeline = Pipeline([('scl', StandardScaler()),
+                             ('clf', SVC(random_state=0))])
+
+        parameters = {'clf__kernel': ('rbf', 'poly', 'linear'),
+                      #'clf__max_iter': np.arange(0., 500., 100.),
+                      'clf__gamma': np.arange(1., 50., 5.),
+                      'clf__tol': np.arange(0.000001, 2.0, 0.5) }
+        
+        grid_search = GridSearchCV(pipeline, parameters, n_jobs=-1, verbose=1)
+        
+        print("Performing grid search...")
+        print("pipeline:", [name for name, _ in pipeline.steps])
+        print("parameters:")
+        print(parameters)
+        t0 = timer()
+        grid_search.fit(X_train, y_train)
+        print("done in %0.3fs" % (timer() - t0))
+        print()
+    
+        print("Best score: %0.3f" % grid_search.best_score_)
+        print("Best parameters set:")
+        best_parameters = grid_search.best_estimator_.get_params()
+        for param_name in sorted(parameters.keys()):
+            print("\t%s: %r" % (param_name, best_parameters[param_name]))
+            
+    def gridSearch(self):
+        X_train, X_test, y_train, y_test =  self.loadWineData()
+        
+        tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
+                     'C': [1, 10, 100, 1000]},
+                    {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
+
+        scores = ['precision', 'recall']
+        
+        for score in scores:
+            print("# Tuning hyper-parameters for %s" % score)
+            print()
+        
+            clf = GridSearchCV(SVC(C=1), tuned_parameters, cv=5,
+                               scoring='%s_weighted' % score)
+            clf.fit(X_train, y_train)
+        
+            print("Best parameters set found on development set:")
+            print()
+            print(clf.best_params_)
+            print()
+            print("Grid scores on development set:")
+            print()
+            for params, mean_score, scores in clf.grid_scores_:
+                print("%0.3f (+/-%0.03f) for %r"
+                      % (mean_score, scores.std() * 2, params))
+            print()
+        
+            print("Detailed classification report:")
+            print()
+            print("The model is trained on the full development set.")
+            print("The scores are computed on the full evaluation set.")
+            print()
+            y_true, y_pred = y_test, clf.predict(X_test)
+            print(classification_report(y_true, y_pred))
+            print()
+            
+        
+        
+        
     def run(self):
         
         X_train, X_test, y_train, y_test =  self.loadWineData()
 
         kernels =['rbf', 'poly', 'linear', 'sigmoid'] 
+        kernels =['linear'] 
+        
         params_dict_rbf = {'clf__C': np.arange(1, 500, 4),
                            'clf__max_iter': np.arange(0, 500, 2),
                            'clf__gamma': np.arange(1, 50, 1),
                            'clf__tol': np.arange(0.000001, 2.0, 0.005)}
         
-        params_dict_poly = {'clf__C': np.arange(1, 500, 4),
-                            'clf__max_iter': np.arange(0, 500, 2),
-                            'clf__gamma': np.arange(1, 3, 1),
-                            'clf__tol': np.arange(0.000001, 2.0, 0.005)}
+        params_dict_poly = {'clf__degree': np.arange(0, 15, 1)}
+        
+        params_dict_linear = {'clf__max_iter': np.arange(1, 1000, (1000 - 1) / 200),
+                              'clf__tol': np.arange(0.000001, 1.9, (1.9 - 0.000001) / 200)
+                              }
         
         param_dict_by_kernel = {'rbf': params_dict_rbf,
                                 'poly': params_dict_poly,
-                                'linear': params_dict_poly,
+                                'linear': params_dict_linear,
                                 'sigmoid': params_dict_poly}       
         
         #params_dict = {'clf__degree': np.arange(0, 15, 1)}
@@ -259,7 +332,9 @@ class validation_curves:
                 
 if __name__ == "__main__":
     vc = validation_curves()
-    vc.run()
+    vc.gridSearch2()
+    
+    #vc.run()
               
         
         

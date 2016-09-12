@@ -102,20 +102,21 @@ class validation_curves:
         
         params_dict_poly = {'clf__C': np.arange(1, 500, 4),
                             'clf__max_iter': np.arange(0, 500, 2),
-                            'clf__gamma': np.arange(1, 50, 1),
+                            'clf__gamma': np.arange(1, 3, 1),
                             'clf__tol': np.arange(0.000001, 2.0, 0.005)}
         
         param_dict_by_kernel = {'rbf': params_dict_rbf,
                                 'poly': params_dict_poly,
-                                'linear': params_dict_rbf,
-                                'sigmoid': params_dict_rbf}       
+                                'linear': params_dict_poly,
+                                'sigmoid': params_dict_poly}       
         
         #params_dict = {'clf__degree': np.arange(0, 15, 1)}
         
         learner_name = 'SVM'
         
         for kernel in kernels:
-            
+            print(kernel)
+
             params_dict = param_dict_by_kernel[kernel]
             
             for param_name in params_dict.keys():
@@ -253,7 +254,7 @@ class validation_curves:
                 labs = [l.get_label() for l in lns]
                 ax1.legend(lns, labs, loc='center right')
     
-                fn = save_path + learner_name + '_' + kernel_name + '_' + param_name + '_validation.png'
+                fn = save_path + learner_name + '_' + kernel + '_' + param_name + '_validation.png'
                 plt.savefig(fn)
                 
 if __name__ == "__main__":

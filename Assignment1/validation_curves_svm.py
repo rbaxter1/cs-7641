@@ -135,12 +135,15 @@ class validation_curves:
                 
                 # do the cross validation
                 for k, (train, test) in enumerate(skf.split(X=X_train, y=y_train)):
-                    
+                   
+                    #params = clf.get_params()
+                    #print(params)
+ 
                     # run the learning algorithm
                     clf.fit(X_train[train], y_train[train])
                     
                     # complexity
-                    nvectors = clf.clf.n_support_.sum()
+                    nvectors = clf.named_steps['clf'].n_support_.sum()
                     num_vectors.append(nvectors)
                     
                     # in sample

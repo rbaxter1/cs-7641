@@ -96,10 +96,10 @@ class validation_curves:
         
         #kernel = 'poly'
         kernel = 'rbf'
-        params_dict = {'clf__C': np.arange(1, 1000, 20),
-                       'clf__max_iter': np.arange(0, 350, 5),
+        params_dict = {'clf__C': np.arange(1, 500, 4),
+                       'clf__max_iter': np.arange(0, 1000, 25),
                        'clf__gamma': np.arange(1, 50, 1),
-                       'clf__tol': np.arange(0.001, 2.0, 0.1)}
+                       'clf__tol': np.arange(0.000001, 2.0, 0.005)}
         
         #params_dict = {'clf__degree': np.arange(0, 15, 1)}
         
@@ -113,8 +113,8 @@ class validation_curves:
             std_in_sample_errors = []
             out_of_sample_avg_errors = []
             std_out_of_sample_errors = []
-            avg_num_nodes = []
-            std_num_nodes = []
+            avg_num_vectors = []
+            std_num_vectors = []
             
             for param_value in params_dict[param_name]:
                 print(param_value)
@@ -131,7 +131,7 @@ class validation_curves:
                 
                 out_sample_errors = []
                 in_sample_errors = []
-                num_nodes = []
+                num_vectors = []
                 
                 # do the cross validation
                 for k, (train, test) in enumerate(skf.split(X=X_train, y=y_train)):
@@ -140,8 +140,8 @@ class validation_curves:
                     clf.fit(X_train[train], y_train[train])
                     
                     # complexity
-                    nnodes = clf.clf.n_support_[0]
-                    num_nodes.append(nnodes)
+                    nvectors = clf.clf.n_support_.sum()
+                    num_vectors.append(nvectors)
                     
                     # in sample
                     predicted_values = clf.predict(X_train[train])
@@ -153,7 +153,7 @@ class validation_curves:
                     out_sample_mse = mean_squared_error(y_train[test], predicted_values)
                     out_sample_errors.append(out_sample_mse)
 
-                    print('Fold:', k+1, ', Validation error: ', out_sample_mse, ', Training error: ', in_sample_mse, ', Tree nodes: ', nnodes)
+                    print('Fold:', k+1, ', Validation error: ', out_sample_mse, ', Training error: ', in_sample_mse, ', Support vectors: ', nvectors)
                    
                 # out of sample (test)
                 avg_test_err = np.mean(out_sample_mse)
@@ -168,14 +168,14 @@ class validation_curves:
                 std_in_sample_errors.append(train_err_std)
                 
                 # complexity (num nodes)
-                avg_nodes = np.mean(num_nodes)
-                std_nodes = np.std(num_nodes)
-                avg_num_nodes.append(avg_nodes)
-                std_num_nodes.append(std_nodes)
+                avg_vectors = np.mean(num_vectors)
+                std_vectors = np.std(num_vectors)
+                avg_num_vectors.append(avg_vectors)
+                std_num_vectors.append(std_vectors)
                 
                 print('Avg validation MSE: ', avg_test_err, '+/-', test_err_std,
                       'Avg training MSE: ', avg_train_err, '+/-', train_err_std,
-                      'Avg num support vectors: ', avg_nodes, '+/-', std_nodes)
+                      'Avg num support vectors: ', avg_vectors, '+/-', std_vectors)
                 
                 x.append(param_value)
                 
@@ -185,8 +185,8 @@ class validation_curves:
             train_std = np.array(std_in_sample_errors)
             test_mean = np.array(out_of_sample_avg_errors)
             test_std = np.array(std_out_of_sample_errors)
-            nodes_mean = np.array(avg_num_nodes)
-            nodes_std = np.array(std_num_nodes)
+            vectors_mean = np.array(avg_num_vectors)
+            vectors_std = np.array(std_num_vectors)
             save_path= './output/'
 
             # plot
@@ -216,14 +216,14 @@ class validation_curves:
                              test_mean - test_std,
                              alpha=0.15, color='green')
             
-            l3 = ax2.plot(param_range, nodes_mean,
+            l3 = ax2.plot(param_range, vectors_mean,
                           color='red', marker='o',
                           markersize=5,
                           label='vector count')
             
             ax2.fill_between(param_range,
-                             nodes_mean + nodes_std,
-                             nodes_mean - nodes_std,
+                             vectors_mean + vectors_std,
+                             vectors_mean - vectors_std,
                              alpha=0.15, color='red')
             
             ax1.set_xlabel(param_name)

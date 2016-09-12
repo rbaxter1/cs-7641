@@ -10,7 +10,6 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder, Imputer
 
-
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -21,8 +20,52 @@ class validation_curves:
     def __init__(self):
         pass
     
-    def run(self):
+    def loadWineData(self):
+        '''
+        1 - fixed acidity
+        2 - volatile acidity
+        3 - citric acid
+        4 - residual sugar
+        5 - chlorides
+        6 - free sulfur dioxide
+        7 - total sulfur dioxide
+        8 - density
+        9 - pH
+        10 - sulphates
+        11 - alcohol
+        Output variable (based on sensory data):
+        12 - quality (score between 0 and 10)
+        '''
         
+        # load the red wine data
+        # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        
+        df['phSugarRatio'] = df['pH'] / df['residual sugar']
+        df['phSugarRatioScore'] = df['phSugarRatio'] / df['phSugarRatio'].std() 
+        med = df['phSugarRatioScore'].median()
+        abs_med = abs(med)
+        df['phSugarRatioStd'] = df['phSugarRatioScore'] / abs_med
+        
+        #df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
+        #df.plot.scatter(x='quality', y='phSugarRatioStd')
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
+        df.loc[(df['quality'] >= 6), 'quality'] = 1
+        
+        # separate the x and y data
+        # y = quality, x = features (using fixed acid, volatile acid and alcohol)
+        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol']
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        return X_train, X_test, y_train, y_test
+    
+    def loadData(self):
         df = pd.read_csv('./data/shot_logs.csv', sep=',')
         
         le = LabelEncoder()
@@ -45,15 +88,22 @@ class validation_curves:
                                                             test_size=0.25,
                                                             random_state=0)
 
-        params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01),
-                       'max_depth': np.arange(1, 40, 1),
-                       'min_samples_split': np.arange(1, 200, 5),
-                       'min_samples_leaf': np.arange(2, 200, 5),
-                       'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.05),
-                       'max_leaf_nodes': np.arange(2, 100, 5)}
-        #params_dict = {'max_depth': np.arange(1, 40, 1)}
+        return X_train, X_test, y_train, y_test
+    
+    def run(self):
         
-        learner_name = 'DecisionTreeClassifier'
+        X_train, X_test, y_train, y_test =  self.loadWineData()
+        
+        #kernel = 'poly'
+        kernel = 'rbf'
+        params_dict = {'clf__C': np.arange(1, 1000, 20),
+                       'clf__max_iter': np.arange(0, 350, 5),
+                       'clf__gamma': np.arange(1, 50, 1),
+                       'clf__tol': np.arange(0.001, 2.0, 0.1)}
+        
+        #params_dict = {'clf__degree': np.arange(0, 15, 1)}
+        
+        learner_name = 'SVM'
         
         for param_name in params_dict.keys():
             print(param_name)
@@ -69,7 +119,9 @@ class validation_curves:
             for param_value in params_dict[param_name]:
                 print(param_value)
                 
-                clf = DecisionTreeClassifier(criterion='entropy', random_state=0)
+                clf = Pipeline([('scl', StandardScaler()),
+                                ('clf', SVC(random_state=0, kernel=kernel))])
+                
                 params = clf.get_params()
                 params[param_name] = param_value
                 clf.set_params(**params)
@@ -88,7 +140,7 @@ class validation_curves:
                     clf.fit(X_train[train], y_train[train])
                     
                     # complexity
-                    nnodes = clf.tree_.node_count
+                    nnodes = clf.clf.n_support_[0]
                     num_nodes.append(nnodes)
                     
                     # in sample
@@ -123,76 +175,71 @@ class validation_curves:
                 
                 print('Avg validation MSE: ', avg_test_err, '+/-', test_err_std,
                       'Avg training MSE: ', avg_train_err, '+/-', train_err_std,
-                      'Avg num tree nodes: ', avg_nodes, '+/-', std_nodes)
+                      'Avg num support vectors: ', avg_nodes, '+/-', std_nodes)
                 
                 x.append(param_value)
                 
-            # plot
-            plt.cla()    
-            plt.clf()
-            
+            # prepare
             param_range = x
             train_mean = np.array(in_sample_avg_errors)
             train_std = np.array(std_in_sample_errors)
             test_mean = np.array(out_of_sample_avg_errors)
             test_std = np.array(std_out_of_sample_errors)
-            
+            nodes_mean = np.array(avg_num_nodes)
+            nodes_std = np.array(std_num_nodes)
             save_path= './output/'
+
+            # plot
+            plt.cla()    
+            plt.clf()
             
-            plt.plot(param_range, train_mean,
-                        color='blue', marker='o',
-                        markersize=5,
-                        label='training error')
+            fig, ax1 = plt.subplots()
+            ax2 = ax1.twinx()
+
+            l1 = ax1.plot(param_range, train_mean,
+                          color='blue', marker='o',
+                          markersize=5,
+                          label='training error')
             
-            plt.fill_between(param_range,
+            ax1.fill_between(param_range,
                              train_mean + train_std,
                              train_mean - train_std,
                              alpha=0.15, color='blue')
             
-            plt.plot(param_range, test_mean,
-                     color='green', marker='s',
-                     markersize=5, linestyle='--',
-                     label='validation error')
+            l2 = ax1.plot(param_range, test_mean,
+                          color='green', marker='s',
+                          markersize=5, linestyle='--',
+                          label='validation error')
             
-            plt.fill_between(param_range,
+            ax1.fill_between(param_range,
                              test_mean + test_std,
                              test_mean - test_std,
                              alpha=0.15, color='green')
             
-            plt.grid()
-            plt.title("%s: Error versus %s" % (learner_name, param_name))
-            plt.xlabel(param_name)
-            plt.ylabel('Mean Squared Error')
-            plt.legend(loc='lower left')
+            l3 = ax2.plot(param_range, nodes_mean,
+                          color='red', marker='o',
+                          markersize=5,
+                          label='vector count')
             
+            ax2.fill_between(param_range,
+                             nodes_mean + nodes_std,
+                             nodes_mean - nodes_std,
+                             alpha=0.15, color='red')
+            
+            ax1.set_xlabel(param_name)
+            ax1.set_ylabel('Mean Squared Error')
+            ax2.set_ylabel('Support Vector Count')
+
+            plt.grid()
+            plt.title("%s: Training, Validation Error (left)\nand Vector Count (right) Versus %s" % (learner_name, param_name))
+            
+            lns = l1+l2+l3
+            labs = [l.get_label() for l in lns]
+            ax1.legend(lns, labs, loc='center right')
+
             fn = save_path + learner_name + '_' + param_name + '_validation.png'
             plt.savefig(fn)
             
-            plt.cla()
-            plt.clf()
-            
-            nodes_mean = np.array(avg_num_nodes)
-            nodes_std = np.array(std_num_nodes)
-            
-            plt.plot(param_range, nodes_mean,
-                        color='blue', marker='o',
-                        markersize=5,
-                        label='node count')
-            
-            plt.fill_between(param_range,
-                             nodes_mean + nodes_std,
-                             nodes_mean - nodes_std,
-                             alpha=0.15, color='blue')
-            
-            plt.grid()
-            plt.title("%s:\nNumber of tree nodes versus %s" % (learner_name, param_name))
-            plt.xlabel(param_name)
-            plt.ylabel('Node Count')
-            plt.legend(loc='lower right')
-            
-            fn = save_path + learner_name + '_' + param_name + 'nodes.png'
-            plt.savefig(fn)
-                
 if __name__ == "__main__":
     vc = validation_curves()
     vc.run()

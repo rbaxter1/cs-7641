@@ -98,7 +98,7 @@ class validation_curves:
                        'max_leaf_nodes': np.arange(2, 300, 5)}
         #params_dict = {'max_depth': np.arange(1, 40, 1)}
         
-        learner_name = 'DecisionTreeClassifier'
+        learner_name = 'Tree'
         
         for param_name in params_dict.keys():
             print(param_name)
@@ -172,47 +172,68 @@ class validation_curves:
                 
                 x.append(param_value)
                 
-            # plot
-            plt.cla()    
-            plt.clf()
-            
+            # prepare
             param_range = x
             train_mean = np.array(in_sample_avg_errors)
             train_std = np.array(std_in_sample_errors)
             test_mean = np.array(out_of_sample_avg_errors)
             test_std = np.array(std_out_of_sample_errors)
-            
+            nodes_mean = np.array(avg_num_nodes)
+            nodes_std = np.array(std_num_nodes)
             save_path= './output/'
+
+            # plot
+            plt.cla()    
+            plt.clf()
             
-            plt.plot(param_range, train_mean,
-                        color='blue', marker='o',
-                        markersize=5,
-                        label='training error')
+            fig, ax1 = plt.subplots()
+            ax2 = ax1.twinx()
+
+            l1 = ax1.plot(param_range, train_mean,
+                          color='blue', marker='o',
+                          markersize=5,
+                          label='training error')
             
-            plt.fill_between(param_range,
+            ax1.fill_between(param_range,
                              train_mean + train_std,
                              train_mean - train_std,
                              alpha=0.15, color='blue')
             
-            plt.plot(param_range, test_mean,
-                     color='green', marker='s',
-                     markersize=5, linestyle='--',
-                     label='validation error')
+            l2 = ax1.plot(param_range, test_mean,
+                          color='green', marker='s',
+                          markersize=5, linestyle='--',
+                          label='validation error')
             
-            plt.fill_between(param_range,
+            ax1.fill_between(param_range,
                              test_mean + test_std,
                              test_mean - test_std,
                              alpha=0.15, color='green')
             
-            plt.grid()
-            plt.title("%s: Error versus %s" % (learner_name, param_name))
-            plt.xlabel(param_name)
-            plt.ylabel('Mean Squared Error')
-            plt.legend(loc='lower left')
+            l3 = ax2.plot(param_range, nodes_mean,
+                          color='red', marker='o',
+                          markersize=5,
+                          label='node count')
             
+            ax2.fill_between(param_range,
+                             nodes_mean + nodes_std,
+                             nodes_mean - nodes_std,
+                             alpha=0.15, color='red')
+            
+            ax1.set_xlabel(param_name)
+            ax1.set_ylabel('Mean Squared Error')
+            ax2.set_ylabel('Node Count')
+
+            plt.grid()
+            plt.title("%s: Training, Validation Error (left)\nand Node Count (right) Versus %s" % (learner_name, param_name))
+            
+            lns = l1+l2+l3
+            labs = [l.get_label() for l in lns]
+            ax1.legend(lns, labs, loc='center right')
+
             fn = save_path + learner_name + '_' + param_name + '_validation.png'
             plt.savefig(fn)
             
+            '''
             plt.cla()
             plt.clf()
             
@@ -237,7 +258,8 @@ class validation_curves:
             
             fn = save_path + learner_name + '_' + param_name + 'nodes.png'
             plt.savefig(fn)
-                
+            '''
+            
 if __name__ == "__main__":
     vc = validation_curves()
     vc.run()

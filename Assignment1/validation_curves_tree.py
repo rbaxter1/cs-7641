@@ -2,101 +2,68 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import Imputer, LabelEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV
+from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from sklearn.model_selection import StratifiedKFold
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from timeit import default_timer as timer
+from data_helper import *
 
 class validation_curves:
     def __init__(self):
         pass
     
-    def loadWineData(self):
-        '''
-        1 - fixed acidity
-        2 - volatile acidity
-        3 - citric acid
-        4 - residual sugar
-        5 - chlorides
-        6 - free sulfur dioxide
-        7 - total sulfur dioxide
-        8 - density
-        9 - pH
-        10 - sulphates
-        11 - alcohol
-        Output variable (based on sensory data):
-        12 - quality (score between 0 and 10)
-        '''
-        
-        # load the red wine data
-        # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
-        df = pd.read_csv('./data/winequality-red.csv', sep=';')
-        
-        df['phSugarRatio'] = df['pH'] / df['residual sugar']
-        df['phSugarRatioScore'] = df['phSugarRatio'] / df['phSugarRatio'].std() 
-        med = df['phSugarRatioScore'].median()
-        abs_med = abs(med)
-        df['phSugarRatioStd'] = df['phSugarRatioScore'] / abs_med
-        
-        #df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
-        #df.plot.scatter(x='quality', y='phSugarRatioStd')
-        
-        # group the quality into binary good or bad
-        df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
-        df.loc[(df['quality'] >= 6), 'quality'] = 1
-        
-        # separate the x and y data
-        # y = quality, x = features (using fixed acid, volatile acid and alcohol)
-        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol']
-        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
-        
-        # split the data into training and test data
-        # for the wine data using 30% of the data for testing
-        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
-        
-        return X_train, X_test, y_train, y_test
-    
-    def loadData(self):
-        df = pd.read_csv('./data/shot_logs.csv', sep=',')
-        
-        le = LabelEncoder()
-        le.fit(df['LOCATION'])
-        le.transform(df['LOCATION']) 
-        df['LOCATION_ENC'] = le.transform(df['LOCATION'])
-            
-        le = LabelEncoder()
-        le.fit(df['SHOT_RESULT'])
-        le.transform(df['SHOT_RESULT']) 
-        df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
-            
-        x_col_names = ['player_id', 'SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'DRIBBLES', 'SHOT_NUMBER', 'FINAL_MARGIN']
-        x, y = df.loc[:,x_col_names].values, df.loc[:,'SHOT_RESULT_ENC'].values
-        
-        # split the data into training and test data
-        # for the wine data using 30% of the data for testing
-        X_train, X_test, y_train, y_test = train_test_split(x,
-                                                            y,
-                                                            test_size=0.25,
-                                                            random_state=0)
+    def gridSearch2(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test =  dh.load_wine_data()
 
-        return X_train, X_test, y_train, y_test
+        pipeline = Pipeline([#('scl', StandardScaler()),
+                             ('clf', DecisionTreeClassifier(random_state=0))])
+        
+        parameters = {'clf__criterion': ('gini', 'entropy'),
+                      'clf__min_impurity_split': np.arange(0, 0.5, 0.01),
+                      'clf__max_depth': np.arange(1, 40, 1)#,
+                      #'clf__min_samples_split': np.arange(1, 200, 5),
+                      #'clf__min_samples_leaf': np.arange(2, 200, 5),
+                      #'clf__min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.05),
+                      #'clf__max_leaf_nodes': np.arange(2, 300, 5)
+                      }
+        
+        grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
+        
+        print("Performing grid search...")
+        print("pipeline:", [name for name, _ in pipeline.steps])
+        print("parameters:")
+        print(parameters)
+        t0 = timer()
+        grid_search.fit(X_train, y_train)
+        print("done in %0.3fs" % (timer() - t0))
+        print()
     
+        print("Best score: %0.3f" % grid_search.best_score_)
+        print("Best parameters set:")
+        best_parameters = grid_search.best_estimator_.get_params()
+        for param_name in sorted(parameters.keys()):
+            print("\t%s: %r" % (param_name, best_parameters[param_name]))
+            
     def run(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test =  dh.load_wine_data()
         
-        X_train, X_test, y_train, y_test =  self.loadWineData()
-        
-        params_dict = {'min_impurity_split': np.arange(0, 0.5, 0.01),
-                       'max_depth': np.arange(1, 40, 1),
-                       'min_samples_split': np.arange(1, 200, 5),
-                       'min_samples_leaf': np.arange(2, 200, 5),
-                       'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.05),
-                       'max_leaf_nodes': np.arange(2, 300, 5)}
-        #params_dict = {'max_depth': np.arange(1, 40, 1)}
+        params_dict = {
+            'min_impurity_split': np.arange(0.0, 1.0, 0.02),
+            'max_depth': np.arange(1, 25, 1),
+            'min_samples_split': np.arange(1, 200, 5),
+            'min_samples_leaf': np.arange(2, 200, 5),
+            #'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.01),
+            'max_leaf_nodes': np.arange(2, 225, 5),
+            'max_features': [1, 2, 3, 4, 5]
+            }
         
         learner_name = 'Tree'
         
@@ -235,6 +202,7 @@ class validation_curves:
             
 if __name__ == "__main__":
     vc = validation_curves()
+    #vc.gridSearch2()
     vc.run()
               
         

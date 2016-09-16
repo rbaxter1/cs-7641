@@ -15,8 +15,11 @@ proj.file-list = [loc('boost_test.py'),
                   loc('svm_test.py'),
                   loc('tree_test.py'),
                   loc('validation_curves.py'),
+                  loc('validation_curves_boost.py'),
+                  loc('validation_curves_knn.py'),
+                  loc('validation_curves_neural.py'),
                   loc('validation_curves_old.py'),
                   loc('validation_curves_svm.py'),
                   loc('validation_curves_tree.py')]
 proj.file-type = 'shared'
-proj.main-file = loc('validation_curves_tree.py')
+proj.main-file = loc('validation_curves_knn.py')

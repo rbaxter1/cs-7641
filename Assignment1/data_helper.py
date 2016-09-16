@@ -7,6 +7,46 @@ class data_helper:
     def __init__(self):
         pass
     
+    def load_titanic_data(self):
+        
+        df = pd.read_csv('./data/titanic_train.csv', sep=',')
+        
+        # we need to encode sex. using the sklearn label encoder is
+        # one way. however one consideration is that the learning
+        # algorithm may make assumptions about the magnitude of the
+        # labels. for example, male is greater than female. use
+        # one hot encoder to get around this.
+        #ohe = OneHotEncoder(categorical_features=[0])
+        #ohe.fit_transform(x).toarray()
+        
+        # Even better pandas has a one hot encoding built in!
+        df = pd.get_dummies(df[['Sex', 'Pclass', 'Age', 'Survived', 'Fare', 'SibSp', 'Parch']])    
+    
+        # this data set is missing some ages. we could impute a value
+        # like the average or median. or remove the rows having missing
+        # data. the disadvantage of removing values is we may be taking
+        # away valuable information that the learning algorithm needs.
+        imr = Imputer(strategy='most_frequent')
+        imr.fit(df['Age'].reshape(-1, 1))
+        imputed_data = imr.transform(df['Age'].reshape(-1, 1))
+        
+        df['Age']  = imputed_data
+        
+        
+        #y = df['Survived'].values
+        #x = df.iloc[:,[0,1,3,4]].values
+        
+        #x_col_names = df.iloc[:,[0,1,3,4]].columns
+        x_col_names = ['Pclass', 'Age', 'Fare', 'SibSp', 'Parch', 'Sex_female', 'Sex_male']
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'Survived'].values
+        
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        return X_train, X_test, y_train, y_test
+        
     def load_wine_data(self):
         
         '''

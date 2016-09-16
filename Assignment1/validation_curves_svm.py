@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from timeit import default_timer as timer
+from data_helper import *
 
 class validation_curves:
     def __init__(self):
@@ -91,23 +92,22 @@ class validation_curves:
         
         
         
-    def run(self):
+    def run(self, X_train, X_test, y_train, y_test, dataset):
         
-        dh = data_helper()
-        X_train, X_test, y_train, y_test =  dh.load_wine_data()
-
         kernels =['rbf', 'poly', 'linear', 'sigmoid'] 
-        kernels =['linear'] 
+        #kernels =['linear'] 
         
-        params_dict_rbf = {'clf__C': np.arange(1, 500, 4),
-                           'clf__max_iter': np.arange(0, 500, 2),
-                           'clf__gamma': np.arange(1, 50, 1),
-                           'clf__tol': np.arange(0.000001, 2.0, 0.005)}
+        params_dict_rbf = {'clf__C': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
+                           'clf__max_iter': {'param_value': np.arange(0, 300, 1), 'reverse_xaxis': True},
+                           'clf__gamma': {'param_value': np.arange(1, 30, 1), 'reverse_xaxis': False},
+                           'clf__tol': {'param_value': np.arange(0.000001, 2.0, 0.005), 'reverse_xaxis': True}
+                           }
         
-        params_dict_poly = {'clf__degree': np.arange(0, 15, 1)}
+        params_dict_poly = {'clf__degree': {'param_value': np.arange(0, 15, 1), 'reverse_xaxis': True}
+                            }
         
-        params_dict_linear = {'clf__max_iter': np.arange(1, 1000, (1000 - 1) / 200),
-                              'clf__tol': np.arange(0.000001, 1.9, (1.9 - 0.000001) / 200)
+        params_dict_linear = {'clf__max_iter': {'param_value': np.arange(0, 300, 1), 'reverse_xaxis': True},
+                              'clf__tol': {'param_value': np.arange(0.000001, 2.0, 0.005), 'reverse_xaxis': True}
                               }
         
         param_dict_by_kernel = {'rbf': params_dict_rbf,
@@ -135,7 +135,7 @@ class validation_curves:
                 avg_num_vectors = []
                 std_num_vectors = []
                 
-                for param_value in params_dict[param_name]:
+                for param_value in params_dict[param_name]['param_value']:
                     print(param_value)
                     
                     clf = Pipeline([('scl', StandardScaler()),
@@ -210,7 +210,8 @@ class validation_curves:
                 vectors_mean = np.array(avg_num_vectors)
                 vectors_std = np.array(std_num_vectors)
                 save_path= './output/'
-    
+                rev_axis = params_dict[param_name]['reverse_xaxis']
+                
                 # plot
                 plt.cla()    
                 plt.clf()
@@ -259,14 +260,22 @@ class validation_curves:
                 labs = [l.get_label() for l in lns]
                 ax1.legend(lns, labs, loc='center right')
     
-                fn = save_path + learner_name + '_' + kernel + '_' + param_name + '_validation.png'
+                if (rev_axis):
+                    ax1.invert_xaxis()
+                
+                fn = save_path + dataset + '_' + learner_name + '_' + kernel + '_' + param_name + '_validation.png'
                 plt.savefig(fn)
                 
 if __name__ == "__main__":
     vc = validation_curves()
-    vc.gridSearch2()
+    #vc.gridSearch2()
     
-    vc.run()
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data()
+    vc.run(X_train, X_test, y_train, y_test, 'titanic')          
+        
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+    vc.run(X_train, X_test, y_train, y_test, 'wine')
               
         
         

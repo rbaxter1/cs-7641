@@ -1,19 +1,18 @@
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import Imputer, LabelEncoder
+from sklearn.preprocessing import Imputer, LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.neighbors import KNeighborsClassifier
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from data_helper import *
-
 from timeit import default_timer as timer
+from data_helper import *
 
 class validation_curves:
     def __init__(self):
@@ -23,16 +22,14 @@ class validation_curves:
         dh = data_helper()
         X_train, X_test, y_train, y_test =  dh.load_wine_data()
 
-        pipeline = Pipeline([#('scl', StandardScaler()),
-                             ('clf', DecisionTreeClassifier(random_state=0))])
+        pipeline = Pipeline([ ('scl', StandardScaler() ),
+                              ('clf', KNeighborsClassifier(n_neighbors=n_neighbors,
+                                                           leaf_size=leaf_size,
+                                                           p=p, n_jobs=-1))])
         
-        parameters = {'clf__criterion': ('gini', 'entropy'),
-                      'clf__min_impurity_split': np.arange(0, 0.5, 0.01),
-                      'clf__max_depth': np.arange(1, 40, 1)#,
-                      #'clf__min_samples_split': np.arange(1, 200, 5),
-                      #'clf__min_samples_leaf': np.arange(2, 200, 5),
-                      #'clf__min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.05),
-                      #'clf__max_leaf_nodes': np.arange(2, 300, 5)
+        parameters = {'clf__n_neighbors': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
+                      'clf__leaf_size': {'param_value': np.arange(0, 50, 1), 'reverse_xaxis': False},
+                      'clf__p': {'param_value': np.arange(0, 50, 1), 'reverse_xaxis': False}
                       }
         
         grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
@@ -54,18 +51,12 @@ class validation_curves:
             
     def run(self, X_train, X_test, y_train, y_test, dataset):
         
-        params_dict = {
-            'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
-            'max_depth': {'param_value': np.arange(1, 25, 1), 'reverse_xaxis': False},
-            'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
-            'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
-            'max_leaf_nodes': {'param_value': np.arange(2, 225, 5), 'reverse_xaxis': False},
-            'max_features': {'param_value': [1, 2, 3, 4, 5], 'reverse_xaxis': False}
-            }
+        params_dict ={'clf__n_neighbors': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': True},
+                      'clf__leaf_size': {'param_value': np.arange(1, 20, 1), 'reverse_xaxis': False},
+                      'clf__p': {'param_value': np.arange(1, 20, 1), 'reverse_xaxis': False}
+                      }
         
-        ##'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.01),
-        
-        learner_name = 'Tree'
+        learner_name = 'KNN'
         
         for param_name in params_dict.keys():
             print(param_name)
@@ -81,7 +72,8 @@ class validation_curves:
             for param_value in params_dict[param_name]['param_value']:
                 print(param_value)
                 
-                clf = DecisionTreeClassifier(criterion='entropy', random_state=0)
+                clf = Pipeline([ ('scl', StandardScaler() ),
+                              ('clf', KNeighborsClassifier(n_jobs=-1))])
                 params = clf.get_params()
                 params[param_name] = param_value
                 clf.set_params(**params)
@@ -92,46 +84,28 @@ class validation_curves:
                 out_sample_errors = []
                 in_sample_errors = []
                 num_nodes = []
-                fit_times = []
-                predict_times = []
                 
                 # do the cross validation
                 for k, (train, test) in enumerate(skf.split(X=X_train, y=y_train)):
                     
-                    start = timer()
                     # run the learning algorithm
                     clf.fit(X_train[train], y_train[train])
-                    end = timer()
-                    tot_fit_time = end - start
-                    fit_times.append(tot_fit_time)
                     
                     # complexity
-                    nnodes = clf.tree_.node_count
+                    nnodes = 1 # clf.named_steps['clf'].radius
                     num_nodes.append(nnodes)
                     
                     # in sample
-                    start = timer()
                     predicted_values = clf.predict(X_train[train])
-                    end = timer()
-                    tot_in_sample_predict_time = end - start
-                    predict_times.append(tot_in_sample_predict_time)
-                    
                     in_sample_mse = mean_squared_error(y_train[train], predicted_values)
                     in_sample_errors.append(in_sample_mse)
                     
                     # out of sample
-                    start = timer()
                     predicted_values = clf.predict(X_train[test])
-                    end = timer()
-                    tot_out_sample_predict_time = end - start
-                    predict_times.append(tot_out_sample_predict_time)
                     out_sample_mse = mean_squared_error(y_train[test], predicted_values)
                     out_sample_errors.append(out_sample_mse)
 
-                    print('Fold:', k+1, ', Validation error: ', out_sample_mse,
-                          ', Training error: ', in_sample_mse, ', Tree nodes: ', nnodes,
-                          ', fit time: ', tot_time, ', in sample predict time: ', tot_in_sample_predict_time,
-                          ', out of sample predict time: ', tot_out_sample_predict_time)
+                    print('Fold:', k+1, ', Validation error: ', out_sample_mse, ', Training error: ', in_sample_mse, ', Tree nodes: ', nnodes)
                    
                 # out of sample (test)
                 avg_test_err = np.mean(out_sample_mse)
@@ -144,13 +118,6 @@ class validation_curves:
                 train_err_std = np.std(in_sample_mse)
                 in_sample_avg_errors.append(avg_train_err)
                 std_in_sample_errors.append(train_err_std)
-                
-                # timings
-                avg_fit_time = np.mean(fit_times)
-                std_time_time = np.std(fit_times)
-                avg_predict_time = np.mean(predict_times)
-                std_predict_time = np.std(predict_times)
-                
                 
                 # complexity (num nodes)
                 avg_nodes = np.mean(num_nodes)
@@ -192,7 +159,6 @@ class validation_curves:
                              train_mean - train_std,
                              alpha=0.15, color='blue')
             
-            
             l2 = ax1.plot(param_range, test_mean,
                           color='green', marker='s',
                           markersize=5, linestyle='--',
@@ -217,19 +183,17 @@ class validation_curves:
             ax1.set_ylabel('Mean Squared Error')
             ax2.set_ylabel('Node Count')
 
+            if (rev_axis):
+                ax1.invert_xaxis()
+                
             plt.grid()
             plt.title("%s: Training, Validation Error (left)\nand Node Count (right) Versus %s" % (learner_name, param_name))
             
             lns = l1+l2+l3
             labs = [l.get_label() for l in lns]
             ax1.legend(lns, labs, loc='center right')
-            
-            if (rev_axis):
-                ax1.invert_xaxis()
-                #ax2.invert_xaxis()
-                
-            
-            fn = save_path + dataset + '_' + learner_name + '_' + param_name + '_validation.png'
+
+            fn = save_path + learner_name + '_' + param_name + '_validation.png'
             plt.savefig(fn)
             
 if __name__ == "__main__":
@@ -243,6 +207,8 @@ if __name__ == "__main__":
         
     X_train, X_test, y_train, y_test =  dh.load_wine_data()
     vc.run(X_train, X_test, y_train, y_test, 'wine')
+              
+        
         
         
         

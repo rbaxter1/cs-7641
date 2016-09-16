@@ -9,6 +9,9 @@ from sklearn.tree import DecisionTreeClassifier, export_graphviz
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import host_subplot
+import mpl_toolkits.axisartist as AA
+
 import numpy as np
 import pandas as pd
 from data_helper import *
@@ -77,6 +80,11 @@ class validation_curves:
             std_out_of_sample_errors = []
             avg_num_nodes = []
             std_num_nodes = []
+            avg_fit_times = []
+            std_fit_times = []
+            avg_predict_times = []
+            std_predict_times = []
+            
             
             for param_value in params_dict[param_name]['param_value']:
                 print(param_value)
@@ -102,7 +110,7 @@ class validation_curves:
                     # run the learning algorithm
                     clf.fit(X_train[train], y_train[train])
                     end = timer()
-                    tot_fit_time = end - start
+                    tot_fit_time = (end - start) * 1000.
                     fit_times.append(tot_fit_time)
                     
                     # complexity
@@ -113,7 +121,7 @@ class validation_curves:
                     start = timer()
                     predicted_values = clf.predict(X_train[train])
                     end = timer()
-                    tot_in_sample_predict_time = end - start
+                    tot_in_sample_predict_time = (end - start) * 1000.
                     predict_times.append(tot_in_sample_predict_time)
                     
                     in_sample_mse = mean_squared_error(y_train[train], predicted_values)
@@ -123,14 +131,14 @@ class validation_curves:
                     start = timer()
                     predicted_values = clf.predict(X_train[test])
                     end = timer()
-                    tot_out_sample_predict_time = end - start
+                    tot_out_sample_predict_time = (end - start) * 1000.
                     predict_times.append(tot_out_sample_predict_time)
                     out_sample_mse = mean_squared_error(y_train[test], predicted_values)
                     out_sample_errors.append(out_sample_mse)
 
                     print('Fold:', k+1, ', Validation error: ', out_sample_mse,
                           ', Training error: ', in_sample_mse, ', Tree nodes: ', nnodes,
-                          ', fit time: ', tot_time, ', in sample predict time: ', tot_in_sample_predict_time,
+                          ', fit time: ', tot_fit_time, ', in sample predict time: ', tot_in_sample_predict_time,
                           ', out of sample predict time: ', tot_out_sample_predict_time)
                    
                 # out of sample (test)
@@ -147,12 +155,16 @@ class validation_curves:
                 
                 # timings
                 avg_fit_time = np.mean(fit_times)
-                std_time_time = np.std(fit_times)
+                std_fit_time = np.std(fit_times)
+                avg_fit_times.append(avg_fit_time)
+                std_fit_times.append(std_fit_time)
+                
                 avg_predict_time = np.mean(predict_times)
                 std_predict_time = np.std(predict_times)
+                avg_predict_times.append(avg_predict_time)
+                std_predict_times.append(std_predict_time)
                 
-                
-                # complexity (num nodes)
+                # complexity (num nodes) - how can this be universally applied?
                 avg_nodes = np.mean(num_nodes)
                 std_nodes = np.std(num_nodes)
                 avg_num_nodes.append(avg_nodes)
@@ -160,7 +172,9 @@ class validation_curves:
                 
                 print('Avg validation MSE: ', avg_test_err, '+/-', test_err_std,
                       'Avg training MSE: ', avg_train_err, '+/-', train_err_std,
-                      'Avg num tree nodes: ', avg_nodes, '+/-', std_nodes)
+                      'Avg num tree nodes: ', avg_nodes, '+/-', std_nodes,
+                      'Avg fit time: ', avg_fit_time, '+/-', std_fit_time,
+                      'Avg predict time: ', avg_predict_time, '+/-', std_predict_time)
                 
                 x.append(param_value)
                 
@@ -172,6 +186,10 @@ class validation_curves:
             test_std = np.array(std_out_of_sample_errors)
             nodes_mean = np.array(avg_num_nodes)
             nodes_std = np.array(std_num_nodes)
+            fit_time_mean = np.array(avg_fit_times)
+            fit_time_std = np.array(std_fit_times)
+            predict_time_mean = np.array(avg_predict_times)
+            predict_time_std = np.array(std_predict_times)
             save_path= './output/'
             rev_axis = params_dict[param_name]['reverse_xaxis']
 
@@ -179,59 +197,179 @@ class validation_curves:
             plt.cla()    
             plt.clf()
             
-            fig, ax1 = plt.subplots()
-            ax2 = ax1.twinx()
-
-            l1 = ax1.plot(param_range, train_mean,
-                          color='blue', marker='o',
-                          markersize=5,
-                          label='training error')
-            
-            ax1.fill_between(param_range,
-                             train_mean + train_std,
-                             train_mean - train_std,
-                             alpha=0.15, color='blue')
-            
-            
-            l2 = ax1.plot(param_range, test_mean,
-                          color='green', marker='s',
-                          markersize=5, linestyle='--',
-                          label='validation error')
-            
-            ax1.fill_between(param_range,
-                             test_mean + test_std,
-                             test_mean - test_std,
-                             alpha=0.15, color='green')
-            
-            l3 = ax2.plot(param_range, nodes_mean,
-                          color='red', marker='o',
-                          markersize=5,
-                          label='node count')
-            
-            ax2.fill_between(param_range,
-                             nodes_mean + nodes_std,
-                             nodes_mean - nodes_std,
-                             alpha=0.15, color='red')
-            
-            ax1.set_xlabel(param_name)
-            ax1.set_ylabel('Mean Squared Error')
-            ax2.set_ylabel('Node Count')
-
-            plt.grid()
-            plt.title("%s: Training, Validation Error (left)\nand Node Count (right) Versus %s" % (learner_name, param_name))
-            
-            lns = l1+l2+l3
-            labs = [l.get_label() for l in lns]
-            ax1.legend(lns, labs, loc='center right')
-            
-            if (rev_axis):
-                ax1.invert_xaxis()
-                #ax2.invert_xaxis()
+            if False:
+                    
+                fig, ax1 = plt.subplots()
+                ax2 = ax1.twinx()
+    
+                l1 = ax1.plot(param_range, train_mean,
+                              color='blue', marker='o',
+                              markersize=5,
+                              label='training error')
                 
+                ax1.fill_between(param_range,
+                                 train_mean + train_std,
+                                 train_mean - train_std,
+                                 alpha=0.15, color='blue')
+                
+                
+                l2 = ax1.plot(param_range, test_mean,
+                              color='green', marker='s',
+                              markersize=5, linestyle='--',
+                              label='validation error')
+                
+                ax1.fill_between(param_range,
+                                 test_mean + test_std,
+                                 test_mean - test_std,
+                                 alpha=0.15, color='green')
+                
+                '''
+                l3 = ax2.plot(param_range, nodes_mean,
+                              color='red', marker='o',
+                              markersize=5,
+                              label='node count')
+                
+                ax2.fill_between(param_range,
+                                 nodes_mean + nodes_std,
+                                 nodes_mean - nodes_std,
+                                 alpha=0.15, color='red')
+                '''
+                
+                l3 = ax2.plot(param_range, fit_time_mean,
+                              color='gray', marker='3',
+                              markersize=5,
+                              label='fit time')
+                
+                ax2.fill_between(param_range,
+                                 fit_time_mean + fit_time_std,
+                                 fit_time_mean - fit_time_std,
+                                 alpha=0.15, color='gray')
+                
+                l4 = ax2.plot(param_range, predict_time_mean,
+                              color='orange', marker='4',
+                              markersize=5,
+                              label='predict time')
+                
+                ax2.fill_between(param_range,
+                                 predict_time_mean + predict_time_std,
+                                 predict_time_mean - predict_time_std,
+                                 alpha=0.15, color='orange')
+                
+                ax1.set_xlabel(param_name)
+                ax1.set_ylabel('Mean Squared Error')
+                #ax2.set_ylabel('Node Count')
+                ax2.set_ylabel('Time')
+    
+                plt.grid()
+                #plt.title("%s: Training, Validation Error (left)\nand Node Count (right) Versus %s" % (learner_name, param_name))
+                plt.title("%s: Training, Validation Error (left)\nand Timings (right) Versus %s" % (learner_name, param_name))
+                
+                lns = l1+l2+l3+l4
+                labs = [l.get_label() for l in lns]
+                ax1.legend(lns, labs, loc='center right')
+                
+                if (rev_axis):
+                    ax1.invert_xaxis()
+                    #ax2.invert_xaxis()
+                    
+                
+                fn = save_path + dataset + '_' + learner_name + '_' + param_name + '_validation.png'
+                plt.savefig(fn)
             
-            fn = save_path + dataset + '_' + learner_name + '_' + param_name + '_validation.png'
-            plt.savefig(fn)
             
+            if True:
+                host = host_subplot(111, axes_class=AA.Axes)
+                plt.subplots_adjust(right=0.75)
+            
+                par1 = host.twinx()
+                par2 = host.twinx()
+                
+                offset = 60
+                new_fixed_axis = par2.get_grid_helper().new_fixed_axis
+                par2.axis["right"] = new_fixed_axis(loc="right",
+                                                    axes=par2,
+                                                    offset=(offset, 0))
+            
+                par2.axis["right"].toggle(all=True)
+            
+                #host.set_xlim(0, 2)
+                #host.set_ylim(0, 2)
+            
+                host.set_xlabel(param_name)
+                host.set_ylabel('Mean Squared Error')
+                par1.set_ylabel('Node Count')
+                par2.set_ylabel('Time (Milliseconds)')
+                
+                p1, = host.plot(param_range, train_mean,
+                                color='blue', marker='o',
+                                markersize=5,
+                                label='Training Error')
+                
+                host.fill_between(param_range,
+                                  train_mean + train_std,
+                                  train_mean - train_std,
+                                  alpha=0.15, color='blue')
+                
+                
+                p2, = host.plot(param_range, test_mean,
+                                color='green', marker='s',
+                                markersize=5, linestyle='--',
+                                label='Validation Error')
+                
+                host.fill_between(param_range,
+                                  test_mean + test_std,
+                                  test_mean - test_std,
+                                  alpha=0.15, color='green')
+                
+                
+                p3,  = par1.plot(param_range, nodes_mean,
+                                 color='red', marker='o',
+                                 markersize=5,
+                                 label='Node Count')
+                
+                par1.fill_between(param_range,
+                                  nodes_mean + nodes_std,
+                                  nodes_mean - nodes_std,
+                                  alpha=0.15, color='red')
+                
+                p4, = par2.plot(param_range, fit_time_mean,
+                                color='gray', marker='3',
+                                markersize=5,
+                                label='Fit Time')
+                
+                par2.fill_between(param_range,
+                                  fit_time_mean + fit_time_std,
+                                  fit_time_mean - fit_time_std,
+                                  alpha=0.15, color='gray')
+                
+                p5, = par2.plot(param_range, predict_time_mean,
+                                color='orange', marker='4',
+                                markersize=5,
+                                label='Predict Time')
+                
+                par2.fill_between(param_range,
+                                  predict_time_mean + predict_time_std,
+                                  predict_time_mean - predict_time_std,
+                                  alpha=0.15, color='orange')
+                
+                
+                
+                host.legend()
+
+                host.axis["left"].label.set_color(p1.get_color())
+                host.axis["left"].label.set_color(p2.get_color())
+                par1.axis["right"].label.set_color(p3.get_color())
+                par2.axis["right"].label.set_color(p4.get_color())
+                par2.axis["right"].label.set_color(p5.get_color())
+                
+                plt.grid()
+                plt.title("%s: Training, Validation Error (left)\nand Node Count/Timings (right) Versus %s" % (learner_name, param_name))
+                
+                if (rev_axis):
+                    host.invert_xaxis()
+                
+                fn = save_path + dataset + '_' + learner_name + '_' + param_name + '_validation.png'
+                plt.savefig(fn)
 if __name__ == "__main__":
     vc = validation_curves()
     #vc.gridSearch2()

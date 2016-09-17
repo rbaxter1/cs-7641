@@ -353,7 +353,7 @@ if __name__ == "__main__":
                          }
 
     vc.run(X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic, SVC, StandardScaler, outer_param_dict, 'titanic', 'SVM', '')
-    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, SVC, outer_param_dict, 'wine', 'SVM', '')
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, SVC, StandardScaler,  outer_param_dict, 'wine', 'SVM', '')
         
         
     ###
@@ -388,7 +388,7 @@ if __name__ == "__main__":
             'max_features': {'param_value': [1, 2, 3, 4, 5], 'reverse_xaxis': False}
             }
         
-    outer_param_dict = { 'clf__criterion': {'gini': params_dict,
+    outer_param_dict = { 'criterion': {'gini': params_dict,
                                          'entropy': params_dict}     
                          }
     
@@ -413,8 +413,8 @@ if __name__ == "__main__":
                          }
     
     
-    vc.run(X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic, MLPClassifier, StandardScaler, params_dict, 'titanic', 'Neural Net', '')
-    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, params_dict, 'wine', 'Neural Net', '')
+    vc.run(X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic, MLPClassifier, StandardScaler, outer_param_dict, 'titanic', 'Neural Net', '')
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, outer_param_dict, 'wine', 'Neural Net', '')
         
    
     

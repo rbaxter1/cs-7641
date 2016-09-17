@@ -292,8 +292,8 @@ class validation_curves:
                     
                     
                     
-                    host.legend()
-        
+                    host.legend(loc='best', fancybox=True, framealpha=0.5)
+                    
                     host.axis["left"].label.set_color(p1.get_color())
                     host.axis["left"].label.set_color(p2.get_color())
                     if complexity_name != '':

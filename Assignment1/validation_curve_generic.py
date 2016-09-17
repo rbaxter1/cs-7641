@@ -312,7 +312,7 @@ class validation_curves:
                     if (rev_axis):
                         host.invert_xaxis()
                     
-                    fn = save_path + dataset + '_' + learner_name + '_' + outer_param + '_' + param_name + '_validation.png'
+                    fn = save_path + dataset + '_' + learner_name + '_' + outer_param + '_' + outer_param_value + '_' + param_name + '_validation.png'
                     plt.savefig(fn)
                     
             

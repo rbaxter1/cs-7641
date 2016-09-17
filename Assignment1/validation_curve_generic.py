@@ -274,22 +274,22 @@ class validation_curves:
                                     color='gray', marker='3',
                                     markersize=5,
                                     label='Fit Time')
-                    
+                    '''
                     par2.fill_between(param_range,
                                       fit_time_mean + fit_time_std,
                                       fit_time_mean - fit_time_std,
                                       alpha=0.15, color='gray')
-                    
+                    '''
                     p5, = par2.plot(param_range, predict_time_mean,
                                     color='orange', marker='4',
                                     markersize=5,
                                     label='Predict Time')
-                    
+                    '''
                     par2.fill_between(param_range,
                                       predict_time_mean + predict_time_std,
                                       predict_time_mean - predict_time_std,
                                       alpha=0.15, color='orange')
-                    
+                    '''
                     
                     
                     host.legend(loc='best', fancybox=True, framealpha=0.5)

@@ -9,9 +9,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder, Imputer
 from sklearn.svm import SVC
-
+from sklearn.ensemble import AdaBoostClassifier
 
 from sklearn.neighbors import KNeighborsClassifier
+from plot_helper import *
 
 import matplotlib
 matplotlib.use('Agg')
@@ -65,7 +66,7 @@ class validation_curves:
     def run(self, X_train, X_test, y_train, y_test, clf_type, sc1_type, outer_param_dict, dataset, learner_name, complexity_name):
         
         ##'min_weight_fraction_leaf': np.arange(0.0, 0.5, 0.01),
-        
+        ph = plot_helper()
         for outer_param in outer_param_dict.keys():
             print(outer_param)
             
@@ -96,16 +97,12 @@ class validation_curves:
                         #clf = DecisionTreeClassifier(criterion='entropy', random_state=0)
                         
                         if sc1_type == None:
-                            
                             clf = clf_type()
-                            
                         else:
                             clf = Pipeline([ ('scl', sc1_type() ),
                                              ('clf', clf_type() )
                                              ])        
                             
-                        
-                        
                         
                         params = clf.get_params()
                         params[param_name] = param_value
@@ -200,135 +197,34 @@ class validation_curves:
                         
                         x.append(param_value)
                         
-                    # prepare
-                    param_range = x
-                    train_mean = np.array(in_sample_avg_errors)
-                    train_std = np.array(std_in_sample_errors)
-                    test_mean = np.array(out_of_sample_avg_errors)
-                    test_std = np.array(std_out_of_sample_errors)
-                    complexity_mean = np.array(avg_complexity_measures)
-                    complexity_std = np.array(std_complexity_measures)
-                    fit_time_mean = np.array(avg_fit_times)
-                    fit_time_std = np.array(std_fit_times)
-                    predict_time_mean = np.array(avg_predict_times)
-                    predict_time_std = np.array(std_predict_times)
-                    save_path= './output/'
-                    rev_axis = params_dict[param_name]['reverse_xaxis']
-        
-                    # plot
-                    plt.cla()    
-                    plt.clf()
+                    ph.plot_validation_curve(param_range=x,
+                                             train_mean=np.array(in_sample_avg_errors),
+                                             train_std=np.array(std_in_sample_errors),
+                                             test_mean=np.array(out_of_sample_avg_errors),
+                                             test_std=np.array(std_out_of_sample_errors),
+                                             complexity_mean=np.array(avg_complexity_measures),
+                                             complexity_std=np.array(std_complexity_measures),
+                                             fit_time_mean=np.array(avg_fit_times),
+                                             fit_time_std=np.array(std_fit_times),
+                                             predict_time_mean=np.array(avg_predict_times),
+                                             predict_time_std=np.array(std_predict_times),
+                                             rev_axis=params_dict[param_name]['reverse_xaxis'],
+                                             param_name=param_name,
+                                             learner_name=learner_name,
+                                             save_file_name=dataset + '_' + learner_name + '_' + outer_param + '_' + outer_param_value + '_' + param_name,
+                                             complexity_name=complexity_name)
                     
-                    host = host_subplot(111, axes_class=AA.Axes)
-                    plt.subplots_adjust(right=0.75)
-                
-                    par1 = host.twinx()
-                    par2 = host.twinx()
-                    
-                    offset = 60
-                    new_fixed_axis = par2.get_grid_helper().new_fixed_axis
-                    par2.axis["right"] = new_fixed_axis(loc="right",
-                                                        axes=par2,
-                                                        offset=(offset, 0))
-                
-                    par2.axis["right"].toggle(all=True)
-                
-                    host.set_xlabel(param_name)
-                    host.set_ylabel('Mean Squared Error')
-                    par1.set_ylabel(complexity_name)
-                    par2.set_ylabel('Time (Milliseconds)')
-                    
-                    p1, = host.plot(param_range, train_mean,
-                                    color='blue', marker='o',
-                                    markersize=5,
-                                    label='Training Error')
-                    
-                    host.fill_between(param_range,
-                                      train_mean + train_std,
-                                      train_mean - train_std,
-                                      alpha=0.15, color='blue')
-                    
-                    
-                    p2, = host.plot(param_range, test_mean,
-                                    color='green', marker='s',
-                                    markersize=5, linestyle='--',
-                                    label='Validation Error')
-                    
-                    host.fill_between(param_range,
-                                      test_mean + test_std,
-                                      test_mean - test_std,
-                                      alpha=0.15, color='green')
-                    
-                    if complexity_name != '':
-                        p3,  = par1.plot(param_range, complexity_mean,
-                                         color='red', marker='o',
-                                         markersize=5,
-                                         label=complexity_name)
-                        
-                        par1.fill_between(param_range,
-                                          complexity_mean + complexity_std,
-                                          complexity_mean - complexity_std,
-                                          alpha=0.15, color='red')
-                    
-                    p4, = par2.plot(param_range, fit_time_mean,
-                                    color='gray', marker='3',
-                                    markersize=5,
-                                    label='Fit Time')
-                    '''
-                    par2.fill_between(param_range,
-                                      fit_time_mean + fit_time_std,
-                                      fit_time_mean - fit_time_std,
-                                      alpha=0.15, color='gray')
-                    '''
-                    p5, = par2.plot(param_range, predict_time_mean,
-                                    color='orange', marker='4',
-                                    markersize=5,
-                                    label='Predict Time')
-                    '''
-                    par2.fill_between(param_range,
-                                      predict_time_mean + predict_time_std,
-                                      predict_time_mean - predict_time_std,
-                                      alpha=0.15, color='orange')
-                    '''
-                    
-                    
-                    host.legend(loc='best', fancybox=True, framealpha=0.5)
-                    
-                    host.axis["left"].label.set_color(p1.get_color())
-                    host.axis["left"].label.set_color(p2.get_color())
-                    if complexity_name != '':
-                        par1.axis["right"].label.set_color(p3.get_color())
-                    par2.axis["right"].label.set_color(p4.get_color())
-                    par2.axis["right"].label.set_color(p5.get_color())
-                    
-                    plt.grid()
-                    
-                    if complexity_name == '':
-                        plt.title("%s: Training, Validation Error (left)\nand Timings (right) Versus %s" % (learner_name, param_name))
-                    
-                    else:
-                        plt.title("%s: Training, Validation Error (left)\nand %s/Timings (right) Versus %s" % (learner_name, complexity_name, param_name))
-                    
-                    if (rev_axis):
-                        host.invert_xaxis()
-                    
-                    fn = save_path + dataset + '_' + learner_name + '_' + outer_param + '_' + outer_param_value + '_' + param_name + '_validation.png'
-                    plt.savefig(fn)
                     
             
 if __name__ == "__main__":
     vc = validation_curves()
     #vc.gridSearch2()
     
-    
-    
     dh = data_helper()    
     X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic =  dh.load_titanic_data()
     X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data()
 
 
-
- 
     ###
     ### SVM
     ###
@@ -418,4 +314,27 @@ if __name__ == "__main__":
         
    
     
+    ###
+    ### Boosting
+    ###
+    tree = DecisionTreeClassifier(criterion=criterion)
+    estimator = AdaBoostClassifier(base_estimator=tree, random_state=0, n_estimators=260, learning_rate=learning_rate)
+    
+    params_dict = {
+                    'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
+                    'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
+                    'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
+                    'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False}
+    }
+    
+    outer_param_dict = { 'clf__activation': {'identity': params_dict,
+                                         'logistic': params_dict,
+                                         'tanh': params_dict,
+                                         'relu': params_dict}     
+                         }
+    
+    
+    vc.run(X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic, MLPClassifier, StandardScaler, outer_param_dict, 'titanic', 'Neural Net', '')
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, outer_param_dict, 'wine', 'Neural Net', '')
+        
     

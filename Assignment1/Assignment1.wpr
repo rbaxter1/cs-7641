@@ -6,6 +6,7 @@
 [project attributes]
 proj.file-list = [loc('boost_test.py'),
                   loc('data_helper.py'),
+                  loc('data_helper_test.py'),
                   loc('impurity.py'),
                   loc('knn_test.py'),
                   loc('main.py'),
@@ -24,4 +25,4 @@ proj.file-list = [loc('boost_test.py'),
                   loc('validation_curves_tree.py'),
                   loc('validation_curve_generic.py')]
 proj.file-type = 'shared'
-proj.main-file = loc('validation_curve_generic.py')
+proj.main-file = loc('data_helper_test.py')

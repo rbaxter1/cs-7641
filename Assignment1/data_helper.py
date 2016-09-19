@@ -70,21 +70,27 @@ class data_helper:
         df = pd.read_csv('./data/winequality-red.csv', sep=';')
         
         df['phSugarRatio'] = df['pH'] / df['residual sugar']
-        df['phSugarRatioScore'] = df['phSugarRatio'] / df['phSugarRatio'].std() 
-        med = df['phSugarRatioScore'].median()
-        abs_med = abs(med)
-        df['phSugarRatioStd'] = df['phSugarRatioScore'] / abs_med
+        df['phCitricAcidRatio'] = df['pH'] / df['citric acid']
+        df['phVolatileAcidRatio'] = df['pH'] / df['volatile acidity']
+        df['phFixedAcidRatio'] = df['pH'] / df['fixed acidity']
+        
+        #df['phSugarRatioScore'] = df['phSugarRatio'] / df['phSugarRatio'].std() 
+        #med = df['phSugarRatioScore'].median()
+        #abs_med = abs(med)
+        #df['phSugarRatioStd'] = df['phSugarRatioScore'] / abs_med
         
         #df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
         #df.plot.scatter(x='quality', y='phSugarRatioStd')
         
+        mean = df['quality'].mean()
+        
         # group the quality into binary good or bad
-        df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0
-        df.loc[(df['quality'] >= 6), 'quality'] = 1
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= mean), 'quality'] = 0
+        df.loc[(df['quality'] > mean), 'quality'] = 1
         
         # separate the x and y data
         # y = quality, x = features (using fixed acid, volatile acid and alcohol)
-        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates']
+        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'phVolatileAcidRatio']
         x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
         
         # split the data into training and test data

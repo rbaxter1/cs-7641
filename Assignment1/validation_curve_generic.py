@@ -317,6 +317,7 @@ if __name__ == "__main__":
     ###
     ### Boosting
     ###
+    '''
     tree = DecisionTreeClassifier(criterion=criterion)
     estimator = AdaBoostClassifier(base_estimator=tree, random_state=0, n_estimators=260, learning_rate=learning_rate)
     
@@ -336,5 +337,5 @@ if __name__ == "__main__":
     
     vc.run(X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic, MLPClassifier, StandardScaler, outer_param_dict, 'titanic', 'Neural Net', '')
     vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, outer_param_dict, 'wine', 'Neural Net', '')
-        
+    '''
     

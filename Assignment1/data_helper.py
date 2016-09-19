@@ -90,7 +90,8 @@ class data_helper:
         
         # separate the x and y data
         # y = quality, x = features (using fixed acid, volatile acid and alcohol)
-        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'citric acid', 'phVolatileAcidRatio']
+        #x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'citric acid', 'phVolatileAcidRatio']
+        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'phVolatileAcidRatio']
         x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
         
         # split the data into training and test data

@@ -74,6 +74,9 @@ class data_helper:
         df['phVolatileAcidRatio'] = df['pH'] / df['volatile acidity']
         df['phFixedAcidRatio'] = df['pH'] / df['fixed acidity']
         
+        df['quality3'] = pd.qcut(df['quality'], 3, labels=['poor', 'average', 'best'])
+        
+        
         #df['phSugarRatioScore'] = df['phSugarRatio'] / df['phSugarRatio'].std() 
         #med = df['phSugarRatioScore'].median()
         #abs_med = abs(med)
@@ -84,9 +87,13 @@ class data_helper:
         
         mean = df['quality'].mean()
         
+        df['quality2'] = df['quality']
+        
         # group the quality into binary good or bad
-        df.loc[(df['quality'] >= 0) & (df['quality'] <= mean), 'quality'] = 0
-        df.loc[(df['quality'] > mean), 'quality'] = 1
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= mean), 'quality2'] = 0
+        df.loc[(df['quality'] > mean), 'quality2'] = 1
+        
+        
         
         # separate the x and y data
         # y = quality, x = features (using fixed acid, volatile acid and alcohol)

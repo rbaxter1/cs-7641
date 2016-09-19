@@ -11,7 +11,27 @@ class plot_helper:
     def __init__(self):
         self.save_path= './output/'
         
-    
+    def plot_pred_act(self, Y, predY, desc, title, datasetName, save_file_name):
+        plt.clf()
+        plt.cla()
+        
+        #N = Y.shape[0]
+        #colors = np.random.rand(N)
+        # hmmm
+        #area = np.pi * (15 * np.random.rand(N))**2  # 0 to 15 point radiuses
+        
+        fig, ax = plt.subplots()
+        #ax.scatter(Y, predY, s=area, c=colors, alpha=0.5)
+        ax.scatter(Y, predY, color='blue')
+        ax.plot([Y.min(), Y.max()], [Y.min(), Y.max()], 'k--', lw=4, c='magenta')
+        plt.title(title)
+        plt.grid(True)
+        ax.set_xlabel('Actual')
+        ax.set_ylabel('Predicted')
+        fn = self.save_path + save_file_name + '_predact.png'
+        plt.savefig(fn)
+        
+        
     def plot_validation_curve(self, param_range, train_mean, train_std, test_mean, test_std, complexity_mean, complexity_std,
                               fit_time_mean, fit_time_std, predict_time_mean, predict_time_std, rev_axis, param_name, 
                               learner_name, save_file_name, complexity_name = '', plot_timing_bands=False):

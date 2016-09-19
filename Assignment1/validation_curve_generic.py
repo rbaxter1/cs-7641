@@ -14,11 +14,11 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from plot_helper import *
 
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import host_subplot
-import mpl_toolkits.axisartist as AA
+#import matplotlib
+#matplotlib.use('Agg')
+#import matplotlib.pyplot as plt
+#from mpl_toolkits.axes_grid1 import host_subplot
+#import mpl_toolkits.axisartist as AA
 
 import numpy as np
 import pandas as pd
@@ -159,6 +159,18 @@ class validation_curves:
                                   ', Training error: ', in_sample_mse, ', ', complexity_name, ': ', complexity,
                                   ', fit time: ', tot_fit_time, ', in sample predict time: ', tot_in_sample_predict_time,
                                   ', out of sample predict time: ', tot_out_sample_predict_time)
+                           
+                        # RUN WITH ALL THE DATA FOR PLOT
+                        clf.fit(X_train, y_train)
+                        predicted_values = clf.predict(X_test)
+                        
+                        ph.plot_pred_act(y_test,
+                                        predicted_values,
+                                        dataset + '_' + learner_name + '_' + outer_param + '_' + outer_param_value + '_' + param_name,
+                                        'Predicted versus Actual', 
+                                        dataset, 
+                                        save_file_name=dataset + '_' + learner_name + '_' + outer_param + '_' + outer_param_value + '_' + param_name)
+                       
                            
                         # out of sample (test)
                         avg_test_err = np.mean(out_sample_mse)

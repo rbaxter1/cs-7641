@@ -236,7 +236,6 @@ if __name__ == "__main__":
     X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic =  dh.load_titanic_data()
     X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data()
 
-
     ###
     ### SVM
     ###
@@ -281,26 +280,44 @@ if __name__ == "__main__":
     vc.run(X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic, KNeighborsClassifier, StandardScaler, outer_param_dict, 'titanic', 'KNN', '')
     vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, KNeighborsClassifier, StandardScaler, outer_param_dict, 'wine', 'KNN', '')
         
-    
-
 
     ###
     ### TREE
     ###
+    
+    # max features should be 1 to n_features
     params_dict = {
             'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
             'max_depth': {'param_value': np.arange(1, 25, 1), 'reverse_xaxis': False},
             'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
             'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
             'max_leaf_nodes': {'param_value': np.arange(2, 225, 5), 'reverse_xaxis': False},
-            'max_features': {'param_value': [1, 2, 3, 4, 5], 'reverse_xaxis': False}
+            'max_features': {'param_value': np.arange(1, X_train_titanic.shape[1], 1), 'reverse_xaxis': False}
             }
         
+    
     outer_param_dict = { 'criterion': {'gini': params_dict,
                                          'entropy': params_dict}     
                          }
     
     vc.run(X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic, DecisionTreeClassifier, None, outer_param_dict, 'titanic', 'Tree', 'Tree nodes')
+    
+    
+    params_dict = {
+            'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
+            'max_depth': {'param_value': np.arange(1, 25, 1), 'reverse_xaxis': False},
+            'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
+            'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
+            'max_leaf_nodes': {'param_value': np.arange(2, 225, 5), 'reverse_xaxis': False},
+            'max_features': {'param_value': np.arange(1, X_train_wine.shape[1], 1), 'reverse_xaxis': False}
+            }
+        
+    
+    outer_param_dict = { 'criterion': {'gini': params_dict,
+                                         'entropy': params_dict}     
+                         }
+    
+    
     vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, DecisionTreeClassifier, None, outer_param_dict, 'wine', 'Tree', 'Tree nodes')
 
 

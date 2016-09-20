@@ -2,10 +2,67 @@ from sklearn.preprocessing import Imputer, LabelEncoder
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
+from plot_helper import *
 
 class data_helper:
     def __init__(self):
         pass
+    
+    def search_wine_data(self):
+        
+        '''
+        1 - fixed acidity
+        2 - volatile acidity
+        3 - citric acid
+        4 - residual sugar
+        5 - chlorides
+        6 - free sulfur dioxide
+        7 - total sulfur dioxide
+        8 - density
+        9 - pH
+        10 - sulphates
+        11 - alcohol
+        Output variable (based on sensory data):
+        12 - quality (score between 0 and 10)
+        '''
+        
+        # load the red wine data
+        # source: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        
+        '''   
+        CORR
+                               quality  
+        fixed acidity        0.124052  
+        volatile acidity     -0.390558  
+        citric acid          0.226373  
+        residual sugar       0.013732  
+        chlorides            -0.128907  
+        free sulfur dioxide  -0.050656  
+        total sulfur dioxide -0.185100  
+        density              -0.174919  
+        pH                    -0.057731  
+        sulphates             0.251397  
+        alcohol               0.476166  
+        quality               1.000000  
+        '''
+        
+        df['quality_3'] = pd.qcut(df['quality'], 3, labels=[0,1,2]).values.astype(np.int64)
+        
+        split = 5 #df['quality'].median()
+        df['quality_2'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= split), 'quality_2'] = 0
+        df.loc[(df['quality'] > split), 'quality_2'] = 1
+        
+        df['quality_4'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= 4), 'quality_4'] = 1
+        df.loc[(df['quality'] > 4), 'quality_4'] = 0
+        
+        
     
     def load_wine_data(self):
         
@@ -221,6 +278,18 @@ class data_helper:
         df['sulphates_residual_sugar_ratio'] = df['sulphates'] / df['residual sugar'] 
         df['alcohol_residual_sugar_ratio'] = df['alcohol'] / df['residual sugar'] 
         
+        ph = plot_helper()
+        #ph.plot_scatter(df['quality'], df['alcohol'])
+        
+        #ph.plot_scatter(df['quality'], df['alcohol_factor'])
+        #ph.plot_scatter(df['quality_3'], df['pH'])
+        #ph.plot_scatter(df['quality_3'], df['volatile_acidity_ph_ratio'])
+        #ph.plot_scatter(df['quality_3'], df['fixed_acidity_ph_ratio'])
+        #ph.plot_scatter(df['quality_3'], df['sulphates_residual_sugar_ratio'])
+        #ph.plot_scatter(df['quality_3'], df['alcohol_residual_sugar_ratio'])
+        
+        df['volatile_acidity_ph_ratio'] = df['volatile acidity'] / df['pH'] 
+        
         
         
         x_col_names = ['citric acid', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'volatile_acidity_ph_ratio']
@@ -334,7 +403,7 @@ class data_helper:
         
         # split the data into training and test data
         # for the wine data using 30% of the data for testing
-        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
         
         return X_train, X_test, y_train, y_test
     

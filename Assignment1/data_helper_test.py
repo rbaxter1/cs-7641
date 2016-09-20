@@ -20,7 +20,8 @@ from timeit import default_timer as timer
 
 def run_grid_search(pipeline, parameters):
     dh = data_helper()
-    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+    #X_train, X_test, y_train, y_test =  dh.load_wine_data()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data()
     
     grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
     

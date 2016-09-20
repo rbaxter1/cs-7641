@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
@@ -11,6 +11,15 @@ class plot_helper:
     def __init__(self):
         self.save_path= './output/'
         
+    def plot_scatter(self, x, y):
+        N = x.shape[0]
+        #colors = np.random.rand(N)
+        #area = np.pi * (15 * np.random.rand(N))**2  # 0 to 15 point radiuses
+        
+        #plt.scatter(x, y, s=area, c=colors, alpha=0.5)
+        plt.scatter(x, y, alpha=0.5)    
+        plt.show()
+
     def plot_pred_act(self, Y, predY, desc, title, datasetName, save_file_name):
         plt.clf()
         plt.cla()
@@ -29,8 +38,9 @@ class plot_helper:
         ax.set_xlabel('Actual')
         ax.set_ylabel('Predicted')
         fn = self.save_path + save_file_name + '_predact.png'
-        plt.savefig(fn)
         
+        #plt.savefig(fn)
+        plt.show()
         
     def plot_validation_curve(self, param_range, train_mean, train_std, test_mean, test_std, complexity_mean, complexity_std,
                               fit_time_mean, fit_time_std, predict_time_mean, predict_time_std, rev_axis, param_name, 

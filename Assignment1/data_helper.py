@@ -48,23 +48,51 @@ class data_helper:
         
         df['quality_3'] = pd.qcut(df['quality'], 3, labels=[0,1,2]).values.astype(np.int64)
         
+        split = 5 #df['quality'].median()
+        df['quality_2'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= split), 'quality_2'] = 0
+        df.loc[(df['quality'] > split), 'quality_2'] = 1
+        
+        df['quality_4'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] <= 4), 'quality_4'] = 1
+        df.loc[(df['quality'] > 4), 'quality_4'] = 0
+        
         
         df['alcohol_std'] = df['alcohol'].std()
         df['alcohol_norm'] = df['alcohol'] / df['alcohol_std']
         df['alcohol_norm_med'] = df['alcohol_norm'].median()
         df['alcohol_norm_abs_med'] = df['alcohol_norm_med'].abs()
         df['alcohol_factor'] = df['alcohol_norm'] / df['alcohol_norm_abs_med']
-        df['alcohol_factor_quant'] = pd.qcut(df['alcohol_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        #df['alcohol_factor_quant'] = pd.qcut(df['alcohol_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        df['alcohol_factor_quant'] = pd.qcut(df['alcohol_factor'], 2, labels=[0,1]).values.astype(np.int64)
         
         df['alcohol_factor_quant'].corr(df['quality_3'])
         #0.50415520619906773
+        
+        
+        df['sulphates_std'] = df['sulphates'].std()
+        df['sulphates_norm'] = df['sulphates'] / df['sulphates_std']
+        df['sulphates_norm_med'] = df['sulphates_norm'].median()
+        df['sulphates_norm_abs_med'] = df['sulphates_norm_med'].abs()
+        df['sulphates_factor'] = df['sulphates_norm'] / df['sulphates_norm_abs_med']
+        #df['sulphates_factor_quant'] = pd.qcut(df['sulphates_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        df['sulphates_factor_quant'] = pd.qcut(df['sulphates_factor'], 2, labels=[0,1]).values.astype(np.int64)
+        
+        df['sulphates_factor_quant'].corr(df['quality_3'])
+        #0.50415520619906773
+        
                 
         df['volatile_acidity_std'] = df['volatile acidity'].std()
         df['volatile_acidity_norm'] = df['volatile acidity'] / df['volatile_acidity_std']
         df['volatile_acidity_norm_med'] = df['volatile_acidity_norm'].median()
         df['volatile_acidity_norm_abs_med'] = df['volatile_acidity_norm_med'].abs()
         df['volatile_acidity_factor'] = df['volatile_acidity_norm'] / df['volatile_acidity_norm_abs_med']
-        df['volatile_acidity_factor_quant'] = pd.qcut(df['volatile_acidity_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        #df['volatile_acidity_factor_quant'] = pd.qcut(df['volatile_acidity_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        df['volatile_acidity_factor_quant'] = pd.qcut(df['volatile_acidity_factor'], 2, labels=[0,1]).values.astype(np.int64)
         
         df['volatile_acidity_factor_quant'].corr(df['quality_3'])
         #-0.35545462139356093
@@ -85,8 +113,9 @@ class data_helper:
         df['total_sulfur_dioxide_norm_med'] = df['total_sulfur_dioxide_norm'].median()
         df['total_sulfur_dioxide_norm_abs_med'] = df['total_sulfur_dioxide_norm_med'].abs()
         df['total_sulfur_dioxide_factor'] = df['total_sulfur_dioxide_norm'] / df['total_sulfur_dioxide_norm_abs_med']
-        df['total_sulfur_dioxide_factor_quant'] = pd.qcut(df['total_sulfur_dioxide_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
-
+        #df['total_sulfur_dioxide_factor_quant'] = pd.qcut(df['total_sulfur_dioxide_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        df['total_sulfur_dioxide_factor_quant'] = pd.qcut(df['total_sulfur_dioxide_factor'], 2, labels=[0,1]).values.astype(np.int64)
+        
         df['total_sulfur_dioxide_factor_quant'].corr(df['quality_3'])
         #-0.22585898166340387
 
@@ -95,7 +124,9 @@ class data_helper:
         df['citric_acid_norm_med'] = df['citric_acid_norm'].median()
         df['citric_acid_norm_abs_med'] = df['citric_acid_norm_med'].abs()
         df['citric_acid_factor'] = df['citric_acid_norm'] / df['citric_acid_norm_abs_med']
-        df['citric_acid_factor_quant'] = pd.qcut(df['citric_acid_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        #df['citric_acid_factor_quant'] = pd.qcut(df['citric_acid_factor'], 10, labels=[0,1,2,3,4,5,6,7,8,9]).values.astype(np.int64)
+        df['citric_acid_factor_quant'] = pd.qcut(df['citric_acid_factor'], 2, labels=[0,1]).values.astype(np.int64)
+        
         
         df['citric_acid_factor_quant'].corr(df['quality_3'])
         #df['citric_acid_factor_quant'].corr(df['quality_3'])
@@ -139,13 +170,66 @@ class data_helper:
         # separate the x and y data
         # y = quality, x = features (using fixed acid, volatile acid and alcohol)
         #x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'citric acid', 'phVolatileAcidRatio']
+        '''
         x_col_names = ['citric_acid_factor_quant',
                        'alcohol_factor_quant',
                        'volatile_acidity_factor_quant',
                        'citric_acid_ph_ratio_factor_quant',
                        'total_sulfur_dioxide_factor_quant']
+        '''
+        x_col_names = ['citric_acid_factor',
+                       'alcohol_factor',
+                       'volatile_acidity_factor',
+                       #'citric_acid_ph_ratio_factor',
+                       'total_sulfur_dioxide_factor',
+                       'sulphates_factor']
         
-        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality_3'].values
+        x_col_names = ['citric_acid_factor_quant',
+                       'alcohol_factor_quant',
+                       'volatile_acidity_factor_quant',
+                       #'citric_acid_ph_ratio_factor',
+                       'total_sulfur_dioxide_factor_quant',
+                       'sulphates_factor_quant']
+        
+        #x_col_names = ['alcohol_factor',
+        #               'volatile_acidity_factor',
+        #               'total_sulfur_dioxide_factor']
+        
+        #x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol']
+        
+        
+        
+        
+        '''   
+        CORR
+                               quality  
+        fixed acidity        0.124052  
+        volatile acidity     -0.390558  
+        citric acid          0.226373  
+        residual sugar       0.013732  
+        chlorides            -0.128907  
+        free sulfur dioxide  -0.050656  
+        total sulfur dioxide -0.185100  
+        density              -0.174919  
+        pH                    -0.057731  
+        sulphates             0.251397  
+        alcohol               0.476166  
+        quality               1.000000  
+        '''
+        df['volatile_acidity_ph_ratio'] = df['volatile acidity'] / df['pH'] 
+        df['fixed_acidity_ph_ratio'] = df['fixed acidity'] / df['pH'] 
+        df['sulphates_residual_sugar_ratio'] = df['sulphates'] / df['residual sugar'] 
+        df['alcohol_residual_sugar_ratio'] = df['alcohol'] / df['residual sugar'] 
+        
+        
+        
+        x_col_names = ['citric acid', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'volatile_acidity_ph_ratio']
+        #x_col_names = ['alcohol', 'volatile_acidity_ph_ratio', 'alcohol_residual_sugar_ratio', 'fixed_acidity_ph_ratio']
+        x_col_names = ['citric acid', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates']
+        #x_col_names = ['alcohol', 'volatile_acidity_ph_ratio', 'alcohol_residual_sugar_ratio', 'fixed_acidity_ph_ratio']
+        
+        
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality_2'].values
         
         # split the data into training and test data
         # for the wine data using 30% of the data for testing

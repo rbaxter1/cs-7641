@@ -5,6 +5,7 @@
 ##################################################################
 [project attributes]
 proj.file-list = [loc('boost_test.py'),
+                  loc('classifier_comparison.py'),
                   loc('data_helper.py'),
                   loc('data_helper_test.py'),
                   loc('impurity.py'),
@@ -16,6 +17,7 @@ proj.file-list = [loc('boost_test.py'),
                   loc('plot_helper.py'),
                   loc('svm_test.py'),
                   loc('tree_test.py'),
+                  loc('validation_curve2.py'),
                   loc('validation_curves.py'),
                   loc('validation_curves_boost.py'),
                   loc('validation_curves_knn.py'),
@@ -23,6 +25,14 @@ proj.file-list = [loc('boost_test.py'),
                   loc('validation_curves_old.py'),
                   loc('validation_curves_svm.py'),
                   loc('validation_curves_tree.py'),
-                  loc('validation_curve_generic.py')]
+                  loc('validation_curve_generic.py'),
+                  loc('../../ML4T_2016Fall/mc3_p1/classifier_comparison.py'),
+                  loc('../../ML4T_2016Fall/mc3_p1/LinRegLearner.py'),
+                  loc('../../ML4T_2016Fall/mc3_p1/RTLearner.py'),
+                  loc('../../ML4T_2016Fall/mc3_p1/testlearner.py'),
+                  loc('../../ML4T_2016Fall/mc3_p1/util.py')]
 proj.file-type = 'shared'
-proj.main-file = loc('data_helper_test.py')
+proj.launch-config = {loc('../../ML4T_2016Fall/mc3_p1/testlearner.py'): ('pr'\
+        'oject',
+        (u'.\\Data\\winequality-red.csv',
+         ''))}

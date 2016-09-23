@@ -62,7 +62,19 @@ class data_helper:
         df.loc[(df['quality'] >= 0) & (df['quality'] <= 4), 'quality_4'] = 1
         df.loc[(df['quality'] > 4), 'quality_4'] = 0
         
+    def load_wine_data_full_set(self):
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
         
+        x_col_names = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', 'chlorides',
+                       'free sulfur dioxide', 'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol'] 
+        
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        return X_train, X_test, y_train, y_test
     
     def load_wine_data(self):
         
@@ -293,12 +305,16 @@ class data_helper:
         
         
         x_col_names = ['citric acid', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'volatile_acidity_ph_ratio']
-        #x_col_names = ['alcohol', 'volatile_acidity_ph_ratio', 'alcohol_residual_sugar_ratio', 'fixed_acidity_ph_ratio']
-        x_col_names = ['citric acid', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates']
-        #x_col_names = ['alcohol', 'volatile_acidity_ph_ratio', 'alcohol_residual_sugar_ratio', 'fixed_acidity_ph_ratio']
+        x_col_names = ['alcohol', 'volatile_acidity_ph_ratio', 'alcohol_residual_sugar_ratio', 'fixed_acidity_ph_ratio']
+        #x_col_names = ['citric acid', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates']
+        #x_col_names = ['volatile_acidity_ph_ratio', 'alcohol_residual_sugar_ratio', 'fixed_acidity_ph_ratio']
+        #x_col_names = ['alcohol', 'volatile acidity', 'sulphates']
+        #x_col_names = ['alcohol', 'volatile acidity']
         
+        x_col_names = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar', 'chlorides',
+                       'free sulfur dioxide', 'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol'] 
         
-        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality_2'].values
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
         
         # split the data into training and test data
         # for the wine data using 30% of the data for testing
@@ -346,7 +362,7 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
         
-    def load_wine_data_orig(self):
+    def load_wine_data_orig(self, scale=False):
         
         '''
         1 - fixed acidity
@@ -398,8 +414,12 @@ class data_helper:
         # separate the x and y data
         # y = quality, x = features (using fixed acid, volatile acid and alcohol)
         #x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'total sulfur dioxide', 'sulphates', 'citric acid', 'phVolatileAcidRatio']
-        x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'phVolatileAcidRatio']
+        #x_col_names = ['fixed acidity', 'volatile acidity', 'alcohol', 'phVolatileAcidRatio']
+        x_col_names = ['fixed acidity', 'alcohol']
+        
         x, y = df.loc[:,x_col_names].values, df.loc[:,'quality'].values
+        if scale:
+            x = StandardScaler().fit_transform(x)
         
         # split the data into training and test data
         # for the wine data using 30% of the data for testing
@@ -420,8 +440,12 @@ class data_helper:
         le.transform(df['SHOT_RESULT']) 
         df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
             
-        x_col_names = ['player_id', 'SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'DRIBBLES', 'SHOT_NUMBER', 'FINAL_MARGIN']
+        x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'DRIBBLES', 'FINAL_MARGIN']
+        x_col_names = ['SHOT_DIST', 'CLOSE_DEF_DIST', 'DRIBBLES']
         x, y = df.loc[:,x_col_names].values, df.loc[:,'SHOT_RESULT_ENC'].values
+        
+        
+        
         
         # split the data into training and test data
         # for the wine data using 30% of the data for testing

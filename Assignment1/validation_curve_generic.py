@@ -2,7 +2,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import Imputer, LabelEncoder
-from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV
+from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV, cross_val_score, cross_val_predict
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.pipeline import Pipeline
@@ -144,6 +144,8 @@ class validation_curves:
                             predict_times.append(tot_in_sample_predict_time)
                             
                             in_sample_mse = mean_squared_error(y_train[train], predicted_values)
+                            in_sample_mse = 1. - clf.score(X_train[train], y_train[train])
+                            
                             in_sample_errors.append(in_sample_mse)
                             
                             # out of sample
@@ -153,6 +155,7 @@ class validation_curves:
                             tot_out_sample_predict_time = (end - start) * 1000.
                             predict_times.append(tot_out_sample_predict_time)
                             out_sample_mse = mean_squared_error(y_train[test], predicted_values)
+                            out_sample_mse = 1. - clf.score(X_test, y_test)
                             out_sample_errors.append(out_sample_mse)
         
                             print('Fold:', k+1, ', Validation error: ', out_sample_mse,
@@ -161,8 +164,11 @@ class validation_curves:
                                   ', out of sample predict time: ', tot_out_sample_predict_time)
                            
                         # RUN WITH ALL THE DATA FOR PLOT
+                        
+                        '''
                         clf.fit(X_train, y_train)
                         predicted_values = clf.predict(X_test)
+                        
                         
                         ph.plot_pred_act(y_test,
                                         predicted_values,
@@ -170,17 +176,20 @@ class validation_curves:
                                         'Predicted versus Actual', 
                                         dataset, 
                                         save_file_name=dataset + '_' + learner_name + '_' + outer_param + '_' + outer_param_value + '_' + param_name)
-                       
-                           
+                        '''
+                        
+                        scores = cross_val_score(clf, X_train, y_train)
+                        out_sample_errors = 1. - scores
+                        
                         # out of sample (test)
-                        avg_test_err = np.mean(out_sample_mse)
-                        test_err_std = np.std(out_sample_mse)
+                        avg_test_err = np.mean(out_sample_errors)
+                        test_err_std = np.std(out_sample_errors)
                         out_of_sample_avg_errors.append(avg_test_err)
                         std_out_of_sample_errors.append(test_err_std)
                         
                         # in sample (train)
-                        avg_train_err = np.mean(in_sample_mse)
-                        train_err_std = np.std(in_sample_mse)
+                        avg_train_err = np.mean(in_sample_errors)
+                        train_err_std = np.std(in_sample_errors)
                         in_sample_avg_errors.append(avg_train_err)
                         std_in_sample_errors.append(train_err_std)
                         
@@ -226,15 +235,42 @@ class validation_curves:
                                              save_file_name=dataset + '_' + learner_name + '_' + outer_param + '_' + outer_param_value + '_' + param_name,
                                              complexity_name=complexity_name)
                     
-                    
+
+def plot_all_wine_tree_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data_full_set()
+
+    params_dict = {
+            #'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
+            'max_depth': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': False} #,
+            #'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
+            #'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
+            #'max_leaf_nodes': {'param_value': np.arange(2, 225, 5), 'reverse_xaxis': False},
+            #'max_features': {'param_value': np.arange(1, X_train_wine.shape[1], 1), 'reverse_xaxis': False}
+            }
+        
+    
+    outer_param_dict = { 'criterion': {'gini': params_dict}     
+                         }
+    
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, DecisionTreeClassifier, None, outer_param_dict, 'wine', 'Tree (all data)', 'Tree nodes')
+
             
 if __name__ == "__main__":
+    
+    plot_all_wine_tree_validation()
+    
+    '''
     vc = validation_curves()
     #vc.gridSearch2()
     
     dh = data_helper()    
     X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic =  dh.load_titanic_data()
-    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data()
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data_full_set()
+
+
 
     ###
     ### SVM
@@ -346,7 +382,6 @@ if __name__ == "__main__":
     ###
     ### Boosting
     ###
-    '''
     tree = DecisionTreeClassifier(criterion=criterion)
     estimator = AdaBoostClassifier(base_estimator=tree, random_state=0, n_estimators=260, learning_rate=learning_rate)
     

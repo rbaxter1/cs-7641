@@ -76,7 +76,65 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
+    
+    def load_wine_data_knn(self):
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        
+        split = df['quality'].median()
+        df['quality_2'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] < split), 'quality_2'] = 0
+        df.loc[(df['quality'] >= split), 'quality_2'] = 1
+        
+        df['volatile_acidity_ph_ratio'] = df['volatile acidity'] / df['pH'] 
+        df['fixed_acidity_ph_ratio'] = df['fixed acidity'] / df['pH'] 
+        df['sulphates_residual_sugar_ratio'] = df['sulphates'] / df['residual sugar'] 
+        df['alcohol_residual_sugar_ratio'] = df['alcohol'] / df['residual sugar'] 
+        df['volatile_acidity_ph_ratio'] = df['volatile acidity'] / df['pH'] 
+
+
+        #x_col_names = ['volatile acidity', 'alcohol', 'volatile_acidity_ph_ratio'] 
+        x_col_names = ['alcohol', 'volatile acidity', 'sulphates', 'pH'] 
+        
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality_2'].values
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        return X_train, X_test, y_train, y_test
+    
+
     def load_wine_data(self):
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        
+        split = df['quality'].median()
+        df['quality_2'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] < split), 'quality_2'] = 0
+        df.loc[(df['quality'] >= split), 'quality_2'] = 1
+        
+        df['volatile_acidity_ph_ratio'] = df['volatile acidity'] / df['pH'] 
+        df['fixed_acidity_ph_ratio'] = df['fixed acidity'] / df['pH'] 
+        df['sulphates_residual_sugar_ratio'] = df['sulphates'] / df['residual sugar'] 
+        df['alcohol_residual_sugar_ratio'] = df['alcohol'] / df['residual sugar'] 
+        df['volatile_acidity_ph_ratio'] = df['volatile acidity'] / df['pH'] 
+
+
+        #x_col_names = ['volatile acidity', 'alcohol', 'volatile_acidity_ph_ratio'] 
+        x_col_names = ['volatile acidity', 'alcohol', 'pH'] 
+        
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'quality_2'].values
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        return X_train, X_test, y_train, y_test
+    
+    def load_wine_data_orig2(self):
         
         '''
         1 - fixed acidity
@@ -322,7 +380,7 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
-    def load_titanic_data(self):
+    def load_titanic_data_orig(self):
         
         df = pd.read_csv('./data/titanic_train.csv', sep=',')
         
@@ -424,6 +482,96 @@ class data_helper:
         # split the data into training and test data
         # for the wine data using 30% of the data for testing
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
+        
+        return X_train, X_test, y_train, y_test
+    
+    
+    def load_titanic_data_full_set(self):
+        
+        df = pd.read_csv('./data/titanic_train.csv', sep=',')
+        
+        # we need to encode sex. using the sklearn label encoder is
+        # one way. however one consideration is that the learning
+        # algorithm may make assumptions about the magnitude of the
+        # labels. for example, male is greater than female. use
+        # one hot encoder to get around this.
+        #ohe = OneHotEncoder(categorical_features=[0])
+        #ohe.fit_transform(x).toarray()
+        
+        '''
+        PassengerId                          1
+        Survived                             0
+        Pclass                               3
+        Name           Braund, Mr. Owen Harris
+        Sex                               male
+        Age                                 22
+        SibSp                                1
+        Parch                                0
+        Ticket                       A/5 21171
+        Fare                              7.25
+        Cabin                              NaN
+        Embarked                             S
+        '''
+                
+        # Even better pandas has a one hot encoding built in!
+        dfx = pd.get_dummies(df[['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Cabin', 'Embarked']])    
+        
+        imr = Imputer(strategy='most_frequent')
+        imr.fit(dfx)
+        x = imr.transform(dfx)
+        y = df.loc[:,'Survived'].values
+                
+        # this data set is missing some ages. we could impute a value
+        # like the average or median. or remove the rows having missing
+        # data. the disadvantage of removing values is we may be taking
+        # away valuable information that the learning algorithm needs.
+        #imr = Imputer(strategy='most_frequent')
+        #imr.fit(df['Age'].reshape(-1, 1))
+        #imputed_data = imr.transform(df['Age'].reshape(-1, 1))
+        #df['Age']  = imputed_data
+        
+        #y = df['Survived'].values
+        #x = df.iloc[:,[0,1,3,4]].values
+        
+        #x_col_names = df.iloc[:,[0,1,3,4]].columns
+        #x_col_names = ['Pclass', 'Age', 'Fare', 'SibSp', 'Parch', 'Sex_female', 'Sex_male']
+        #x, y = df.loc[:,x_col_names].values, df.loc[:,'Survived'].values
+        
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+        
+        return X_train, X_test, y_train, y_test
+        
+    def load_titanic_data(self):
+        
+        df = pd.read_csv('./data/titanic_train.csv', sep=',')
+        
+        '''
+        PassengerId                          1
+        Survived                             0
+        Pclass                               3
+        Name           Braund, Mr. Owen Harris
+        Sex                               male
+        Age                                 22
+        SibSp                                1
+        Parch                                0
+        Ticket                       A/5 21171
+        Fare                              7.25
+        Cabin                              NaN
+        Embarked                             S
+        '''
+                
+        # Even better pandas has a one hot encoding built in!
+        dfx = pd.get_dummies(df[['Pclass', 'Sex', 'Age', 'Fare', 'Cabin']])    
+        
+        imr = Imputer(strategy='most_frequent')
+        imr.fit(dfx)
+        x = imr.transform(dfx)
+        y = df.loc[:,'Survived'].values
+    
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
         
         return X_train, X_test, y_train, y_test
     

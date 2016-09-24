@@ -236,6 +236,30 @@ class validation_curves:
                                              complexity_name=complexity_name)
                     
 
+
+def plot_all_titanic_tree_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train, X_test, y_train, y_test = dh.load_titanic_data_full_set()
+
+    params_dict = {
+            #'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
+            'max_depth': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': False} ,
+            #'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
+            #'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
+            'max_leaf_nodes': {'param_value': np.arange(2, 200, 4), 'reverse_xaxis': False}#,
+            #'max_features': {'param_value': np.arange(1, X_train_wine.shape[1], 1), 'reverse_xaxis': False}
+            }
+        
+    
+    outer_param_dict = { 'criterion': {'gini': params_dict}     
+                         }
+    
+    vc.run(X_train, X_test, y_train, y_test, DecisionTreeClassifier, None, outer_param_dict, 'titanic', 'Tree, All Features', 'Tree nodes')
+
+     
+     
 def plot_all_wine_tree_validation():
     vc = validation_curves()
     
@@ -244,10 +268,10 @@ def plot_all_wine_tree_validation():
 
     params_dict = {
             #'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
-            'max_depth': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': False} #,
+            'max_depth': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': False} ,
             #'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
             #'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
-            #'max_leaf_nodes': {'param_value': np.arange(2, 225, 5), 'reverse_xaxis': False},
+            'max_leaf_nodes': {'param_value': np.arange(2, 200, 4), 'reverse_xaxis': False}#,
             #'max_features': {'param_value': np.arange(1, X_train_wine.shape[1], 1), 'reverse_xaxis': False}
             }
         
@@ -255,12 +279,126 @@ def plot_all_wine_tree_validation():
     outer_param_dict = { 'criterion': {'gini': params_dict}     
                          }
     
-    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, DecisionTreeClassifier, None, outer_param_dict, 'wine', 'Tree (all data)', 'Tree nodes')
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, DecisionTreeClassifier, None, outer_param_dict, 'wine', 'Tree, All Features', 'Tree nodes')
 
-            
+
+def plot_reduced_wine_tree_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data()
+
+    params_dict = {
+            #'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
+            'max_depth': {'param_value': np.arange(1, 30, 1), 'reverse_xaxis': False} ,
+            #'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
+            #'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
+            'max_leaf_nodes': {'param_value': np.arange(2, 200, 4), 'reverse_xaxis': False}#,
+            #'max_features': {'param_value': np.arange(1, X_train_wine.shape[1], 1), 'reverse_xaxis': False}
+            }
+        
+    
+    outer_param_dict = { 'criterion': {'gini': params_dict}     
+                         }
+    
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, DecisionTreeClassifier, None, outer_param_dict, 'wine', 'Tree, Feature Subset', 'Tree nodes')
+
+
+def plot_wine_knn_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data_knn()
+
+    params_dict = {'clf__n_neighbors': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': True}#,
+                   #'clf__leaf_size': {'param_value': np.arange(1, 20, 1), 'reverse_xaxis': False},
+                   #'clf__p': {'param_value': np.arange(1, 20, 1), 'reverse_xaxis': False}
+                   }
+    
+    outer_param_dict = { 'clf__algorithm': {'kd_tree': params_dict}     
+                         }
+                     
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, KNeighborsClassifier, StandardScaler, outer_param_dict, 'wine', 'KNN', '')
+        
+
+
+def plot_titanic_knn_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_titanic_data_full_set()
+
+    params_dict = {'clf__n_neighbors': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': True}#,
+                   #'clf__leaf_size': {'param_value': np.arange(1, 20, 1), 'reverse_xaxis': False},
+                   #'clf__p': {'param_value': np.arange(1, 20, 1), 'reverse_xaxis': False}
+                   }
+    
+    outer_param_dict = { 'clf__algorithm': {'kd_tree': params_dict}     
+                         }
+                     
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, KNeighborsClassifier, StandardScaler, outer_param_dict, 'Titanic', 'KNN', '')
+        
+          
+
+def plot_wine_neural_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data_knn()
+
+    params_dict = {
+                    'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
+                    'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
+                    'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
+                    'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False}
+    }
+    
+    outer_param_dict = { 'clf__activation': {'identity': params_dict,
+                                         'logistic': params_dict,
+                                         'tanh': params_dict,
+                                         'relu': params_dict}     
+                         }
+    
+                         
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, outer_param_dict, 'wine', 'Neural Net', '')
+        
+
+
+def plot_titanic_neural_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_titanic_data_full_set()
+
+    params_dict = {
+                    'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
+                    'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
+                    'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
+                    'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False}
+    }
+    
+    outer_param_dict = { 'clf__activation': {'identity': params_dict,
+                                         'logistic': params_dict,
+                                         'tanh': params_dict,
+                                         'relu': params_dict}     
+                         }
+    
+                         
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, outer_param_dict, 'Titanic', 'Neural Net', '')
+   
 if __name__ == "__main__":
     
-    plot_all_wine_tree_validation()
+    #plot_all_wine_tree_validation()
+    #plot_all_titanic_tree_validation()
+    
+    #plot_reduced_wine_tree_validation()
+    
+    #plot_wine_knn_validation()
+    #plot_titanic_knn_validation()
+    
+    
+    plot_wine_neural_validation()
+    plot_titanic_neural_validation()
     
     '''
     vc = validation_curves()

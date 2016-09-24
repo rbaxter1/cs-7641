@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
 import numpy as np
+import uuid
 
 
 
@@ -144,6 +145,6 @@ class plot_helper:
         if (rev_axis):
             host.invert_xaxis()
         
-        fn = self.save_path + save_file_name + '_validation.png'
+        fn = self.save_path + save_file_name + '_' + str(uuid.uuid4()) +'_validation.png'
         plt.savefig(fn)
         

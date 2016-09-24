@@ -16,7 +16,10 @@ from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier, BaggingClassifier
 from sklearn.model_selection import learning_curve, validation_curve
 
-
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder, Imputer
 
 from timeit import default_timer as timer
 
@@ -228,17 +231,92 @@ def run_learning_curves_boost():
     run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Boosting')
             
 
-def run_learning_curves_tree_full_data():
-    pipeline = Pipeline([('clf', DecisionTreeClassifier(max_leaf_nodes=38,random_state=0))])
+def run_learning_curves_tree_wine_full_data_max_depth(max_depth):
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(max_depth=max_depth,random_state=0))])
     
     dh = data_helper()
     X_train, X_test, y_train, y_test =  dh.load_wine_data_full_set()
 
-    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Tree (all data)')
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Tree, Wine, All Features, max_depth=' + str(max_depth))
+    
+    
+
+def run_learning_curves_tree_wine_max_depth(max_depth):
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(max_depth=max_depth,random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Tree, Wine, Feature Subset, max_depth=' + str(max_depth))
+    
+    
+def run_learning_curves_knn_wine_k(k):
+    pipeline = Pipeline([ ('scl', StandardScaler() ),
+                          ('clf', KNeighborsClassifier())])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'KNN, Wine, K=' + str(k))
+    
+def run_learning_curves_knn_titanic_k(k):
+    pipeline = Pipeline([ ('scl', StandardScaler() ),
+                          ('clf', KNeighborsClassifier(algorithm='kd_tree'))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'KNN, Titantic, K=' + str(k))
+
+    
+
+
+def run_learning_curves_tree_titanic_data_max_depth(max_depth):
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(max_depth=max_depth,random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Tree, Titanic, All Features, max_depth=' + str(max_depth))
+
+
+def run_learning_curves_tree_titanic_full_data_max_depth(max_depth):
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(max_depth=max_depth,random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Tree, Titanic, All Features, max_depth=' + str(max_depth))
     
     
     
-def run_validation_curves_tree_full_data_max_depth():
+    
+    
+    
+
+    
+def run_validation_curves_tree_wine_max_depth():
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__max_depth', np.arange(1,50,1),
+                          'Tree, Wine, Features Subset')
+
+def run_validation_curves_tree_wine_max_leaf_nodes():
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__max_leaf_nodes', np.arange(2,200,4),
+                          'Tree, Wine, Features Subset')
+    
+    
+def run_validation_curves_tree_wine_full_data_max_depth():
     pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
     
     dh = data_helper()
@@ -246,9 +324,117 @@ def run_validation_curves_tree_full_data_max_depth():
     
     run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
                           'clf__max_depth', np.arange(1,50,1),
-                          'Decision Tree For All Wine Data')
+                          'Tree, Wine, All Features')
+
+def run_validation_curves_tree_wine_full_data_max_leaf_nodes():
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_full_set()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__max_leaf_nodes', np.arange(2,200,4),
+                          'Tree, Wine, All Features')
     
 
+def run_validation_curves_tree_titanic_full_data_max_depth():
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__max_depth', np.arange(1,50,1),
+                          'Tree, Titanic, All Features')
+
+def run_validation_curves_tree_titanic_full_data_max_leaf_nodes():
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__max_leaf_nodes', np.arange(2,200,4),
+                          'Tree, Titanic, All Features')
+
+def run_validation_curves_tree_titanic_data_max_leaf_nodes():
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__max_leaf_nodes', np.arange(2,200,4),
+                          'Tree, Titanic')
+
+
+def run_validation_curves_tree_titanic_data_max_depth():
+    pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__max_depth', np.arange(1,50,1),
+                          'Tree, Titanic')
+    
+    
+
+def run_validation_curves_knn_titanic_data_k():
+    pipeline = Pipeline([ ('scl', StandardScaler() ),
+                          ('clf', KNeighborsClassifier(algorithm='kd_tree'))])
+
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__n_neighbors', np.arange(1,30,1),
+                          'KNN, Titanic')
+    
+
+
+def run_validation_curves_knn_wine_data_k():
+    pipeline = Pipeline([ ('scl', StandardScaler() ),
+                          ('clf', KNeighborsClassifier(algorithm='kd_tree'))])
+
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__n_neighbors', np.arange(1,50,1),
+                          'KNN, Wine Feature Subset')
+    
+
+
+def run_validation_curves_neural_titanic_data_k():
+    pipeline = Pipeline([ ('scl', StandardScaler() ),
+                          ('clf', MLPClassifier())])
+
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__n_neighbors', np.arange(1,30,1),
+                          'KNN, Titanic')
+    
+
+
+def run_validation_curves_neural_wine_data_k():
+    pipeline = Pipeline([ ('scl', StandardScaler() ),
+                          ('clf', MLPClassifier())])
+
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__n_neighbors', np.arange(1,50,1),
+                          'KNN, Wine Feature Subset')
+    
+    
 def run_validation_curves_boost():
     pipeline = Pipeline([('scl', StandardScaler()),
                          ('clf', AdaBoostClassifier(DecisionTreeClassifier(random_state=0), 100))])
@@ -278,11 +464,46 @@ def run_validation_curves_boost():
                           'Boost')
     
     
+    
+        
 if __name__ == "__main__":
-    #run_learning_curves_bag()
-    #run_validation_curves_tree_full_data_max_depth()
-    run_learning_curves_tree_full_data()    
     '''
+    run_validation_curves_tree_wine_full_data_max_depth()
+    run_validation_curves_tree_wine_full_data_max_leaf_nodes()
+    run_learning_curves_tree_wine_full_data_max_depth(8)
+
+    run_validation_curves_tree_titanic_full_data_max_depth()
+    run_validation_curves_tree_titanic_full_data_max_leaf_nodes()
+    run_learning_curves_tree_titanic_full_data_max_depth(6)
+    
+    run_validation_curves_tree_wine_max_depth()
+    run_validation_curves_tree_wine_max_leaf_nodes()
+    run_learning_curves_tree_wine_max_depth(4)
+    
+    run_validation_curves_knn_wine_data_k()
+    run_learning_curves_knn_wine_k(35)
+    
+    run_validation_curves_knn_titanic_data_k()
+    run_learning_curves_knn_titanic_k(3)
+    '''
+    run_validation_curves_neural_wine_data_k()
+    #run_learning_curves_neural_wine_k(35)
+    
+    run_validation_curves_neural_titanic_data_k()
+    #run_learning_curves_neural_titanic_k(3)
+
+
+
+
+    #run_validation_curves_tree_titanic_data_max_depth()
+    #run_validation_curves_tree_titanic_data_max_leaf_nodes()
+    #run_learning_curves_tree_titanic_data_max_depth(8)
+
+
+    
+    '''
+    #run_learning_curves_bag()
+        
     grid_search_neural_sgd()
     
     

@@ -463,7 +463,7 @@ def plot_wine_neural_validation():
 
 def plot_titanic_neural_validation():
     vc = validation_curves()
-    
+    h = 100
     dh = data_helper()    
     X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_titanic_data_full_set()
 

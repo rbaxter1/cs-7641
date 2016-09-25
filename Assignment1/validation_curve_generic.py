@@ -100,6 +100,39 @@ class validation_curves:
                             clf = clf_type()
                         elif sc1_type == AdaBoostClassifier:
                             clf = AdaBoostClassifier(base_estimator=clf_type())
+                        elif clf_type == MLPClassifier:
+                            if dataset == 'Titanic':
+                                clf = Pipeline([('scl', StandardScaler()),
+                                              ('clf', MLPClassifier(random_state=0,
+                                                                    max_iter=50,
+                                                                    activation='relu',
+                                                                    shuffle=True,
+                                                                    solver='adam',
+                                                                    learning_rate_init=0.001,
+                                                                    learning_rate='constant'
+                                                                    ))])
+                            else:
+                                clf = Pipeline([('scl', StandardScaler()),
+                                          ('clf', MLPClassifier(activation='relu',
+                                                                learning_rate='constant',
+                                                                shuffle=True,
+                                                                solver='adam',
+                                                                random_state=0,
+                                                                max_iter=500,
+                                                                batch_size=60
+                                                                ))])
+                        elif clf_type == 'SVC':
+                            if dataset == 'wine':
+                                pipeline = Pipeline([('scl', StandardScaler()),
+                                                     ('clf', SVC(C=1, random_state=0, max_iter=500, tol=0.001, kernel='poly'))])
+                                
+                            else:
+                                pipeline = Pipeline([('scl', StandardScaler()),
+                                                     ('clf', SVC(random_state=0, max_iter=500, tol=0.001,
+                                                                 kernel='rbf', probability=True,
+                                                                 shrinking=True, C=3))])
+                                
+                                
                         else:
                             clf = Pipeline([ ('scl', sc1_type() ),
                                              ('clf', clf_type() )
@@ -219,6 +252,9 @@ class validation_curves:
                               'Avg predict time: ', avg_predict_time, '+/-', std_predict_time)
                         
                         x.append(param_value)
+                        
+                    if clf_type == MLPClassifier:
+                        x = np.arange(1, len(x)+1, 1)
                         
                     ph.plot_validation_curve(param_range=x,
                                              train_mean=np.array(in_sample_avg_errors),
@@ -392,13 +428,25 @@ def plot_wine_neural_validation():
     
     dh = data_helper()    
     X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data_knn()
-
+    h = 100
+                          
     params_dict = {
                     #'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
                     #'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
                     #'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
                     #'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False},
-                    'clf__hidden_layer_sizes': {'param_value': [(1,),(1,1,),(1,1,1),(1,1,1,1),(1,1,1,1,1)], 'reverse_xaxis': False}
+                    'clf__hidden_layer_sizes': {'param_value': [(h,),
+                                                                (h,h,),
+                                                                (h,h,h,),
+                                                                (h,h,h,h,),
+                                                                (h,h,h,h,h),
+                                                                (h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h,h,h,h)
+                                                                ], 'reverse_xaxis': False}
                     
     }
     
@@ -420,37 +468,93 @@ def plot_titanic_neural_validation():
     X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_titanic_data_full_set()
 
     params_dict = {
-                    'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
-                    'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
-                    'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
-                    'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False}
+                    #'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
+                    #'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
+                    #'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
+                    #'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False},
+                    'clf__hidden_layer_sizes': {'param_value': [(h,),
+                                                                (h,h,),
+                                                                (h,h,h,),
+                                                                (h,h,h,h,),
+                                                                (h,h,h,h,h),
+                                                                (h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h,h,h),
+                                                                (h,h,h,h,h,h,h,h,h,h,h)
+                                                                ], 'reverse_xaxis': False}
+                    
     }
     
-    outer_param_dict = { 'clf__activation': {'identity': params_dict,
-                                         'logistic': params_dict,
-                                         'tanh': params_dict,
+    outer_param_dict = { 'clf__activation': {#'identity': params_dict,
+                                         #'logistic': params_dict,
+                                         #'tanh': params_dict,
                                          'relu': params_dict}     
                          }
-    
                          
     vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, outer_param_dict, 'Titanic', 'Neural Net', '')
    
+   
+   
+   
+
+def plot_wine_svc_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data()
+
+    params_dict = {#'clf__C': {'param_value': np.arange(1, 5, 1), 'reverse_xaxis': True},
+                   #'clf__gamma': {'param_value': np.arange(0.1, 1., 0.05), 'reverse_xaxis': False},
+                   'clf__degree': {'param_value': np.arange(1, 10, 1), 'reverse_xaxis': False}
+                   }
+    
+    outer_param_dict = { 'clf__kernel': {'poly': params_dict}     
+                         }
+                     
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, SVC, StandardScaler, outer_param_dict, 'wine', 'SVM', '')
+        
+
+
+def plot_titanic_svc_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_titanic_data_full_set()
+
+    params_dict = {#'clf__C': {'param_value': np.arange(1, 5, 1), 'reverse_xaxis': True},
+                   'clf__gamma': {'param_value': np.arange(0.1, 1., 0.05), 'reverse_xaxis': False},
+                   #'clf__p': {'param_value': np.arange(1, 20, 1), 'reverse_xaxis': False}
+                   }
+    
+    outer_param_dict = { 'clf__kernel': {'rbf': params_dict}     
+                         }
+                     
+                     
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, SVC, StandardScaler, outer_param_dict, 'wine', 'SVM', '')
+        
+        
+
 if __name__ == "__main__":
     
-    #plot_wine_boost_validation()
+    plot_wine_boost_validation()
     plot_titanic_boost_validation()
     
-    #plot_all_wine_tree_validation()
-    #plot_all_titanic_tree_validation()
+    plot_all_wine_tree_validation()
+    plot_all_titanic_tree_validation()
     
-    #plot_reduced_wine_tree_validation()
+    plot_reduced_wine_tree_validation()
     
-    #plot_wine_knn_validation()
-    #plot_titanic_knn_validation()
+    plot_wine_knn_validation()
+    plot_titanic_knn_validation()
     
     
-    #plot_wine_neural_validation()
-    #plot_titanic_neural_validation()
+    plot_wine_neural_validation()
+    plot_titanic_neural_validation()
+    
+    plot_wine_svc_validation()
+    plot_titanic_svc_validation()
     
     '''
     vc = validation_curves()

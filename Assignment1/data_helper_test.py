@@ -1,4 +1,6 @@
 from data_helper import *
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import uuid
 
@@ -276,6 +278,97 @@ def grid_search_titanic_neural():
 
 
 
+def grid_search_wine_boost():
+    pipeline = Pipeline([('clf', AdaBoostClassifier(base_estimator=DecisionTreeClassifier()))])
+    
+    parameters = {'clf__base_estimator__max_depth': np.arange(1, 30, 1),
+                  
+                  }
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+
+
+def grid_search_titanic_svm_poly():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', SVC(kernel='poly'))])
+    
+    
+    parameters = {'clf__C': np.arange(1,5,1),
+                  'clf__degree': np.arange(1,5,1),
+                  #'clf__shrinking': [True, False],
+                  #'clf__probability': [True, False],
+                  #'clf__gamma': np.arange(0.1, 0.7, 0.1)
+                  }
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+def grid_search_titanic_svm():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', SVC())])
+    
+    
+    parameters = {'clf__kernel': ['rbf', 'linear', 'sigmoid'],
+                  'clf__C': np.arange(1,5,1),
+                  'clf__shrinking': [True, False],
+                  'clf__probability': [True, False],
+                  'clf__gamma': np.arange(0.1, 0.7, 0.1)}
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+
+
+
+
+
+def grid_search_wine_svm_poly():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', SVC(kernel='poly'))])
+    
+    
+    parameters = {'clf__C': np.arange(1,5,1),
+                  'clf__degree': np.arange(1,5,1),
+                  #'clf__shrinking': [True, False],
+                  #'clf__probability': [True, False],
+                  #'clf__gamma': np.arange(0.1, 0.7, 0.1)
+                  }
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+def grid_search_wine_svm():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', SVC())])
+    
+    
+    parameters = {'clf__kernel': ['rbf', 'linear', 'sigmoid'],
+                  'clf__C': np.arange(1,5,1),
+                  'clf__shrinking': [True, False],
+                  'clf__probability': [True, False],
+                  'clf__gamma': np.arange(0.1, 0.7, 0.1)}
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+
 
 def grid_search_neural_sgd():
     pipeline = Pipeline([('scl', StandardScaler()),
@@ -399,7 +492,8 @@ def run_learning_curves_neural_wine_data():
 
 
 def run_learning_curves_boost_wine_max_depth(max_depth):
-    pipeline = Pipeline([('clf', AdaBoostClassifier(DecisionTreeClassifier(random_state=0)))])
+    pipeline = Pipeline([('clf', AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=max_depth, random_state=0),
+                                                    algorithm='SAMME.R'))])
     
     dh = data_helper()
     X_train, X_test, y_train, y_test =  dh.load_wine_data()
@@ -450,6 +544,41 @@ def run_learning_curves_neural_titanic():
     X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
 
     run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Neural, Titanic, Feature Subset, hidden_layers=1')
+
+
+
+def run_learning_curves_svm_wine():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', SVC(random_state=0, C=1, max_iter=500, tol=0.001, kernel='poly', degree=1))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'SVM, Wine, kernel=poly, degree=1')
+
+
+def run_learning_curves_svm_titanic():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', SVC(random_state=0,
+                                     max_iter=500,
+                                     tol=0.001,
+                                     kernel='rbf',
+                                     probability=True,
+                                     shrinking=True,
+                                     C=3,
+                                     gamma=0.2))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'SVM, Titanic, kernel=rbf, C=3, gamma=0.2')
+
+
+
+
+
+
+
 
 
 
@@ -708,7 +837,7 @@ def run_validation_curves_boost():
     
         
 if __name__ == "__main__":
-    '''
+    
     run_validation_curves_tree_wine_full_data_max_depth()
     run_validation_curves_tree_wine_full_data_max_leaf_nodes()
     run_learning_curves_tree_wine_full_data_max_depth(8)
@@ -726,8 +855,8 @@ if __name__ == "__main__":
     
     run_validation_curves_knn_titanic_data_k()
     run_learning_curves_knn_titanic_k(3)
-    '''
-    #grid_search_wine_neural()
+    
+    grid_search_wine_neural()
     '''
     Best score: 0.742
     Best parameters set:
@@ -737,7 +866,7 @@ if __name__ == "__main__":
 	clf__solver: 'adam'
     '''
     
-    #grid_search_wine_neural2()
+    grid_search_wine_neural2()
     '''    
     Best score: 0.735
     Best parameters set:
@@ -747,7 +876,7 @@ if __name__ == "__main__":
 	clf__solver: 'adam'
     '''
     
-    #grid_search_titanic_neural()
+    grid_search_titanic_neural()
     '''
     Best score: 0.809
     Best parameters set:
@@ -757,24 +886,71 @@ if __name__ == "__main__":
 	clf__solver: 'adam'
     '''
     
-    run_learning_curves_boost_wine_max_depth(1)    
+    grid_search_wine_boost()
+    '''
+    Best score: 0.761
+    Best parameters set:
+            clf__base_estimator__max_depth: 17
+    '''
+    run_learning_curves_boost_wine_max_depth(17)    
     run_learning_curves_boost_titanic_full_data_max_depth(1)
     
     
+    grid_search_wine_svm()
+    '''
+    Best score: 0.731
+    Best parameters set:
+            clf__C: 1
+            clf__gamma: 0.10000000000000001
+            clf__kernel: 'linear'
+            clf__probability: True
+            clf__shrinking: True
+    '''
     
-    #run_validation_curves_neural_wine_data_hidden_layer_sizes()
-    #run_learning_curves_neural_wine_data()
+    grid_search_wine_svm_poly()
+    '''
+    Best score: 0.732
+    Best parameters set:
+            clf__C: 1
+            clf__degree: 1
+    '''
     
-    #run_validation_curves_neural_titanic_data_hidden_layer_sizes()
-    #run_validation_curves_neural_titanic_data_hidden_layer_sizes()
+    grid_search_titanic_svm()
+    '''
+    Best score: 0.817
+    Best parameters set:
+            clf__C: 3
+            clf__gamma: 0.10000000000000001
+            clf__kernel: 'rbf'
+            clf__probability: True
+            clf__shrinking: True
+    '''
+    grid_search_titanic_svm_poly()
+    '''
+    Best score: 0.798
+    Best parameters set:
+            clf__C: 4
+            clf__degree: 1
+    '''
+    
+    
+    run_validation_curves_neural_wine_data_hidden_layer_sizes()
+    run_learning_curves_neural_wine_data()
+    run_learning_curves_neural_wine()
+    
+    run_validation_curves_neural_titanic_data_hidden_layer_sizes()
+    run_validation_curves_neural_titanic_data_hidden_layer_sizes()
+    run_learning_curves_neural_titanic()
 
 
 
-
-    #run_validation_curves_tree_titanic_data_max_depth()
-    #run_validation_curves_tree_titanic_data_max_leaf_nodes()
-    #run_learning_curves_tree_titanic_data_max_depth(8)
-
+    run_validation_curves_tree_titanic_data_max_depth()
+    run_validation_curves_tree_titanic_data_max_leaf_nodes()
+    run_learning_curves_tree_titanic_data_max_depth(8)
+    
+    
+    run_learning_curves_svm_wine()
+    run_learning_curves_svm_titanic()
 
     
     '''

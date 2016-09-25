@@ -98,6 +98,8 @@ class validation_curves:
                         
                         if sc1_type == None:
                             clf = clf_type()
+                        elif sc1_type == AdaBoostClassifier:
+                            clf = AdaBoostClassifier(base_estimator=clf_type())
                         else:
                             clf = Pipeline([ ('scl', sc1_type() ),
                                              ('clf', clf_type() )
@@ -259,7 +261,52 @@ def plot_all_titanic_tree_validation():
     vc.run(X_train, X_test, y_train, y_test, DecisionTreeClassifier, None, outer_param_dict, 'titanic', 'Tree, All Features', 'Tree nodes')
 
      
-     
+
+
+def plot_wine_boost_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train, X_test, y_train, y_test = dh.load_wine_data()
+
+    params_dict = {
+            #'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
+            'base_estimator__max_depth': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': False} ,
+            #'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
+            #'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
+            'base_estimator__max_leaf_nodes': {'param_value': np.arange(2, 200, 4), 'reverse_xaxis': False}#,
+            #'max_features': {'param_value': np.arange(1, X_train_wine.shape[1], 1), 'reverse_xaxis': False}
+            }
+        
+    
+    outer_param_dict = { 'algorithm': {'SAMME.R': params_dict}     
+                         }
+    
+    vc.run(X_train, X_test, y_train, y_test, DecisionTreeClassifier, AdaBoostClassifier, outer_param_dict, 'wine', 'Boost, Feature Subset', '')
+
+
+def plot_titanic_boost_validation():
+    vc = validation_curves()
+    
+    dh = data_helper()    
+    X_train, X_test, y_train, y_test = dh.load_titanic_data_full_set()
+
+    params_dict = {
+            #'min_impurity_split': {'param_value': np.arange(0.0, 1.0, 0.02), 'reverse_xaxis': True},
+            'base_estimator__max_depth': {'param_value': np.arange(1, 50, 1), 'reverse_xaxis': False} ,
+            #'min_samples_split': {'param_value': np.arange(1, 200, 5), 'reverse_xaxis': True},
+            #'min_samples_leaf': {'param_value': np.arange(2, 200, 5), 'reverse_xaxis': True},
+            'base_estimator__max_leaf_nodes': {'param_value': np.arange(2, 200, 4), 'reverse_xaxis': False}#,
+            #'max_features': {'param_value': np.arange(1, X_train_wine.shape[1], 1), 'reverse_xaxis': False}
+            }
+        
+    
+    outer_param_dict = { 'algorithm': {'SAMME.R': params_dict}     
+                         }
+    
+    vc.run(X_train, X_test, y_train, y_test, DecisionTreeClassifier, AdaBoostClassifier, outer_param_dict, 'Titanic', 'Boost', '')
+
+
 def plot_all_wine_tree_validation():
     vc = validation_curves()
     
@@ -347,15 +394,17 @@ def plot_wine_neural_validation():
     X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_wine_data_knn()
 
     params_dict = {
-                    'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
-                    'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
-                    'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
-                    'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False}
+                    #'clf__max_iter': {'param_value': np.arange(1, 500, 10), 'reverse_xaxis': False},
+                    #'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
+                    #'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
+                    #'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False},
+                    'clf__hidden_layer_sizes': {'param_value': [(1,),(1,1,),(1,1,1),(1,1,1,1),(1,1,1,1,1)], 'reverse_xaxis': False}
+                    
     }
     
-    outer_param_dict = { 'clf__activation': {'identity': params_dict,
-                                         'logistic': params_dict,
-                                         'tanh': params_dict,
+    outer_param_dict = { 'clf__activation': {#'identity': params_dict,
+                                         #'logistic': params_dict,
+                                         #'tanh': params_dict,
                                          'relu': params_dict}     
                          }
     
@@ -388,6 +437,9 @@ def plot_titanic_neural_validation():
    
 if __name__ == "__main__":
     
+    #plot_wine_boost_validation()
+    plot_titanic_boost_validation()
+    
     #plot_all_wine_tree_validation()
     #plot_all_titanic_tree_validation()
     
@@ -397,8 +449,8 @@ if __name__ == "__main__":
     #plot_titanic_knn_validation()
     
     
-    plot_wine_neural_validation()
-    plot_titanic_neural_validation()
+    #plot_wine_neural_validation()
+    #plot_titanic_neural_validation()
     
     '''
     vc = validation_curves()

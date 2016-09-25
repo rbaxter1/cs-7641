@@ -70,7 +70,7 @@ def run_learning_curves(X_train, X_test, y_train, y_test, pipeline, title_desc='
     plt.savefig(fn)
 
 
-def run_validation_curves(X_train, X_test, y_train, y_test, pipeline, param_name, param_range, title_desc=''):
+def run_validation_curves(X_train, X_test, y_train, y_test, pipeline, param_name, param_range, title_desc='', param_range_plot=None):
     
     #X_train, X_test, y_train, y_test =  dh.load_titanic_data()
     #X_train, X_test, y_train, y_test =  dh.load_nba_data()
@@ -91,6 +91,9 @@ def run_validation_curves(X_train, X_test, y_train, y_test, pipeline, param_name
     test_mean = np.mean(test_scores, axis=1)
     test_std = np.std(test_scores, axis=1)
     
+    if param_range_plot != None:
+        param_range = param_range_plot
+        
     plt.plot(param_range, train_mean,
              color='blue', marker='o',
              markersize=5,
@@ -118,6 +121,25 @@ def run_validation_curves(X_train, X_test, y_train, y_test, pipeline, param_name
     plt.legend(loc='lower right')
     fn = './output/' + str(uuid.uuid4()) + '_validationcurve.png'
     plt.savefig(fn)
+
+def run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters):    
+    grid_search = GridSearchCV(pipeline, parameters, n_jobs=1, verbose=1)
+    
+    print("Performing grid search...")
+    print("pipeline:", [name for name, _ in pipeline.steps])
+    print("parameters:")
+    print(parameters)
+    t0 = timer()
+    grid_search.fit(X_train, y_train)
+    print("done in %0.3fs" % (timer() - t0))
+    print()
+    
+    print("Best score: %0.3f" % grid_search.best_score_)
+    print("Best parameters set:")
+    best_parameters = grid_search.best_estimator_.get_params()
+    for param_name in sorted(parameters.keys()):
+        print("\t%s: %r" % (param_name, best_parameters[param_name]))
+
     
 
 def run_grid_search(pipeline, parameters):
@@ -171,22 +193,88 @@ def grid_search_tree():
     
     run_grid_search(pipeline, parameters)
 
-def grid_search_neural():
+def grid_search_wine_neural():
     pipeline = Pipeline([('scl', StandardScaler()),
-                         ('clf', MLPClassifier(random_state=0))])
+                         ('clf', MLPClassifier(random_state=0,
+                                               max_iter=500
+                                               ))])
     
     parameters = {'clf__activation': ('identity', 'logistic', 'tanh', 'relu'),
                   'clf__solver': ('lbgfs', 'sgd', 'adam'),
                   'clf__learning_rate': ('constant', 'invscaling', 'adaptive'),
                   'clf__shuffle': (True, False),
-                  'clf__learning_rate_init': (1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001)
+                  #'clf__learning_rate_init': np.arange(0.001,0.01,0.001)
                   #'clf__max_iter': np.arange(1, 500, 10),
                   #'clf__batch_size': np.arange(50,500,10),
                   #'clf__learning_rate_init': np.arange(0.001,0.1,0.01),
                   #'clf__power_t': np.arange(0.01,0.1,0.01)
+                  #'clf__hidden_layer_sizes', [(10),(10,10),(10,10,10),(10,10,10,10),(10,10,10,10,10)]
                   }
     
-    run_grid_search(pipeline, parameters)
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+def grid_search_wine_neural2():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', MLPClassifier(activation='relu',
+                                               learning_rate='constant',
+                                               shuffle=True,
+                                               solver='adam',
+                                               random_state=0,
+                                               max_iter=500,
+                                               batch_size=60,
+                                               ))])
+    
+    parameters = {#'clf__activation': ('identity', 'logistic', 'tanh', 'relu'),
+                  #'clf__solver': ('lbgfs', 'sgd', 'adam'),
+                  #'clf__learning_rate': ('constant', 'invscaling', 'adaptive'),
+                  #'clf__shuffle': (True, False),
+                  #'clf__learning_rate_init': np.arange(0.001,0.01,0.001)
+                  #'clf__max_iter': np.arange(1, 500, 10),
+                  #'clf__batch_size': np.arange(50,500,10),
+                  #'clf__learning_rate_init': np.arange(0.001,0.1,0.01),
+                  #'clf__power_t': np.arange(0.01,0.1,0.01)
+                  #'clf__hidden_layer_sizes', [(10),(10,10),(10,10,10),(10,10,10,10),(10,10,10,10,10)]
+                  }
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+
+def grid_search_titanic_neural():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', MLPClassifier(random_state=0,
+                                               max_iter=500
+                                               ))])
+    
+    parameters = {'clf__activation': ('identity', 'logistic', 'tanh', 'relu'),
+                  'clf__solver': ('lbgfs', 'sgd', 'adam'),
+                  'clf__learning_rate': ('constant', 'invscaling', 'adaptive'),
+                  'clf__shuffle': (True, False),
+                  #'clf__learning_rate_init': np.arange(0.001,0.01,0.001)
+                  #'clf__max_iter': np.arange(1, 500, 10),
+                  #'clf__batch_size': np.arange(50,500,10),
+                  #'clf__learning_rate_init': np.arange(0.001,0.1,0.01),
+                  #'clf__power_t': np.arange(0.01,0.1,0.01)
+                  #'clf__hidden_layer_sizes', [(10),(10,10),(10,10,10),(10,10,10,10),(10,10,10,10,10)]
+                  }
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+
+    run_grid_search_data(X_train, X_test, y_train, y_test, pipeline, parameters)
+
+
+
 
 
 def grid_search_neural_sgd():
@@ -209,6 +297,8 @@ def grid_search_neural_sgd():
     
     run_grid_search(pipeline, parameters)
 
+    
+    
 
 
 def run_learning_curves_bag():
@@ -288,8 +378,84 @@ def run_learning_curves_tree_titanic_full_data_max_depth(max_depth):
 
     run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Tree, Titanic, All Features, max_depth=' + str(max_depth))
     
+
+def run_learning_curves_neural_wine_data():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', MLPClassifier(activation='relu',
+                                               learning_rate='constant',
+                                               shuffle=True,
+                                               solver='adam',
+                                               random_state=0,
+                                               max_iter=500,
+                                               batch_size=60,
+                                               ))])
     
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Neural, Wine, Feature subset')
+
+
+
+
+def run_learning_curves_boost_wine_max_depth(max_depth):
+    pipeline = Pipeline([('clf', AdaBoostClassifier(DecisionTreeClassifier(random_state=0)))])
     
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Boost, Wine, Feature Subset, max_depth=' + str(max_depth))
+
+
+def run_learning_curves_boost_titanic_full_data_max_depth(max_depth):
+    pipeline = Pipeline([('clf', AdaBoostClassifier(DecisionTreeClassifier(random_state=0)))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Boost, Titanic, All Features, max_depth=' + str(max_depth))
+
+
+def run_learning_curves_neural_wine():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', MLPClassifier(activation='relu',
+                                               learning_rate='constant',
+                                               shuffle=True,
+                                               solver='adam',
+                                               random_state=0,
+                                               max_iter=500,
+                                               batch_size=60,
+                                               hidden_layer_sizes=(100,)
+                                               ))])
+    
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Neural, Wine, Feature Subset, hidden_layers=1')
+
+
+def run_learning_curves_neural_titanic():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', MLPClassifier(random_state=0,
+                                               max_iter=50,
+                                               activation='relu',
+                                               shuffle=True,
+                                               solver='adam',
+                                               learning_rate_init=0.001,
+                                               learning_rate='constant',
+                                               hidden_layer_sizes=(100,)
+                                               ))])
+        
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    run_learning_curves(X_train, X_test, y_train, y_test, pipeline, 'Neural, Titanic, Feature Subset, hidden_layers=1')
+
+
+
+
+
+ 
     
     
     
@@ -346,6 +512,8 @@ def run_validation_curves_tree_titanic_full_data_max_depth():
     run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
                           'clf__max_depth', np.arange(1,50,1),
                           'Tree, Titanic, All Features')
+
+
 
 def run_validation_curves_tree_titanic_full_data_max_leaf_nodes():
     pipeline = Pipeline([('clf', DecisionTreeClassifier(random_state=0))])
@@ -408,7 +576,7 @@ def run_validation_curves_knn_wine_data_k():
     
 
 
-def run_validation_curves_neural_titanic_data_k():
+def run_validation_curves_neural_titanic_data_hidden_layer_sizes():
     pipeline = Pipeline([ ('scl', StandardScaler() ),
                           ('clf', MLPClassifier())])
 
@@ -417,22 +585,95 @@ def run_validation_curves_neural_titanic_data_k():
     X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
     
     run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
-                          'clf__n_neighbors', np.arange(1,30,1),
-                          'KNN, Titanic')
+                          'clf__hidden_layer_sizes', [(1,),(1,1,),(1,1,1),(1,1,1,1),(1,1,1,1,1)],
+                          'Neural, Titanic')
+    
+def run_validation_curves_neural_titanic_data_hidden_layer_sizes():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', MLPClassifier(random_state=0,
+                                               max_iter=50,
+                                               activation='relu',
+                                               shuffle=True,
+                                               solver='adam',
+                                               learning_rate_init=0.001,
+                                               learning_rate='constant'
+                                               ))])
+        
+    dh = data_helper()
+    X_train, X_test, y_train, y_test =  dh.load_titanic_data_full_set()
+
+    h = 100
+    
+    run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
+                          'clf__hidden_layer_sizes', [(h,),
+                                                      (h,h,),
+                                                      (h,h,h,),
+                                                      (h,h,h,h),
+                                                      (h,h,h,h,h),
+                                                      (h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h,h,h,h)
+                                                      ],
+                          'Neural, Wine Feature Subset', [1,
+                                                          2,
+                                                          3,
+                                                          4,
+                                                          5,
+                                                          6,
+                                                          7,
+                                                          8,
+                                                          9,
+                                                          10,
+                                                          11
+                                                          ])
     
 
 
-def run_validation_curves_neural_wine_data_k():
-    pipeline = Pipeline([ ('scl', StandardScaler() ),
-                          ('clf', MLPClassifier())])
-
+def run_validation_curves_neural_wine_data_hidden_layer_sizes():
+    pipeline = Pipeline([('scl', StandardScaler()),
+                         ('clf', MLPClassifier(activation='relu',
+                                               learning_rate='constant',
+                                               shuffle=True,
+                                               solver='adam',
+                                               random_state=0,
+                                               max_iter=500,
+                                               batch_size=60,
+                                               ))])
     
     dh = data_helper()
     X_train, X_test, y_train, y_test =  dh.load_wine_data_knn()
+
+    
+    h = 100
     
     run_validation_curves(X_train, X_test, y_train, y_test, pipeline,
-                          'clf__n_neighbors', np.arange(1,50,1),
-                          'KNN, Wine Feature Subset')
+                          'clf__hidden_layer_sizes', [(h,),
+                                                      (h,h,),
+                                                      (h,h,h,),
+                                                      (h,h,h,h,),
+                                                      (h,h,h,h,h),
+                                                      (h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h,h,h),
+                                                      (h,h,h,h,h,h,h,h,h,h,h)
+                                                      ],
+                          'Neural, Wine Feature Subset', [1,
+                                                          2,
+                                                          3,
+                                                          4,
+                                                          5,
+                                                          6,
+                                                          7,
+                                                          8,
+                                                          9,
+                                                          10,
+                                                          11
+                                                          ])
     
     
 def run_validation_curves_boost():
@@ -486,11 +727,46 @@ if __name__ == "__main__":
     run_validation_curves_knn_titanic_data_k()
     run_learning_curves_knn_titanic_k(3)
     '''
-    run_validation_curves_neural_wine_data_k()
-    #run_learning_curves_neural_wine_k(35)
+    #grid_search_wine_neural()
+    '''
+    Best score: 0.742
+    Best parameters set:
+	clf__activation: 'relu'
+	clf__learning_rate: 'constant'
+	clf__shuffle: True
+	clf__solver: 'adam'
+    '''
     
-    run_validation_curves_neural_titanic_data_k()
-    #run_learning_curves_neural_titanic_k(3)
+    #grid_search_wine_neural2()
+    '''    
+    Best score: 0.735
+    Best parameters set:
+	clf__activation: 'relu'
+	clf__learning_rate: 'constant'
+	clf__shuffle: True
+	clf__solver: 'adam'
+    '''
+    
+    #grid_search_titanic_neural()
+    '''
+    Best score: 0.809
+    Best parameters set:
+	clf__activation: 'relu'
+	clf__learning_rate: 'constant'
+	clf__shuffle: True
+	clf__solver: 'adam'
+    '''
+    
+    run_learning_curves_boost_wine_max_depth(1)    
+    run_learning_curves_boost_titanic_full_data_max_depth(1)
+    
+    
+    
+    #run_validation_curves_neural_wine_data_hidden_layer_sizes()
+    #run_learning_curves_neural_wine_data()
+    
+    #run_validation_curves_neural_titanic_data_hidden_layer_sizes()
+    #run_validation_curves_neural_titanic_data_hidden_layer_sizes()
 
 
 

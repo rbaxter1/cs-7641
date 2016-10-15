@@ -102,15 +102,27 @@ class validation_curves:
                             clf = AdaBoostClassifier(base_estimator=clf_type())
                         elif clf_type == MLPClassifier:
                             if dataset == 'Titanic':
+                                clf = pipeline = Pipeline([('scl', StandardScaler()),
+                                                           ('clf', MLPClassifier(random_state=0,
+                                                                                 #max_iter=50,
+                                                                                 activation='relu',
+                                                                                 shuffle=True,
+                                                                                 solver='adam',
+                                                                                 learning_rate_init=0.001,
+                                                                                 learning_rate='constant',
+                                                                                 hidden_layer_sizes=(100,)
+                                                                                 ))])
+                                '''
                                 clf = Pipeline([('scl', StandardScaler()),
                                               ('clf', MLPClassifier(random_state=0,
-                                                                    max_iter=50,
+                                                                    #max_iter=50,
                                                                     activation='relu',
                                                                     shuffle=True,
                                                                     solver='adam',
                                                                     learning_rate_init=0.001,
                                                                     learning_rate='constant'
                                                                     ))])
+                                '''
                             else:
                                 clf = Pipeline([('scl', StandardScaler()),
                                           ('clf', MLPClassifier(activation='relu',
@@ -461,6 +473,34 @@ def plot_wine_neural_validation():
         
 
 
+
+
+def plot_titanic_neural_validation2():
+    vc = validation_curves()
+    h = 100
+    dh = data_helper()    
+    X_train_wine, X_test_wine, y_train_wine, y_test_wine =  dh.load_titanic_data_full_set()
+
+    params_dict = {
+                    'clf__max_iter': {'param_value': np.arange(1, 10000, 1), 'reverse_xaxis': False},
+                    #'clf__batch_size': {'param_value': np.arange(50,500,10), 'reverse_xaxis': False},
+                    #'clf__learning_rate_init': {'param_value': np.arange(0.001,0.1,0.01), 'reverse_xaxis': False},
+                    #'clf__power_t': {'param_value': np.arange(0.01,0.1,0.01), 'reverse_xaxis': False},
+                    
+    }
+    
+    outer_param_dict = { 'clf__activation': {#'identity': params_dict,
+                                         #'logistic': params_dict,
+                                         #'tanh': params_dict,
+                                         'relu': params_dict}     
+                         }
+                         
+    vc.run(X_train_wine, X_test_wine, y_train_wine, y_test_wine, MLPClassifier, StandardScaler, outer_param_dict, 'Titanic', 'Neural Net', '')
+   
+   
+   
+   
+
 def plot_titanic_neural_validation():
     vc = validation_curves()
     h = 100
@@ -538,23 +578,23 @@ def plot_titanic_svc_validation():
 
 if __name__ == "__main__":
     
-    plot_wine_boost_validation()
-    plot_titanic_boost_validation()
+    #plot_wine_boost_validation()
+    #plot_titanic_boost_validation()
     
-    plot_all_wine_tree_validation()
-    plot_all_titanic_tree_validation()
+    #plot_all_wine_tree_validation()
+    #plot_all_titanic_tree_validation()
     
-    plot_reduced_wine_tree_validation()
+    #plot_reduced_wine_tree_validation()
     
-    plot_wine_knn_validation()
-    plot_titanic_knn_validation()
+    #plot_wine_knn_validation()
+    #plot_titanic_knn_validation()
     
     
-    plot_wine_neural_validation()
-    plot_titanic_neural_validation()
+    #plot_wine_neural_validation()
+    plot_titanic_neural_validation2()
     
-    plot_wine_svc_validation()
-    plot_titanic_svc_validation()
+    #plot_wine_svc_validation()
+    #plot_titanic_svc_validation()
     
     '''
     vc = validation_curves()

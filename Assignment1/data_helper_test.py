@@ -838,6 +838,8 @@ def run_validation_curves_boost():
         
 if __name__ == "__main__":
     
+    run_learning_curves_neural_titanic()
+    
     run_validation_curves_tree_wine_full_data_max_depth()
     run_validation_curves_tree_wine_full_data_max_leaf_nodes()
     run_learning_curves_tree_wine_full_data_max_depth(8)

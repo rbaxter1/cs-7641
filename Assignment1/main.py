@@ -17,7 +17,7 @@ from neural_test import *
 from timeit import default_timer as timer
 
 
-def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True, runWine=True, runTitanic=True, ):
+def main2(runTree=False, runKnn=False, runSvm=False, runBoost=False, runNeural=True, runWine=True, runTitanic=False, ):
     
     #arrays = [['Wine', 'Wine', 'Wine', 'Wine',  'Wine',   'Titanic', 'Titanic', 'Titanic', 'Titanic',  'Titanic'],
     #          ['Tree', 'Knn',  'SVM',  'Boost', 'Neural', 'Tree',    'Knn',     'SVM',     'Boost',    'Neural']]
@@ -59,8 +59,8 @@ def main2(runTree=True, runKnn=True, runSvm=True, runBoost=True, runNeural=True,
         abs_med = abs(med)
         df['phSugarRatioStd'] = df['phSugarRatioScore'] / abs_med
         
-        df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
-        df.plot.scatter(x='quality', y='phSugarRatioStd')
+        #df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
+        #df.plot.scatter(x='quality', y='phSugarRatioStd')
         
         # group the quality into binary good or bad
         df.loc[(df['quality'] >= 0) & (df['quality'] <= 5), 'quality'] = 0

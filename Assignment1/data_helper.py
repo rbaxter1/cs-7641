@@ -1,4 +1,4 @@
-from sklearn.preprocessing import Imputer, LabelEncoder
+from sklearn.preprocessing import Imputer, LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
@@ -542,6 +542,23 @@ class data_helper:
         # for the wine data using 30% of the data for testing
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
         
+        # export
+        '''
+        y.shape = (y.shape[0], 1)
+        x = StandardScaler().fit_transform(x)
+        xy = np.hstack((x, y))
+        np.savetxt('titanic.txt', xy, delimiter=',')
+        
+        y_test.shape = (y_test.shape[0], 1)
+        X_test = StandardScaler().fit_transform(X_test)
+        xy_test = np.hstack((X_test, y_test))
+        np.savetxt('titanic_test.txt', xy_test, delimiter=',')
+        
+        y_train.shape = (y_train.shape[0], 1)
+        X_train = StandardScaler().fit_transform(X_train)
+        xy_train = np.hstack((X_train, y_train))
+        np.savetxt('titanic_train.txt', xy_train, delimiter=',')
+        '''
         return X_train, X_test, y_train, y_test
         
     def load_titanic_data(self):

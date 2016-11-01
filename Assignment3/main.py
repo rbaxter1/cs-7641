@@ -110,6 +110,7 @@ def nba_clusters():
     df.columns = x_col_names
     
     gen_plots(df, 'output_clustering_nba')
+    gen_all_plots(df, 'output_clustering_nba', 'NBA')
     
 
 def wine_clusters():
@@ -151,8 +152,7 @@ def wine_clusters():
     df = pd.DataFrame(X_train)
     df.columns = x_col_names
     
-    #gen_plots(df, 'output_clustering_wine')
-    
+    gen_plots(df, 'output_clustering_wine')
     gen_all_plots(df, 'output_clustering_wine', 'Wine')
     
 def gen_plots(df, out_dir):
@@ -191,7 +191,7 @@ def gen_plots(df, out_dir):
                 y_pred = km.predict(X_train_minmax)
                 # inertia is the sum of distances from each point to its center   
                 km_inertias.append(km.inertia_)
-                km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
+                #km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
                 #km_sil_score.append(1)
 
                 # Clusters plot
@@ -217,7 +217,7 @@ def gen_plots(df, out_dir):
                              
                 em_bic.append(em.bic(X_train_minmax))
                 em_aic.append(em.aic(X_train_minmax))
-                em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
+                #em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
                 #em_sil_score.append(1)
 
                 # Clusters plot
@@ -258,6 +258,7 @@ def gen_plots(df, out_dir):
             
             
             # K-means Silhouette plot
+            '''
             plt.clf()
             plt.cla()
             fig, ax = plt.subplots()
@@ -276,9 +277,11 @@ def gen_plots(df, out_dir):
             fn = './' + out_dir + '/' + f1 + '_' + f2 + '_km_silhouette.png'
             plt.savefig(fn)
             plt.close('all')
+            '''
             
             
             # EM Silhouette plot
+            '''
             plt.clf()
             plt.cla()
             fig, ax = plt.subplots()
@@ -297,6 +300,7 @@ def gen_plots(df, out_dir):
             fn = './' + out_dir + '/' + f1 + '_' + f2 + '_em_silhouette.png'
             plt.savefig(fn)
             plt.close('all')
+            '''
             
             
             # EM BIC/AIC plot
@@ -348,7 +352,7 @@ def gen_all_plots(df, out_dir, name):
         y_pred = km.predict(X_train_minmax)
         # inertia is the sum of distances from each point to its center   
         km_inertias.append(km.inertia_)
-        km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
+        #km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
         #km_sil_score.append(1)
 
         ##
@@ -360,7 +364,7 @@ def gen_all_plots(df, out_dir, name):
                      
         em_bic.append(em.bic(X_train_minmax))
         em_aic.append(em.aic(X_train_minmax))
-        em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
+        #em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
         #em_sil_score.append(1)
         
         
@@ -387,6 +391,7 @@ def gen_all_plots(df, out_dir, name):
     
     
     # K-means Silhouette plot
+    '''
     plt.clf()
     plt.cla()
     fig, ax = plt.subplots()
@@ -405,9 +410,11 @@ def gen_all_plots(df, out_dir, name):
     fn = './' + out_dir + '/' + name + '_km_silhouette.png'
     plt.savefig(fn)
     plt.close('all')
+    '''
     
     
     # EM Silhouette plot
+    '''
     plt.clf()
     plt.cla()
     fig, ax = plt.subplots()
@@ -426,7 +433,7 @@ def gen_all_plots(df, out_dir, name):
     fn = './' + out_dir + '/' + name + '_em_silhouette.png'
     plt.savefig(fn)
     plt.close('all')
-    
+    '''
     
     # EM BIC/AIC plot
     plt.clf()

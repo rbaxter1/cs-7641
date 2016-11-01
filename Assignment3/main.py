@@ -151,8 +151,9 @@ def wine_clusters():
     df = pd.DataFrame(X_train)
     df.columns = x_col_names
     
-    gen_plots(df, 'output_clustering_wine')
+    #gen_plots(df, 'output_clustering_wine')
     
+    gen_all_plots(df, 'output_clustering_wine', 'Wine')
     
 def gen_plots(df, out_dir):
     
@@ -324,6 +325,136 @@ def gen_plots(df, out_dir):
             print('done ', f1, ', ', f2)
     
     
+def gen_all_plots(df, out_dir, name):
+    X_train = df.values
+    X_train_minmax = MinMaxScaler().fit_transform(X_train)
+    
+    km_inertias = []
+    em_bic = []
+    em_aic = []
+    
+    km_sil_score = []
+    em_sil_score = []
+    
+    cluster_range = np.arange(2, 20, 1)
+    for k in cluster_range:
+        print('K Clusters: ', k)
+        
+        ##
+        ## k-means
+        ##
+        km = KMeans(n_clusters=k, algorithm='full')
+        km.fit(X_train_minmax)
+        y_pred = km.predict(X_train_minmax)
+        # inertia is the sum of distances from each point to its center   
+        km_inertias.append(km.inertia_)
+        km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
+        #km_sil_score.append(1)
+
+        ##
+        ## Expectation Maximization
+        ##
+        em = GaussianMixture(n_components=k, covariance_type='full')
+        em.fit(X_train_minmax)
+        y_pred = em.predict(X_train_minmax)
+                     
+        em_bic.append(em.bic(X_train_minmax))
+        em_aic.append(em.aic(X_train_minmax))
+        em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
+        #em_sil_score.append(1)
+        
+        
+    # K-means Elbow plot
+    plt.clf()
+    plt.cla()
+    fig, ax = plt.subplots()
+    
+    for axis in [ax.xaxis, ax.yaxis]:
+        axis.set_major_locator(ticker.MaxNLocator(integer=True))
+        
+    plt.plot(cluster_range, km_inertias)
+    
+    t = 'K-Means Elbow: ' + name
+    plt.title(t)
+    
+    
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Inertia')
+    
+    fn = './' + out_dir + '/' + name + '_km_elbow.png'
+    plt.savefig(fn)
+    plt.close('all')
+    
+    
+    # K-means Silhouette plot
+    plt.clf()
+    plt.cla()
+    fig, ax = plt.subplots()
+    
+    for axis in [ax.xaxis, ax.yaxis]:
+        axis.set_major_locator(ticker.MaxNLocator(integer=True))
+        
+    plt.plot(cluster_range, km_sil_score)
+    
+    t = 'K-Means Silhouette: ' + name
+    plt.title(t)
+    
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Silhouette')
+    
+    fn = './' + out_dir + '/' + name + '_km_silhouette.png'
+    plt.savefig(fn)
+    plt.close('all')
+    
+    
+    # EM Silhouette plot
+    plt.clf()
+    plt.cla()
+    fig, ax = plt.subplots()
+    
+    for axis in [ax.xaxis, ax.yaxis]:
+        axis.set_major_locator(ticker.MaxNLocator(integer=True))
+        
+    plt.plot(cluster_range, em_sil_score)
+    
+    t = 'EM Silhouette: ' + name
+    plt.title(t)
+    
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Silhouette')
+    
+    fn = './' + out_dir + '/' + name + '_em_silhouette.png'
+    plt.savefig(fn)
+    plt.close('all')
+    
+    
+    # EM BIC/AIC plot
+    plt.clf()
+    plt.cla()
+    fig, ax = plt.subplots()
+    
+    for axis in [ax.xaxis, ax.yaxis]:
+        axis.set_major_locator(ticker.MaxNLocator(integer=True))
+    
+    plt.plot(cluster_range, em_bic, label='BIC')
+    plt.plot(cluster_range, em_aic, label='AIC')
+        
+    t = 'EM IC: ' + f1 + ' vs ' + f2
+    plt.title(t)
+    
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Information Criterion')
+    
+    plt.legend(loc='best')
+
+    fn = './' + out_dir + '/' + name + '_em_ic.png'
+    plt.savefig(fn)
+    plt.close('all')
+    
+    print('done ', name)
+
+
 if __name__== '__main__':
     wine_clusters()
+    
     

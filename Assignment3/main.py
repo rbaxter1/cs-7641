@@ -7,11 +7,11 @@ import pandas as pd
 import itertools
 import matplotlib.cm as cm
 
+
 import matplotlib.ticker as ticker
 
 from sklearn.metrics import silhouette_samples, silhouette_score
 from scipy import linalg
-#import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 from sklearn.cluster import KMeans
@@ -21,6 +21,8 @@ from sklearn.preprocessing import Imputer, LabelEncoder, StandardScaler, MinMaxS
 from sklearn.model_selection import train_test_split
 
 from sklearn.mixture import GaussianMixture, GMM
+from sklearn.decomposition import PCA
+
 
 def run_and_plot():
     dh = data_helper()
@@ -109,8 +111,8 @@ def nba_clusters():
     df = pd.DataFrame(X_train)
     df.columns = x_col_names
     
-    gen_plots(df, 'output_clustering_nba')
-    gen_all_plots(df, 'output_clustering_nba', 'NBA')
+    gen_plots(df, 'output_clustering_nba', 40)
+    gen_all_plots(df, 'output_clustering_nba', 'NBA', 40)
     
 
 def wine_clusters():
@@ -152,10 +154,10 @@ def wine_clusters():
     df = pd.DataFrame(X_train)
     df.columns = x_col_names
     
-    gen_plots(df, 'output_clustering_wine')
-    gen_all_plots(df, 'output_clustering_wine', 'Wine')
+    gen_plots(df, 'output_clustering_wine', 20)
+    gen_all_plots(df, 'output_clustering_wine', 'Wine', 20)
     
-def gen_plots(df, out_dir):
+def gen_plots(df, out_dir, max_clusters):
     
     for i in range(df.shape[1]):
         
@@ -179,7 +181,7 @@ def gen_plots(df, out_dir):
             km_sil_score = []
             em_sil_score = []
             
-            cluster_range = np.arange(2, 20, 1)
+            cluster_range = np.arange(2, max_clusters, 1)
             for k in cluster_range:
                 print('K Clusters: ', k)
                 
@@ -329,7 +331,7 @@ def gen_plots(df, out_dir):
             print('done ', f1, ', ', f2)
     
     
-def gen_all_plots(df, out_dir, name):
+def gen_all_plots(df, out_dir, name, max_clusters):
     X_train = df.values
     X_train_minmax = MinMaxScaler().fit_transform(X_train)
     
@@ -340,7 +342,7 @@ def gen_all_plots(df, out_dir, name):
     km_sil_score = []
     em_sil_score = []
     
-    cluster_range = np.arange(2, 20, 1)
+    cluster_range = np.arange(2, max_clusters, 1)
     for k in cluster_range:
         print('K Clusters: ', k)
         

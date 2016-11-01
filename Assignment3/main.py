@@ -7,6 +7,8 @@ import pandas as pd
 import itertools
 import matplotlib.cm as cm
 
+import matplotlib.ticker as ticker
+
 from sklearn.metrics import silhouette_samples, silhouette_score
 from scipy import linalg
 #import matplotlib.pyplot as plt
@@ -99,14 +101,6 @@ def main():
     
     df = pd.read_csv('./data/winequality-red.csv', sep=';')
     
-    # impute missing values
-    #imr = Imputer(strategy='mean')
-    #imr.fit(df)
-    
-    # Separate x and y
-    #x = imr.transform(df)
-    #y = df.loc[:,'Survived'].values
-    
     for i in range(df.shape[1]):
         if 'quality' in df.columns[i]:
             continue
@@ -127,7 +121,6 @@ def main():
             X_train_minmax = MinMaxScaler().fit_transform(X_train)
             
             km_inertias = []
-            #em_inertias = []
             em_bic = []
             em_aic = []
             
@@ -144,13 +137,13 @@ def main():
                 km = KMeans(n_clusters=k, algorithm='full')
                 km.fit(X_train_minmax)
                 y_pred = km.predict(X_train_minmax)
+                # inertia is the sum of distances from each point to its center   
                 km_inertias.append(km.inertia_)
                 km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
 
                 # Clusters plot
                 plt.clf()
                 plt.cla()
-                #fig = plt.figure()
                 plt.scatter(X_train_minmax[:,0], X_train_minmax[:,1], c=y_pred)
                 
                 t = 'K-means clusters: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
@@ -158,7 +151,7 @@ def main():
                 plt.xlabel(f1)
                 plt.ylabel(f2)
                 
-                fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + 'km_clusters.png'
+                fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + '_km_clusters.png'
                 plt.savefig(fn)
                 
                 ##
@@ -167,9 +160,7 @@ def main():
                 em = GaussianMixture(n_components=k, covariance_type='full')
                 em.fit(X_train_minmax)
                 y_pred = em.predict(X_train_minmax)
-                
-                # inertia is the sum of distances from each point to its center                
-                #em_inertias.append(em.inertia_) # not available
+                             
                 em_bic.append(em.bic(X_train_minmax))
                 em_aic.append(em.aic(X_train_minmax))
                 em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
@@ -177,7 +168,6 @@ def main():
                 # Clusters plot
                 plt.clf()
                 plt.cla()
-                #fig = plt.figure()
                 plt.scatter(X_train_minmax[:,0], X_train_minmax[:,1], c=y_pred)
                 
                 t = 'EM clusters: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
@@ -185,146 +175,94 @@ def main():
                 plt.xlabel(f1)
                 plt.ylabel(f2)
                 
-                fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + 'em_clusters.png'
+                fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + '_em_clusters.png'
                 plt.savefig(fn)
                 
                 
             # K-means Elbow plot
             plt.clf()
             plt.cla()
-            #fig = plt.figure(cluster_range, np.ones(len(km_inertias)) * km_inertias)
+            fig, ax = plt.subplots()
+            
+            for axis in [ax.xaxis, ax.yaxis]:
+                axis.set_major_locator(ticker.MaxNLocator(integer=True))
+                
             plt.plot(cluster_range, km_inertias)
             
-            t = 'K-Means Elbow: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
+            t = 'K-Means Elbow: ' + f1 + ' vs ' + f2
             plt.title(t)
             
-            #fig.suptitle(t)
             
             plt.xlabel('Number of Clusters')
             plt.ylabel('Inertia')
             
-            fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + 'km_elbow.png'
+            fn = './output_clustering/' + f1 + '_' + f2 + '_km_elbow.png'
             plt.savefig(fn)
             
             # K-means Silhouette plot
             plt.clf()
             plt.cla()
-            #fig = plt.figure(labels, km_sil_score)
+            fig, ax = plt.subplots()
+            
+            for axis in [ax.xaxis, ax.yaxis]:
+                axis.set_major_locator(ticker.MaxNLocator(integer=True))
+                
             plt.plot(cluster_range, km_sil_score)
             
-            t = 'K-Means Silhouette: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
-            #fig.suptitle(t)
+            t = 'K-Means Silhouette: ' + f1 + ' vs ' + f2
             plt.title(t)
             
             plt.xlabel('Number of Clusters')
             plt.ylabel('Silhouette')
             
-            fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + 'km_silhouette.png'
+            fn = './output_clustering/' + f1 + '_' + f2 + '_km_silhouette.png'
             plt.savefig(fn)
             
-            
-            # EM Elbow plot
-            '''
-            plt.clf()
-            plt.cla()
-            fig = plt.figure(cluster_range, em_inertias)
-            
-            t = 'EM elbow: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
-            fig.suptitle(t)
-            
-            plt.xlabel('Number of Clusters')
-            plt.ylabel('Inertia')
-            plt.plot(range())
-            
-            fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + 'em_elbow.png'
-            fig.savefig(fn)
-            '''
             
             # EM Silhouette plot
             plt.clf()
             plt.cla()
-            #fig = plt.figure(labels, em_sil_score)
+            fig, ax = plt.subplots()
+            
+            for axis in [ax.xaxis, ax.yaxis]:
+                axis.set_major_locator(ticker.MaxNLocator(integer=True))
+                
             plt.plot(cluster_range, em_sil_score)
             
-            t = 'EM Silhouette: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
+            t = 'EM Silhouette: ' + f1 + ' vs ' + f2
             plt.title(t)
             
             plt.xlabel('Number of Clusters')
             plt.ylabel('Silhouette')
             
-            fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + 'em_silhouette.png'
+            fn = './output_clustering/' + f1 + '_' + f2 + '_em_silhouette.png'
             plt.savefig(fn)
             
             
             # EM BIC/AIC plot
             plt.clf()
             plt.cla()
+            fig, ax = plt.subplots()
+            
+            for axis in [ax.xaxis, ax.yaxis]:
+                axis.set_major_locator(ticker.MaxNLocator(integer=True))
+            
             plt.plot(cluster_range, em_bic, label='BIC')
             plt.plot(cluster_range, em_aic, label='AIC')
-            
-            #plt.legend(['BIC', 'AIC'], loc='upper left')
-            
-            #ax.plot(N, AIC, '-k', label='AIC')
-            #ax.plot(N, BIC, '--k', label='BIC')
-            #ax.set_xlabel('n. components')
-            #ax.set_ylabel('information criterion')
-            #ax.legend(loc=2
-                      
-            t = 'EM IC: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
+                
+            t = 'EM IC: ' + f1 + ' vs ' + f2
             plt.title(t)
             
             plt.xlabel('Number of Clusters')
             plt.ylabel('Information Criterion')
             
-            fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + 'em_ic.png'
+            plt.legend(loc='best')
+
+            fn = './output_clustering/' + f1 + '_' + f2 + '_em_ic.png'
             plt.savefig(fn)
             
-            print('done ', f1, ', ', f2)  
-                
-            '''
-            # Silhouette plot
-            sa = silhouette_score(X_train_minmax, y_pred)
-            print("silhouette_score:", sa)
-            
-            cluster_labels = np.unique(y_pred)
-            n_clusters = cluster_labels.shape[0]
-            silhouette_vals = silhouette_samples(X_train_minmax, y_pred, metric='euclidean')
-            y_ax_lower, y_ax_upper = 0, 0
-            yticks = []
-            
-            plt.clf()
-            plt.cla()    
-
-            for ii, c in enumerate(cluster_labels):
-                c_silhouette_vals = silhouette_vals[y_pred == c]
-                c_silhouette_vals.sort()
-                y_ax_upper += len(c_silhouette_vals)
-                color = cm.jet(ii / n_clusters)
-                plt.barh(range(y_ax_lower, y_ax_upper), c_silhouette_vals, height=1.0,
-                         edgecolor='none', color=color)
-            
-                yticks.append((y_ax_lower + y_ax_upper) / 2.)
-                y_ax_lower += len(c_silhouette_vals)
-            
-            silhouette_avg = np.mean(silhouette_vals)
-            plt.axvline(silhouette_avg, color="red", linestyle="--")
-            
-            plt.yticks(yticks, cluster_labels + 1)
-            plt.ylabel('Cluster')
-            plt.xlabel('Silhouette coefficient')
-            
-            # plt.tight_layout()
-            fn = './output_clustering/em_silhouette_' + f1 + '_' + f2 + '_' + str(k) + '.png'
-            
-            plt.savefig(fn)
-            #plt.show()                
-            '''
-            
-            
-                
-
+            print('done ', f1, ', ', f2)
     
 if __name__== '__main__':
     main()
-    print(1)
     

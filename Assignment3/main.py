@@ -80,8 +80,38 @@ def plot_results(X, Y, means, covariances, index, title, fn):
     plt.show()
     plt.savefig(fn)
 
+
+def nba_clusters():
+    df = pd.read_csv('./data/shot_logs.csv', sep=',')
     
-def main():
+    le = LabelEncoder()
+    le.fit(df['LOCATION'])
+    le.transform(df['LOCATION']) 
+    df['LOCATION_ENC'] = le.transform(df['LOCATION'])
+        
+    le = LabelEncoder()
+    le.fit(df['SHOT_RESULT'])
+    le.transform(df['SHOT_RESULT']) 
+    df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
+        
+    x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'CLOSE_DEF_DIST', 'DRIBBLES']
+    
+    x = df.loc[:,x_col_names].values
+    y = df.loc[:,'SHOT_RESULT_ENC'].values
+    
+    # split the data into training and test data
+    # for the wine data using 30% of the data for testing
+    X_train, X_test, y_train, y_test = train_test_split(x,
+                                                        y,
+                                                        test_size=0.70,
+                                                        random_state=0)
+    df = pd.DataFrame(X_train)
+    df.columns = x_col_names
+    
+    gen_plots(df, 'output_clustering_nba')
+    
+
+def wine_clusters():
     '''   
     CORR
                            quality  
@@ -101,13 +131,31 @@ def main():
     
     df = pd.read_csv('./data/winequality-red.csv', sep=';')
     
+    split = df['quality'].median()
+    df['quality_2'] = df['quality']
+    
+    # group the quality into binary good or bad
+    df.loc[(df['quality'] >= 0) & (df['quality'] < split), 'quality_2'] = 0
+    df.loc[(df['quality'] >= split), 'quality_2'] = 1
+    
+    x_col_names = ['alcohol', 'volatile acidity', 'sulphates', 'pH'] 
+    
+    x = df.loc[:,x_col_names].values
+    y = df.loc[:,'quality_2'].values
+    
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+    
+    df = pd.DataFrame(X_train)
+    df.columns = x_col_names
+    
+    gen_plots(df, 'output_clustering_wine')
+    
+    
+def gen_plots(df, out_dir):
+    
     for i in range(df.shape[1]):
-        if 'quality' in df.columns[i]:
-            continue
-                
+        
         for j in range(df.shape[1]):
-            if 'quality' in df.columns[j]:
-                continue
         
             if i == j:
                 continue
@@ -151,7 +199,7 @@ def main():
                 plt.xlabel(f1)
                 plt.ylabel(f2)
                 
-                fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + '_km_clusters.png'
+                fn = './' + out_dir + '/' + f1 + '_' + f2 + '_' + str(k) + '_km_clusters.png'
                 plt.savefig(fn)
                 
                 ##
@@ -175,7 +223,7 @@ def main():
                 plt.xlabel(f1)
                 plt.ylabel(f2)
                 
-                fn = './output_clustering/' + f1 + '_' + f2 + '_' + str(k) + '_em_clusters.png'
+                fn = './' + out_dir + '/' + f1 + '_' + f2 + '_' + str(k) + '_em_clusters.png'
                 plt.savefig(fn)
                 
                 
@@ -196,7 +244,7 @@ def main():
             plt.xlabel('Number of Clusters')
             plt.ylabel('Inertia')
             
-            fn = './output_clustering/' + f1 + '_' + f2 + '_km_elbow.png'
+            fn = './' + out_dir + '/' + f1 + '_' + f2 + '_km_elbow.png'
             plt.savefig(fn)
             
             # K-means Silhouette plot
@@ -215,7 +263,7 @@ def main():
             plt.xlabel('Number of Clusters')
             plt.ylabel('Silhouette')
             
-            fn = './output_clustering/' + f1 + '_' + f2 + '_km_silhouette.png'
+            fn = './' + out_dir + '/' + f1 + '_' + f2 + '_km_silhouette.png'
             plt.savefig(fn)
             
             
@@ -235,7 +283,7 @@ def main():
             plt.xlabel('Number of Clusters')
             plt.ylabel('Silhouette')
             
-            fn = './output_clustering/' + f1 + '_' + f2 + '_em_silhouette.png'
+            fn = './' + out_dir + '/' + f1 + '_' + f2 + '_em_silhouette.png'
             plt.savefig(fn)
             
             
@@ -258,11 +306,12 @@ def main():
             
             plt.legend(loc='best')
 
-            fn = './output_clustering/' + f1 + '_' + f2 + '_em_ic.png'
+            fn = './' + out_dir + '/' + f1 + '_' + f2 + '_em_ic.png'
             plt.savefig(fn)
             
             print('done ', f1, ', ', f2)
     
+    
 if __name__== '__main__':
-    main()
+    nba_clusters()
     

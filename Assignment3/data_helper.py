@@ -224,8 +224,41 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
+    
+    
+    def load_nba_data(self):
+        df = pd.read_csv('./data/shot_logs.csv', sep=',')
+        
+        le = LabelEncoder()
+        le.fit(df['LOCATION'])
+        le.transform(df['LOCATION']) 
+        df['LOCATION_ENC'] = le.transform(df['LOCATION'])
+            
+        le = LabelEncoder()
+        le.fit(df['SHOT_RESULT'])
+        le.transform(df['SHOT_RESULT']) 
+        df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
+            
+        x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'DRIBBLES', 'FINAL_MARGIN']
+        x_col_names = ['SHOT_DIST', 'CLOSE_DEF_DIST', 'DRIBBLES']
+        x, y = df.loc[:,x_col_names].values, df.loc[:,'SHOT_RESULT_ENC'].values
+        
+        
+        
+        
+        # split the data into training and test data
+        # for the wine data using 30% of the data for testing
+        X_train, X_test, y_train, y_test = train_test_split(x,
+                                                            y,
+                                                            test_size=0.25,
+                                                            random_state=0)
+
+        return X_train, X_test, y_train, y_test
+    
 if __name__== '__main__':
     dh = data_helper()
+    X_train, X_test, y_train, y_test = dh.load_nba_data()
+    
     X_train, X_test, y_train, y_test = dh.load_preprocess_and_split_titanic_data()
     dh.pre_scale_and_export(X_train, X_test, y_train, y_test, 'titanic')
     

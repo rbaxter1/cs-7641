@@ -93,8 +93,9 @@ def nba_clusters():
     le.fit(df['SHOT_RESULT'])
     le.transform(df['SHOT_RESULT']) 
     df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
-        
-    x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'CLOSE_DEF_DIST', 'DRIBBLES']
+    
+    x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'CLOSE_DEF_DIST', 'DRIBBLES']
+    df.dropna(how='all', inplace=True)
     
     x = df.loc[:,x_col_names].values
     y = df.loc[:,'SHOT_RESULT_ENC'].values
@@ -138,6 +139,8 @@ def wine_clusters():
     df.loc[(df['quality'] >= 0) & (df['quality'] < split), 'quality_2'] = 0
     df.loc[(df['quality'] >= split), 'quality_2'] = 1
     
+    df.dropna(how='all', inplace=True)
+    
     x_col_names = ['alcohol', 'volatile acidity', 'sulphates', 'pH'] 
     
     x = df.loc[:,x_col_names].values
@@ -165,7 +168,7 @@ def gen_plots(df, out_dir):
             
             print('Feature1: ', f1, ', Feature2: ', f2)
             X_train = df.values[:,(i,j)]
-            X_train_scale = StandardScaler().fit_transform(X_train)
+            #X_train_scale = StandardScaler().fit_transform(X_train)
             X_train_minmax = MinMaxScaler().fit_transform(X_train)
             
             km_inertias = []
@@ -187,7 +190,7 @@ def gen_plots(df, out_dir):
                 y_pred = km.predict(X_train_minmax)
                 # inertia is the sum of distances from each point to its center   
                 km_inertias.append(km.inertia_)
-                km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='hamming'))
+                km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
                 #km_sil_score.append(1)
 
                 # Clusters plot
@@ -202,6 +205,7 @@ def gen_plots(df, out_dir):
                 
                 fn = './' + out_dir + '/' + f1 + '_' + f2 + '_' + str(k) + '_km_clusters.png'
                 plt.savefig(fn)
+                plt.close('all')
                 
                 ##
                 ## Expectation Maximization
@@ -212,7 +216,7 @@ def gen_plots(df, out_dir):
                              
                 em_bic.append(em.bic(X_train_minmax))
                 em_aic.append(em.aic(X_train_minmax))
-                em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='hamming'))
+                em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
                 #em_sil_score.append(1)
 
                 # Clusters plot
@@ -227,6 +231,7 @@ def gen_plots(df, out_dir):
                 
                 fn = './' + out_dir + '/' + f1 + '_' + f2 + '_' + str(k) + '_em_clusters.png'
                 plt.savefig(fn)
+                plt.close('all')
                 
                 
             # K-means Elbow plot
@@ -248,6 +253,8 @@ def gen_plots(df, out_dir):
             
             fn = './' + out_dir + '/' + f1 + '_' + f2 + '_km_elbow.png'
             plt.savefig(fn)
+            plt.close('all')
+            
             
             # K-means Silhouette plot
             plt.clf()
@@ -267,6 +274,7 @@ def gen_plots(df, out_dir):
             
             fn = './' + out_dir + '/' + f1 + '_' + f2 + '_km_silhouette.png'
             plt.savefig(fn)
+            plt.close('all')
             
             
             # EM Silhouette plot
@@ -287,6 +295,7 @@ def gen_plots(df, out_dir):
             
             fn = './' + out_dir + '/' + f1 + '_' + f2 + '_em_silhouette.png'
             plt.savefig(fn)
+            plt.close('all')
             
             
             # EM BIC/AIC plot
@@ -310,6 +319,7 @@ def gen_plots(df, out_dir):
 
             fn = './' + out_dir + '/' + f1 + '_' + f2 + '_em_ic.png'
             plt.savefig(fn)
+            plt.close('all')
             
             print('done ', f1, ', ', f2)
     

@@ -439,7 +439,7 @@ def gen_all_plots(df, out_dir, name):
     plt.plot(cluster_range, em_bic, label='BIC')
     plt.plot(cluster_range, em_aic, label='AIC')
         
-    t = 'EM IC: ' + f1 + ' vs ' + f2
+    t = 'EM IC: ' + name
     plt.title(t)
     
     plt.xlabel('Number of Clusters')

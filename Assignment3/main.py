@@ -463,5 +463,6 @@ def gen_all_plots(df, out_dir, name):
 
 if __name__== '__main__':
     wine_clusters()
+    nba_clusters()
     
     

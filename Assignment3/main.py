@@ -187,8 +187,8 @@ def gen_plots(df, out_dir):
                 y_pred = km.predict(X_train_minmax)
                 # inertia is the sum of distances from each point to its center   
                 km_inertias.append(km.inertia_)
-                #km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
-                km_sil_score.append(1)
+                km_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='hamming'))
+                #km_sil_score.append(1)
 
                 # Clusters plot
                 plt.clf()
@@ -212,8 +212,8 @@ def gen_plots(df, out_dir):
                              
                 em_bic.append(em.bic(X_train_minmax))
                 em_aic.append(em.aic(X_train_minmax))
-                #em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='euclidean'))
-                em_sil_score.append(1)
+                em_sil_score.append(silhouette_score(X_train_minmax, y_pred, metric='hamming'))
+                #em_sil_score.append(1)
 
                 # Clusters plot
                 plt.clf()
@@ -315,5 +315,5 @@ def gen_plots(df, out_dir):
     
     
 if __name__== '__main__':
-    nba_clusters()
+    wine_clusters()
     

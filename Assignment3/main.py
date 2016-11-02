@@ -21,8 +21,9 @@ from sklearn.preprocessing import Imputer, LabelEncoder, StandardScaler, MinMaxS
 from sklearn.model_selection import train_test_split
 
 from sklearn.mixture import GaussianMixture, GMM
-from sklearn.decomposition import PCA
-
+from sklearn.decomposition import PCA, FastICA
+from sklearn.random_projection import GaussianRandomProjection
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 def run_and_plot():
     dh = data_helper()
@@ -184,10 +185,19 @@ def nba_dim_reduce():
     
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.7, random_state=0)
     
-    df2 = pd.DataFrame(X_train)
-    df2.columns = x_col_names
+    dfx = pd.DataFrame(X_train)
+    dfx.columns = x_col_names
     
-    gen_pca_plots(df2, 'output_dim_reduce_nba', 'NBA', df2.shape[1])
+    dfy = pd.DataFrame(y_train)
+    dfy.columns = ['SHOT_RESULT_ENC']
+    
+    dfxt = pd.DataFrame(X_test)
+    dfxt.columns = x_col_names
+    
+    dfyt = pd.DataFrame(y_test)
+    dfyt.columns = ['SHOT_RESULT_ENC']
+    
+    gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, 'output_dim_reduce_nba', 'NBA', dfx.shape[1])
     
 def wine_dim_reduce():
     '''   
@@ -209,21 +219,38 @@ def wine_dim_reduce():
     
     df = pd.read_csv('./data/winequality-red.csv', sep=';')
     
-    df = df.dropna(how='all', inplace=True)
+    df.dropna(how='all', inplace=True)
+    
+    split = df['quality'].median()
+    df['quality_2'] = df['quality']
+    
+    # group the quality into binary good or bad
+    df.loc[(df['quality'] >= 0) & (df['quality'] < split), 'quality_2'] = 0
+    df.loc[(df['quality'] >= split), 'quality_2'] = 1
     
     
     x_col_names = ['fixed acidity', 'citric acid', 'alcohol', 'residual sugar', 'chlorides', 'volatile acidity', 'sulphates', 'pH'] 
 
-    y = df.loc[:,'quality'].values
+    y = df.loc[:,'quality_2'].values
     df = df.drop('quality', 1)
+    df = df.drop('quality_2', 1)
     x = df.values
     
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
     
-    df2 = pd.DataFrame(X_train)
-    df2.columns = df.columns
+    dfx = pd.DataFrame(X_train)
+    dfx.columns = df.columns
     
-    gen_pca_plots(df2, 'output_dim_reduce_wine', 'wine', df2.shape[1])
+    dfy = pd.DataFrame(y_train)
+    dfy.columns = ['quality']
+    
+    dfxt = pd.DataFrame(X_test)
+    dfxt.columns = df.columns
+    
+    dfyt = pd.DataFrame(y_test)
+    dfyt.columns = ['quality']
+    
+    gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, 'output_dim_reduce_wine', 'wine', dfx.shape[1])
     
     
     
@@ -402,10 +429,22 @@ def gen_cluster_plots(df, out_dir, max_clusters):
     
     
 
-def gen_pca_plots(df, out_dir, name, max_clusters):
-    X_train = df.values
+def gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, out_dir, name, max_clusters):
+    X_train = dfx.values
     #X_train_scale = StandardScaler().fit_transform(X_train)
     X_train_minmax = MinMaxScaler().fit_transform(X_train)
+    
+    y_train = dfy.values
+    #X_train_scale = StandardScaler().fit_transform(X_train)
+    y_train_minmax = MinMaxScaler().fit_transform(y_train)
+    
+    X_test = dfxt.values
+    X_test_minmax = MinMaxScaler().fit_transform(X_test)
+    
+    y_test = dfyt.values
+    #X_train_scale = StandardScaler().fit_transform(X_train)
+    y_test_minmax = MinMaxScaler().fit_transform(y_test)
+    
     
     #explained_var_ratio = []
     
@@ -416,7 +455,7 @@ def gen_pca_plots(df, out_dir, name, max_clusters):
     ##
     ## PCA
     ##
-    pca = PCA(n_components=df.shape[1])
+    pca = PCA(n_components=dfx.shape[1], svd_solver='full')
     pca.fit(X_train_minmax)
     #X_train_pca = pca.transform(X_train_minmax)
     #explained_var_ratio.append(pca.explained_variance_ratio_)
@@ -467,6 +506,102 @@ def gen_pca_plots(df, out_dir, name, max_clusters):
     fn = './' + out_dir + '/' + name + '_pca_evr.png'
     plt.savefig(fn)
     plt.close('all')
+    
+    
+    
+    ##
+    ## ICA
+    ##
+    ica = FastICA(n_components=dfx.shape[1])
+    ica.fit(X_train_minmax)
+    X_train_ica = ica.transform(X_train_minmax)
+    #explained_var_ratio.append(pca.explained_variance_ratio_)
+    
+    '''
+    # ICA plot
+    plt.clf()
+    plt.cla()
+    fig, ax = plt.subplots()
+    
+    #for axis in [ax.xaxis, ax.yaxis]:
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+    
+    #rng = np.arange(1, ica.explained_variance_ratio_.shape[0]+1, 1)
+    
+    plt.bar(rng, pca.explained_variance_ratio_,
+            alpha=0.5, align='center',
+            label='Individual Explained Variance')
+    
+    plt.step(rng, np.cumsum(pca.explained_variance_ratio_),
+            where='mid', label='Cumulative Explained Variance')
+    
+    plt.legend(loc='best')
+    
+    t = 'ICA: ' + name
+    plt.title(t)
+    
+    plt.xlabel('Principal Components')
+    plt.ylabel('Explained Variance Ratio')
+    
+    fn = './' + out_dir + '/' + name + '_ica_evr.png'
+    plt.savefig(fn)
+    plt.close('all')
+    '''
+    
+
+    ##
+    ## Random Projection
+    ##
+    rp = GaussianRandomProjection(n_components=dfx.shape[1])
+    rp.fit(X_train_minmax)
+    X_train_rp = rp.transform(X_train_minmax)
+    X_train_rp.shape
+    
+    
+    
+    
+    ##
+    ## LDA
+    ##
+    lda = LinearDiscriminantAnalysis(n_components=dfx.shape[1])
+    lda.fit(X_train_minmax, y_train_minmax)
+    
+    score_ = lda.score(X_test_minmax, y_test_minmax)
+    
+    X_train_lda = lda.transform(X_train_minmax)
+    
+    #X_train_lda.shape
+    
+    # LDA plot
+    
+    plt.clf()
+    plt.cla()
+    fig, ax = plt.subplots()
+    
+    #for axis in [ax.xaxis, ax.yaxis]:
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+        
+    rng = np.arange(1, lda.explained_variance_ratio_.shape[0]+1, 1)
+    
+    plt.bar(rng, lda.explained_variance_ratio_,
+            alpha=0.5, align='center',
+            label='Individual Explained Variance')
+    
+    plt.step(rng, np.cumsum(lda.explained_variance_ratio_),
+            where='mid', label='Cumulative Explained Variance')
+    
+    plt.legend(loc='best')
+    
+    t = 'LDA: ' + name
+    plt.title(t)
+    
+    plt.xlabel('Components')
+    plt.ylabel('Explained Variance Ratio')
+    
+    fn = './' + out_dir + '/' + name + '_lda_evr.png'
+    plt.savefig(fn)
+    plt.close('all')
+    
     
     print('done ', name)
     
@@ -605,8 +740,8 @@ def gen_cluster_all_plots(df, out_dir, name, max_clusters):
 
 
 if __name__== '__main__':
-    wine_clusters()
-    nba_clusters()
+    #wine_clusters()
+    #nba_clusters()
     wine_dim_reduce()
     nba_dim_reduce()
     

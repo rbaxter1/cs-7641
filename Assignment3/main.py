@@ -97,7 +97,7 @@ def nba_clusters():
     df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
     
     x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'CLOSE_DEF_DIST', 'DRIBBLES']
-    df.dropna(how='all', inplace=True)
+    df = df.dropna(how='all', inplace=True)
     
     x = df.loc[:,x_col_names].values
     y = df.loc[:,'SHOT_RESULT_ENC'].values
@@ -111,8 +111,8 @@ def nba_clusters():
     df = pd.DataFrame(X_train)
     df.columns = x_col_names
     
-    gen_plots(df, 'output_clustering_nba', 40)
-    gen_all_plots(df, 'output_clustering_nba', 'NBA', 40)
+    gen_cluster_plots(df, 'output_clustering_nba', 40)
+    gen_cluster_all_plots(df, 'output_clustering_nba', 'NBA', 40)
     
 
 def wine_clusters():
@@ -154,10 +154,78 @@ def wine_clusters():
     df = pd.DataFrame(X_train)
     df.columns = x_col_names
     
-    gen_plots(df, 'output_clustering_wine', 20)
-    gen_all_plots(df, 'output_clustering_wine', 'Wine', 20)
+    gen_cluster_plots(df, 'output_clustering_wine', 20)
+    gen_cluster_all_plots(df, 'output_clustering_wine', 'Wine', 20)
     
-def gen_plots(df, out_dir, max_clusters):
+    
+def nba_dim_reduce():
+    
+    df = pd.read_csv('./data/shot_logs.csv', sep=',')
+        
+    le = LabelEncoder()
+    le.fit(df['LOCATION'])
+    le.transform(df['LOCATION']) 
+    df['LOCATION_ENC'] = le.transform(df['LOCATION'])
+        
+    le = LabelEncoder()
+    le.fit(df['SHOT_RESULT'])
+    le.transform(df['SHOT_RESULT']) 
+    df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
+    
+    df = df.drop(df[df['TOUCH_TIME'] < 0].index)
+    
+    x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'DRIBBLES', 'CLOSE_DEF_DIST']
+    
+    y = df.loc[:,'SHOT_RESULT_ENC'].values
+    df = df.drop('SHOT_RESULT_ENC', 1)
+    x = df.loc[:,x_col_names].values
+    
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.7, random_state=0)
+    
+    df2 = pd.DataFrame(X_train)
+    df2.columns = x_col_names
+    
+    gen_pca_plots(df2, 'output_dim_reduce_nba', 'NBA', df2.shape[1])
+    
+def wine_dim_reduce():
+    '''   
+    CORR
+                           quality  
+    fixed acidity        0.124052  
+    volatile acidity     -0.390558  
+    citric acid          0.226373  
+    residual sugar       0.013732  
+    chlorides            -0.128907  
+    free sulfur dioxide  -0.050656  
+    total sulfur dioxide -0.185100  
+    density              -0.174919  
+    pH                    -0.057731  
+    sulphates             0.251397  
+    alcohol               0.476166  
+    quality               1.000000  
+    '''    
+    
+    df = pd.read_csv('./data/winequality-red.csv', sep=';')
+    
+    df = df.dropna(how='all', inplace=True)
+    
+    
+    x_col_names = ['fixed acidity', 'citric acid', 'alcohol', 'residual sugar', 'chlorides', 'volatile acidity', 'sulphates', 'pH'] 
+
+    y = df.loc[:,'quality'].values
+    df = df.drop('quality', 1)
+    x = df.values
+    
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+    
+    df2 = pd.DataFrame(X_train)
+    df2.columns = df.columns
+    
+    gen_pca_plots(df2, 'output_dim_reduce_wine', 'wine', df2.shape[1])
+    
+    
+    
+def gen_cluster_plots(df, out_dir, max_clusters):
     
     for i in range(df.shape[1]):
         
@@ -331,7 +399,78 @@ def gen_plots(df, out_dir, max_clusters):
             print('done ', f1, ', ', f2)
     
     
-def gen_all_plots(df, out_dir, name, max_clusters):
+
+def gen_pca_plots(df, out_dir, name, max_clusters):
+    X_train = df.values
+    #X_train_scale = StandardScaler().fit_transform(X_train)
+    X_train_minmax = MinMaxScaler().fit_transform(X_train)
+    
+    #explained_var_ratio = []
+    
+    #cluster_range = np.arange(2, max_clusters, 1)
+    #for k in cluster_range:
+    #print('K: ', k)
+    
+    ##
+    ## PCA
+    ##
+    pca = PCA(n_components=df.shape[1])
+    pca.fit(X_train_minmax)
+    #X_train_pca = pca.transform(X_train_minmax)
+    #explained_var_ratio.append(pca.explained_variance_ratio_)
+    
+    
+    # Scatter plot
+    '''        
+    plt.clf()
+    plt.cla()
+    plt.scatter(X_train_pca[:,0], X_train_pca[:,1])
+    
+    t = 'PCA Scatter: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
+    plt.title(t)
+    plt.xlabel(f1)
+    plt.ylabel(f2)
+    
+    fn = './' + out_dir + '/' + f1 + '_' + f2 + '_' + str(k) + '_pca_scatter.png'
+    plt.savefig(fn)
+    plt.close('all')
+    '''
+        
+        
+    # PCA plot
+    plt.clf()
+    plt.cla()
+    fig, ax = plt.subplots()
+    
+    #for axis in [ax.xaxis, ax.yaxis]:
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+        
+    rng = np.arange(1, pca.explained_variance_ratio_.shape[0]+1, 1)
+    
+    plt.bar(rng, pca.explained_variance_ratio_,
+            alpha=0.5, align='center',
+            label='Individual Explained Variance')
+    
+    plt.step(rng, np.cumsum(pca.explained_variance_ratio_),
+            where='mid', label='Cumulative Explained Variance')
+    
+    plt.legend(loc='best')
+    
+    t = 'PCA: ' + name
+    plt.title(t)
+    
+    plt.xlabel('Principal Components')
+    plt.ylabel('Explained Variance Ratio')
+    
+    fn = './' + out_dir + '/' + name + '_pca_evr.png'
+    plt.savefig(fn)
+    plt.close('all')
+    
+    print('done ', name)
+    
+    
+    
+def gen_cluster_all_plots(df, out_dir, name, max_clusters):
     X_train = df.values
     X_train_minmax = MinMaxScaler().fit_transform(X_train)
     
@@ -464,7 +603,8 @@ def gen_all_plots(df, out_dir, name, max_clusters):
 
 
 if __name__== '__main__':
-    wine_clusters()
-    nba_clusters()
-    
+    #wine_clusters()
+    #nba_clusters()
+    #wine_dim_reduce()
+    nba_dim_reduce()
     

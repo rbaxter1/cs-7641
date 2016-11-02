@@ -96,6 +96,8 @@ def nba_clusters():
     le.transform(df['SHOT_RESULT']) 
     df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
     
+    df = df.drop(df[df['TOUCH_TIME'] < 0].index)
+    
     x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'CLOSE_DEF_DIST', 'DRIBBLES']
     df = df.dropna(how='all', inplace=True)
     

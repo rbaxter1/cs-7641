@@ -603,8 +603,8 @@ def gen_cluster_all_plots(df, out_dir, name, max_clusters):
 
 
 if __name__== '__main__':
-    #wine_clusters()
-    #nba_clusters()
-    #wine_dim_reduce()
+    wine_clusters()
+    nba_clusters()
+    wine_dim_reduce()
     nba_dim_reduce()
     

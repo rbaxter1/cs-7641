@@ -64,6 +64,6 @@ def run_grid_search(pipeline, parameters, X_train, X_test, y_train, y_test, cv):
     print("The model is trained on the full development set.")
     print("The scores are computed on the full evaluation set.")
     print()
-    y_true, y_pred = y_test, grid_search.predict(X_test)
-    print(classification_report(y_true, y_pred))
+    #y_true, y_pred = y_test, grid_search.predict(X_test)
+    #print(classification_report(y_true, y_pred))
     print()

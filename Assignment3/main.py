@@ -25,64 +25,6 @@ from sklearn.decomposition import PCA, FastICA
 from sklearn.random_projection import GaussianRandomProjection
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
-def run_and_plot():
-    dh = data_helper()
-    #X_train, X_test, y_train, y_test = dh.load_preprocess_and_split_titanic_data()
-    X_train, X_test, y_train, y_test = dh.load_raw_titanic_data()
-    y_pred = KMeans(n_clusters=4).fit_predict(X_train[:,1:3])
-    print(y_pred)
-    plt.scatter(X_train[:, 1], X_train[:, 2], c=y_pred)
-    plt.show()
-        
-
-    plt.figure(figsize=(12, 12))
-    
-    n_samples = 1500
-    random_state = 170
-    X, y = make_blobs(n_samples=n_samples, random_state=random_state)
-    
-    # Incorrect number of clusters
-    y_pred = KMeans(n_clusters=3, random_state=random_state).fit_predict(X)
-    
-    plt.subplot(221)
-    plt.scatter(X[:, 0], X[:, 1], c=y_pred)
-    plt.title("Incorrect Number of Blobs")
-    plt.show()
-    
-color_iter = itertools.cycle(['navy', 'c', 'cornflowerblue', 'gold',
-                              'darkorange'])
-
-
-def plot_results(X, Y, means, covariances, index, title, fn):
-    splot = plt.subplot(5, 1, 1 + index)
-    for i, (mean, covar, color) in enumerate(zip(
-            means, covariances, color_iter)):
-        v, w = linalg.eigh(covar)
-        v = 2. * np.sqrt(2.) * np.sqrt(v)
-        u = w[0] / linalg.norm(w[0])
-        # as the DP will not use every component it has access to
-        # unless it needs it, we shouldn't plot the redundant
-        # components.
-        if not np.any(Y == i):
-            continue
-        plt.scatter(X[Y == i, 0], X[Y == i, 1], .8, color=color)
-
-        # Plot an ellipse to show the Gaussian component
-        angle = np.arctan(u[1] / u[0])
-        angle = 180. * angle / np.pi  # convert to degrees
-        ell = mpl.patches.Ellipse(mean, v[0], v[1], 180. + angle, color=color)
-        ell.set_clip_box(splot.bbox)
-        ell.set_alpha(0.5)
-        splot.add_artist(ell)
-
-    plt.xlim(-6., 4. * np.pi - 6.)
-    plt.ylim(-5., 5.)
-    plt.title(title)
-    plt.xticks(())
-    plt.yticks(())
-    plt.show()
-    plt.savefig(fn)
-
 
 def nba_clusters():
     df = pd.read_csv('./data/shot_logs.csv', sep=',')
@@ -105,11 +47,9 @@ def nba_clusters():
     x = df.loc[:,x_col_names].values
     y = df.loc[:,'SHOT_RESULT_ENC'].values
     
-    # split the data into training and test data
-    # for the wine data using 30% of the data for testing
     X_train, X_test, y_train, y_test = train_test_split(x,
                                                         y,
-                                                        test_size=0.70,
+                                                        test_size=0.30,
                                                         random_state=0)
     df = pd.DataFrame(X_train)
     df.columns = x_col_names
@@ -183,7 +123,7 @@ def nba_dim_reduce():
     df = df.drop('SHOT_RESULT_ENC', 1)
     x = df.loc[:,x_col_names].values
     
-    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.7, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
     
     dfx = pd.DataFrame(X_train)
     dfx.columns = x_col_names
@@ -250,7 +190,7 @@ def wine_dim_reduce():
     dfyt = pd.DataFrame(y_test)
     dfyt.columns = ['quality']
     
-    gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, 'output_dim_reduce_wine', 'wine', dfx.shape[1])
+    gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, 'output_dim_reduce_wine', 'Wine', dfx.shape[1])
     
     
     
@@ -457,9 +397,9 @@ def gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, out_dir, name, max_clusters):
     ##
     pca = PCA(n_components=dfx.shape[1], svd_solver='full')
     pca.fit(X_train_minmax)
-    #X_train_pca = pca.transform(X_train_minmax)
+    X_train_pca = pca.transform(X_train_minmax)
     #explained_var_ratio.append(pca.explained_variance_ratio_)
-    
+    print(X_train_pca.shape)
     
     # Scatter plot
     '''        
@@ -515,6 +455,7 @@ def gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, out_dir, name, max_clusters):
     ica = FastICA(n_components=dfx.shape[1])
     ica.fit(X_train_minmax)
     X_train_ica = ica.transform(X_train_minmax)
+    print(X_train_ica.shape)
     #explained_var_ratio.append(pca.explained_variance_ratio_)
     
     '''
@@ -555,7 +496,7 @@ def gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, out_dir, name, max_clusters):
     rp = GaussianRandomProjection(n_components=dfx.shape[1])
     rp.fit(X_train_minmax)
     X_train_rp = rp.transform(X_train_minmax)
-    X_train_rp.shape
+    print(X_train_rp.shape)
     
     
     
@@ -569,7 +510,7 @@ def gen_dim_reduce_plots(dfx, dfy, dfxt, dfyt, out_dir, name, max_clusters):
     score_ = lda.score(X_test_minmax, y_test_minmax)
     
     X_train_lda = lda.transform(X_train_minmax)
-    
+    print(X_train_lda.shape)
     #X_train_lda.shape
     
     # LDA plot

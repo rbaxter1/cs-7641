@@ -243,18 +243,54 @@ class data_helper:
         x_col_names = ['SHOT_DIST', 'CLOSE_DEF_DIST', 'DRIBBLES']
         x, y = df.loc[:,x_col_names].values, df.loc[:,'SHOT_RESULT_ENC'].values
         
-        
-        
-        
-        # split the data into training and test data
-        # for the wine data using 30% of the data for testing
-        X_train, X_test, y_train, y_test = train_test_split(x,
-                                                            y,
-                                                            test_size=0.25,
-                                                            random_state=0)
+        return train_test_split(x,
+                                y,
+                                test_size=0.25,
+                                random_state=0)
 
-        return X_train, X_test, y_train, y_test
     
+    def get_wine_data_all(self):
+        
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        
+        split = df['quality'].median()
+        df['quality_2'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] < split), 'quality_2'] = 0
+        df.loc[(df['quality'] >= split), 'quality_2'] = 1
+        
+        df.dropna(how='all', inplace=True)
+        
+        x_col_names = ['fixed acidity', 'citric acid', 'alcohol', 'residual sugar', 'chlorides', 'volatile acidity', 'sulphates', 'pH'] 
+    
+        y = df.loc[:,'quality_2'].values
+        df = df.drop('quality', 1)
+        df = df.drop('quality_2', 1)
+        x = df.values
+        
+        return train_test_split(x, y, test_size=0.3, random_state=0)
+                
+    def get_wine_data(self):
+        
+        df = pd.read_csv('./data/winequality-red.csv', sep=';')
+        
+        split = df['quality'].median()
+        df['quality_2'] = df['quality']
+        
+        # group the quality into binary good or bad
+        df.loc[(df['quality'] >= 0) & (df['quality'] < split), 'quality_2'] = 0
+        df.loc[(df['quality'] >= split), 'quality_2'] = 1
+        
+        df.dropna(how='all', inplace=True)
+        
+        x_col_names = ['alcohol', 'volatile acidity', 'sulphates', 'pH'] 
+        
+        x = df.loc[:,x_col_names].values
+        y = df.loc[:,'quality_2'].values
+        
+        return train_test_split(x, y, test_size=0.3, random_state=0)
+        
 if __name__== '__main__':
     dh = data_helper()
     X_train, X_test, y_train, y_test = dh.load_nba_data()

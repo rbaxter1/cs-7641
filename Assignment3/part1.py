@@ -73,7 +73,12 @@ class part1():
             km_measure_score.append(v_measure_score(y_train_score, km.labels_))
             km_adjusted_rand_score.append(adjusted_rand_score(y_train_score, km.labels_))
             km_adjusted_mutual_info_score.append(adjusted_mutual_info_score(y_train_score, km.labels_))
-            km_silhouette_score.append(silhouette_score(X_train_scl, km.labels_, metric='euclidean', sample_size=2000))
+            
+            s_scores = []
+            for i in range(20):
+                s_scores.append(silhouette_score(X_train_scl, km.labels_, metric='euclidean', sample_size=50000))
+            
+            km_silhouette_score.append(np.mean(s_scores))
             
             
         ##

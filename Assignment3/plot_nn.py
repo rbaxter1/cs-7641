@@ -52,6 +52,8 @@ class plot_helper():
         
         plt.savefig(filename)
         
+        plt.close('all')
+        
     
         
     # source: http://scikit-learn.org/stable/auto_examples/model_selection/plot_learning_curve.html
@@ -87,6 +89,7 @@ class plot_helper():
         
         if filename != None:
             plt.savefig(filename)
+            
         return plt
 
     

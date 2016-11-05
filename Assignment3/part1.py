@@ -20,7 +20,6 @@ from timeit import default_timer as time
 
 from data_helper import *
 from plot_helper import *
-#import plot_validation_curve, plot_series
 
 '''
 1. Run the clustering algorithms on the data sets and describe what you see.
@@ -39,6 +38,37 @@ class part1():
         X_train, X_test, y_train, y_test = dh.get_nba_data()
         self.kmeans_analysis(X_train, X_test, y_train, y_test, 'NBA', 20)
     
+    # source: https://github.com/rasbt/python-machine-learning-book/blob/master/code/ch11/ch11.ipynb
+    def silhouette_plot(self, X, X_predicted, title, filename):
+        plt.clf()
+        plt.cla()
+        
+        cluster_labels = np.unique(X_predicted)
+        n_clusters = cluster_labels.shape[0]
+        silhouette_vals = silhouette_samples(X, X_predicted, metric='euclidean')
+        y_ax_lower, y_ax_upper = 0, 0
+        yticks = []
+        for i, c in enumerate(cluster_labels):
+            c_silhouette_vals = silhouette_vals[X_predicted == c]
+            c_silhouette_vals.sort()
+            y_ax_upper += len(c_silhouette_vals)
+            plt.barh(range(y_ax_lower, y_ax_upper), c_silhouette_vals, height=1.0, edgecolor='none')
+        
+            yticks.append((y_ax_lower + y_ax_upper) / 2.)
+            y_ax_lower += len(c_silhouette_vals)
+            
+        silhouette_avg = np.mean(silhouette_vals)
+        plt.axvline(silhouette_avg, color="red", linestyle="--") 
+        
+        plt.yticks(yticks, cluster_labels + 1)
+        plt.ylabel('Cluster')
+        plt.xlabel('Silhouette Coefficient')
+        
+        plt.title(title)
+        
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close('all')
         
     def kmeans_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters):
         scl = RobustScaler()
@@ -51,7 +81,8 @@ class part1():
         km_measure_score = []
         km_adjusted_rand_score = []
         km_adjusted_mutual_info_score = []
-        km_silhouette_score = []
+        #km_silhouette_score = []
+        #km_silhouette_samples = []
         
         cluster_range = np.arange(2, max_clusters+1, 1)
         for k in cluster_range:
@@ -74,11 +105,22 @@ class part1():
             km_adjusted_rand_score.append(adjusted_rand_score(y_train_score, km.labels_))
             km_adjusted_mutual_info_score.append(adjusted_mutual_info_score(y_train_score, km.labels_))
             
-            s_scores = []
-            for i in range(20):
-                s_scores.append(silhouette_score(X_train_scl, km.labels_, metric='euclidean', sample_size=10000))
+            #s_scores = []
+            #s_samples = []
+            #for i in range(20):
+            #    s_scores.append(silhouette_score(X_train_scl, km.labels_, metric='euclidean', sample_size=10000))
+                
+            #km_silhouette_score.append(np.mean(s_scores))
             
-            km_silhouette_score.append(np.mean(s_scores))
+            ##
+            ## Silhouette Plot
+            ##
+            
+            title = 'Silhouette Plot (K-Means, k=' + str(k) + ') for ' + data_set_name
+            name = data_set_name.lower() + '_kmean_silhouette_' + str(k)
+            filename = './' + self.out_dir + '/' + name + '.png'
+            
+            self.silhouette_plot(X_train_scl, km.labels_, title, filename)
             
             
         ##
@@ -111,15 +153,16 @@ class part1():
         filename = './' + self.out_dir + '/' + name + '.png'
                     
         ph.plot_series(cluster_range,
-                    [km_homogeneity_score, km_completeness_score, km_measure_score, km_adjusted_rand_score, km_adjusted_mutual_info_score, km_silhouette_score],
-                    [None, None, None, None, None, None, None],
-                    ['homogeneity', 'completeness', 'measure', 'adjusted_rand', 'adjusted_mutual_info', 'silhouette_score'],
-                    ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'],
-                    ['o', '^', 'v', '>', '<', '1', '2'],
+                    [km_homogeneity_score, km_completeness_score, km_measure_score, km_adjusted_rand_score, km_adjusted_mutual_info_score],
+                    [None, None, None, None, None, None],
+                    ['homogeneity', 'completeness', 'measure', 'adjusted_rand', 'adjusted_mutual_info'],
+                    ['red', 'orange', 'yellow', 'green', 'blue', 'indigo'],
+                    ['o', '^', 'v', '>', '<', '1'],
                     title,
                     'Number of Clusters',
                     'Score',
                     filename)
+        
         
         
     def gmm_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters):

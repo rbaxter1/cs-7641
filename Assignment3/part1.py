@@ -49,7 +49,7 @@ class part1():
         silhouette_vals = silhouette_samples(X, X_predicted, metric='euclidean')
         y_ax_lower, y_ax_upper = 0, 0
         
-        color=iter(cm.jet(np.linspace(0,1,cluster_labels.shape[0])))
+        color=iter(cm.viridis(np.linspace(0,1,cluster_labels.shape[0])))
            
         yticks = []
         for i, c in enumerate(cluster_labels):

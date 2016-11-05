@@ -26,7 +26,7 @@ class data_helper:
         
         return train_test_split(x,
                                 y,
-                                test_size=0.25,
+                                test_size=0.7,
                                 random_state=0)
 
     

@@ -212,7 +212,7 @@ class part1():
 def main():    
     print('Running part 1')
     p = part1()
-    p.cluster_wine()
+    #p.cluster_wine()
     p.cluster_nba()
 
 if __name__== '__main__':

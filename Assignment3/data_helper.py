@@ -20,7 +20,6 @@ class data_helper:
         le.transform(df['SHOT_RESULT']) 
         df['SHOT_RESULT_ENC'] = le.transform(df['SHOT_RESULT'])
             
-        x_col_names = ['SHOT_DIST', 'TOUCH_TIME', 'LOCATION_ENC', 'PTS_TYPE', 'DRIBBLES', 'FINAL_MARGIN']
         x_col_names = ['SHOT_DIST', 'CLOSE_DEF_DIST', 'DRIBBLES']
         x, y = df.loc[:,x_col_names].values, df.loc[:,'SHOT_RESULT_ENC'].values
         

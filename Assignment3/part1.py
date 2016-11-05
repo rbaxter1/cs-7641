@@ -29,12 +29,44 @@ class part1():
     def __init__(self):
         self.out_dir = 'output_part1'
     
-    def cluster_wine(self):
+    def wine_cluster_plots(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        
+        x_col_names = ['alcohol', 'volatile acidity', 'sulphates', 'pH']
+        df = pd.DataFrame(X_train)
+        df.columns = x_col_names
+        
+        self.cluster_plot(df, 5, 'KMeans')
+        self.cluster_plot(df, 5, 'GaussianMixture')
+        
+        
+    def nba_cluster_plots(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        
+        x_col_names = ['SHOT_DIST', 'CLOSE_DEF_DIST', 'DRIBBLES']
+        df = pd.DataFrame(X_train)
+        df.columns = x_col_names
+        
+        self.cluster_plot(df, 2, KMeans)
+    
+    def gmm_wine(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20)
+    
+    def gmm_nba(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20)
+        
+    def kmeans_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
         self.kmeans_analysis(X_train, X_test, y_train, y_test, 'Wine', 20)
     
-    def cluster_nba(self):
+    def kmeans_nba(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_nba_data()
         self.kmeans_analysis(X_train, X_test, y_train, y_test, 'NBA', 20)
@@ -74,6 +106,48 @@ class part1():
         plt.savefig(filename)
         plt.close('all')
         
+    def cluster_plot(self, df, k, cls_type):
+        for i in range(df.shape[1]):
+            for j in range(df.shape[1]):
+        
+                if i == j:
+                    continue
+            
+                f1 = df.columns[i]
+                f2 = df.columns[j]
+                
+                print('Feature1: ', f1, ', Feature2: ', f2)
+                X_train = df.values[:,(i,j)]
+                X_train_scl = RobustScaler().fit_transform(X_train)
+                
+                ##
+                ## Cluster Routine
+                ##
+                if 'KMeans' in cls_type:
+                    cls = KMeans(n_clusters=k, algorithm='full')
+                elif 'GaussianMixture' in cls_type:
+                    cls = GaussianMixture(n_components=k, covariance_type='full')
+                else:
+                    raise AttributeError('cls_type: ' + cls_type + ' not supported.')
+                                         
+                cls.fit(X_train_scl)
+                y_pred = cls.predict(X_train_scl)
+                
+                # Clusters plot
+                plt.clf()
+                plt.cla()
+                plt.scatter(X_train_scl[:,0], X_train_scl[:,1], c=y_pred)
+                
+                title = 'K-Means Clusters: ' + f1 + ' vs ' + f2 + ', k=' + str(k)
+                plt.title(title)
+                plt.xlabel(f1)
+                plt.ylabel(f2)
+                
+                fn = './' + self.out_dir + '/' + f1 + '_' + f2 + '_' + str(k) + '_' + cls_type.lower() + '_cluster.png'
+                plt.savefig(fn)
+                plt.close('all')
+                                
+                
     def kmeans_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters):
         scl = RobustScaler()
         X_train_scl = scl.fit_transform(X_train)
@@ -85,8 +159,6 @@ class part1():
         km_measure_score = []
         km_adjusted_rand_score = []
         km_adjusted_mutual_info_score = []
-        #km_silhouette_score = []
-        #km_silhouette_samples = []
         
         cluster_range = np.arange(2, max_clusters+1, 1)
         for k in cluster_range:
@@ -109,24 +181,20 @@ class part1():
             km_adjusted_rand_score.append(adjusted_rand_score(y_train_score, km.labels_))
             km_adjusted_mutual_info_score.append(adjusted_mutual_info_score(y_train_score, km.labels_))
             
-            #s_scores = []
-            #s_samples = []
-            #for i in range(20):
-            #    s_scores.append(silhouette_score(X_train_scl, km.labels_, metric='euclidean', sample_size=10000))
-                
-            #km_silhouette_score.append(np.mean(s_scores))
-            
             ##
             ## Silhouette Plot
             ##
-            
             title = 'Silhouette Plot (K-Means, k=' + str(k) + ') for ' + data_set_name
             name = data_set_name.lower() + '_kmean_silhouette_' + str(k)
             filename = './' + self.out_dir + '/' + name + '.png'
             
             self.silhouette_plot(X_train_scl, km.labels_, title, filename)
             
-            
+        ##
+        ## Plots
+        ##
+        ph = plot_helper()
+        
         ##
         ## Elbow Plot
         ##
@@ -135,14 +203,13 @@ class part1():
         filename = './' + self.out_dir + '/' + name + '.png'
         
         # line to help visualize the elbow
-        ph = plot_helper()
         lin = ph.extended_line_from_first_two_points(km_inertias)
         
         ph.plot_series(cluster_range,
                     [km_inertias, lin],
                     [None, None],
                     ['inertia', 'projected'],
-                    ['red', 'orange'],
+                    cm.viridis(np.linspace(0, 1, 2)),
                     ['o', ''],
                     title,
                     'Number of Clusters',
@@ -160,14 +227,12 @@ class part1():
                     [km_homogeneity_score, km_completeness_score, km_measure_score, km_adjusted_rand_score, km_adjusted_mutual_info_score],
                     [None, None, None, None, None, None],
                     ['homogeneity', 'completeness', 'measure', 'adjusted_rand', 'adjusted_mutual_info'],
-                    ['red', 'orange', 'yellow', 'green', 'blue', 'indigo'],
+                    cm.viridis(np.linspace(0, 1, 5)),
                     ['o', '^', 'v', '>', '<', '1'],
                     title,
                     'Number of Clusters',
                     'Score',
                     filename)
-        
-        
         
     def gmm_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters):
         scl = RobustScaler()
@@ -184,41 +249,47 @@ class part1():
             ##
             ## Expectation Maximization
             ##
-            em = GaussianMixture(n_components=k, covariance_type='full', n_jobs=-1)
+            em = GaussianMixture(n_components=k, covariance_type='full')
             em.fit(X_train_scl)
             em_pred = em.predict(X_train_scl)
             
             em_bic.append(em.bic(X_train_scl))
             em_aic.append(em.aic(X_train_scl))        
         
+        
         ##
-        ## Elbow Plot
+        ## Plots
         ##
-        title = 'Elbow Plot (K-Means) for ' + data_set_name
-        name = data_set_name.lower() + '_kmean_elbow'
+        ph = plot_helper()
+        
+        ##
+        ## BIC/AIC Plot
+        ##
+        title = 'Information Criterion Plot (EM) for ' + data_set_name
+        name = data_set_name.lower() + '_em_ic'
         filename = './' + self.out_dir + '/' + name + '.png'
         
-        # line to help visualize the elbow
-        ph = plot_helper()
-        lin = ph.extended_line_from_first_two_points(km_inertias)
-        
         ph.plot_series(cluster_range,
-                    [km_inertias, lin],
+                    [em_bic, em_aic],
                     [None, None],
-                    ['inertia', 'projected'],
-                    ['red', 'orange'],
-                    ['o', ''],
+                    ['bic', 'aic'],
+                    cm.viridis(np.linspace(0, 1, 2)),
+                    ['o', '*'],
                     title,
                     'Number of Clusters',
-                    'Inertia',
+                    'Information Criterion',
                     filename)
         
 def main():    
     print('Running part 1')
     p = part1()
-    p.cluster_wine()
-    #p.cluster_nba()
-
+    p.nba_cluster_plots()
+    p.gmm_wine()
+    p.gmm_nba()
+    p.kmeans_wine()
+    p.kmeans_nba()
+    p.wine_cluster_plots()
+    
 if __name__== '__main__':
     main()
     

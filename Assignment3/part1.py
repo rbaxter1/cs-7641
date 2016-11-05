@@ -4,6 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import matplotlib.cm as cm
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, Imputer, OneHotEncoder, RobustScaler
 from sklearn.decomposition import PCA, FastICA, RandomizedPCA, IncrementalPCA
@@ -47,12 +48,15 @@ class part1():
         n_clusters = cluster_labels.shape[0]
         silhouette_vals = silhouette_samples(X, X_predicted, metric='euclidean')
         y_ax_lower, y_ax_upper = 0, 0
+        
+        color=iter(cm.rainbow(np.linspace(0,1,cluster_labels.shape[0])))
+           
         yticks = []
         for i, c in enumerate(cluster_labels):
             c_silhouette_vals = silhouette_vals[X_predicted == c]
             c_silhouette_vals.sort()
             y_ax_upper += len(c_silhouette_vals)
-            plt.barh(range(y_ax_lower, y_ax_upper), c_silhouette_vals, height=1.0, edgecolor='none')
+            plt.barh(range(y_ax_lower, y_ax_upper), c_silhouette_vals, height=1.0, edgecolor='none', color=next(color))
         
             yticks.append((y_ax_lower + y_ax_upper) / 2.)
             y_ax_lower += len(c_silhouette_vals)
@@ -212,8 +216,8 @@ class part1():
 def main():    
     print('Running part 1')
     p = part1()
-    #p.cluster_wine()
-    p.cluster_nba()
+    p.cluster_wine()
+    #p.cluster_nba()
 
 if __name__== '__main__':
     main()

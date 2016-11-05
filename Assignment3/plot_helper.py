@@ -9,7 +9,7 @@ from sklearn.neural_network import MLPClassifier
 from data_helper import *
 
 class plot_helper():
-    def __init__():
+    def __init__(self):
         pass
     
     def extended_line_from_first_two_points(self, series):

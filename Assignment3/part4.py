@@ -127,14 +127,49 @@ def nn_pca():
                   'nesterovs_momentum': (True, False),
                   'early_stopping': (True, False)
                   }
+    
+    #run_grid_search(clf, parameters, X_train, X_test, y_train, y_test, cv)
+    
+    clf = MLPClassifier(activation='relu',
+                        learning_rate='constant',
+                        learning_rate_init=0.09,
+                        momentum=0.9,
+                        nesterovs_momentum=True,
+                        shuffle=True,
+                        solver='sgd',
+                        random_state=0,
+                        max_iter=1000,
+                        batch_size=60,
+                        early_stopping=False)
+    
+    
     '''
-    parameters = {'learning_rate': ('constant', 'adaptive'),
-                  'shuffle': (True, False),
-                  'nesterovs_momentum': (True, False),
-                  'early_stopping': (True, False)
-                  }
+    Best score: 0.708
+    Best parameters set:
+        early_stopping: False
+        learning_rate: 'adaptive'
+        learning_rate_init: 0.090999999999999984
+        momentum: 0.90000000000000002
+        nesterovs_momentum: True
+        shuffle: True
+
     '''
-    run_grid_search(clf, parameters, X_train, X_test, y_train, y_test, cv)
+    
+    '''
+    Best score: 0.707
+    Best parameters set:
+            early_stopping: False
+            learning_rate: 'constant'
+            learning_rate_init: 0.090999999999999984
+            momentum: 0.90000000000000002
+            nesterovs_momentum: True
+            shuffle: True
+    Best parameters set found on development set:
+    ()
+    {'shuffle': True, 'nesterovs_momentum': True, 'learning_rate_init': 0.090999999999999984, 'learning_rate': 'constant', 'momentum': 0.90000000000000002, 'early_stopping': False}
+    ()
+
+    '''    
     
     '''
     clf = MLPClassifier(activation='relu',
@@ -166,6 +201,7 @@ def nn_pca():
     name = 'nn_pca_vc_learning_rate'
     fn = './' + out_dir + '/' + name + '.png'
     
+    '''
     plot_validation_curve(X_train,
                           X_test,
                           y_train,
@@ -177,15 +213,57 @@ def nn_pca():
                           fn,
                           param_range_plot=None)
     
-    
+    '''
     
     title = "Learning Curves (Neural Network PCA)"
     out_dir = 'output_part4'
-    name = 'nn_pca'
+    name = 'nn_ica'
     fn = './' + out_dir + '/' + name + '.png'
     
-    #plot_learning_curve(clf, title, X_train, y_train, ylim=None, cv=cv, n_jobs=4, filename=fn)
+    plot_learning_curve(clf, title, X_train, y_train, ylim=None, cv=cv, n_jobs=4, filename=fn)
     
+def nn_ica():
+    dh = data_helper()
+    X_train, X_test, y_train, y_test = dh.get_wine_data()
+    
+    scl = RobustScaler()
+    X_train_scl = scl.fit_transform(X_train)
+    X_test_scl = scl.transform(X_test)
+    
+    ica = FastICA(n_components=X_train_scl.shape[1])
+    X_ica = ica.fit_transform(X_train_scl)
+    
+    ##
+    ## ICA
+    ##
+    kurt = kurtosis(X_ica)
+    print(kurt)
+    i = kurt.argsort()[::-1]
+     
+    X_ica_sorted = X_ica[:, i]
+    
+    # top 3
+    X_ica_top2 = X_ica_sorted[:,0:3]
+    
+    
+    title = "Learning Curves (Neural Network ICA)"
+    
+    clf = MLPClassifier(activation='relu',
+                        learning_rate='constant',
+                        shuffle=True,
+                        solver='adam',
+                        random_state=0,
+                        max_iter=500,
+                        batch_size=60
+                        )
+    
+    cv = StratifiedShuffleSplit(n_splits=100, test_size=0.2, random_state=0)
+    
+    out_dir = 'output_part4'
+    name = 'nn_ica'
+    fn = './' + out_dir + '/' + name + '.png'
+    
+    plot_learning_curve(clf, title, X_ica_top2, y_train, ylim=None, cv=cv, n_jobs=4, filename=fn)
     
     
     

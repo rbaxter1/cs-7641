@@ -76,7 +76,7 @@ class part1():
             
             s_scores = []
             for i in range(20):
-                s_scores.append(silhouette_score(X_train_scl, km.labels_, metric='euclidean', sample_size=50000))
+                s_scores.append(silhouette_score(X_train_scl, km.labels_, metric='euclidean', sample_size=10000))
             
             km_silhouette_score.append(np.mean(s_scores))
             

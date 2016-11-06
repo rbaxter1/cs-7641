@@ -1,26 +1,24 @@
-neural network lda fit time: 0.086 seconds
-neural network lda predict time: 0.000 seconds
-neural network pda fit time: 0.195 seconds
-neural network pda predict time: 0.000 seconds
-neural network ida fit time: 0.023 seconds
+neural network pca fit time: 0.192 seconds
+neural network pca predict time: 0.000 seconds
+neural network ida fit time: 0.025 seconds
 neural network ida predict time: 0.000 seconds
-neural network rp fit time: 0.217 seconds
+neural network rp fit time: 0.146 seconds
 neural network rp predict time: 0.000 seconds
-neural network lda fit time: 0.086 seconds
+neural network lda fit time: 0.096 seconds
 neural network lda predict time: 0.000 seconds
-neural network pda k-means fit time: 0.313 seconds
-neural network pda k-means predict time: 0.000 seconds
-neural network pda gmm fit time: 0.120 seconds
-neural network pda gmm predict time: 0.001 seconds
-neural network ida k-means fit time: 0.089 seconds
+neural network pca k-means fit time: 0.122 seconds
+neural network pca k-means predict time: 0.000 seconds
+neural network pca gmm fit time: 0.122 seconds
+neural network pca gmm predict time: 0.000 seconds
+neural network ida k-means fit time: 0.088 seconds
 neural network ida k-means predict time: 0.000 seconds
-neural network ida gmm fit time: 0.087 seconds
+neural network ida gmm fit time: 0.107 seconds
 neural network ida gmm predict time: 0.000 seconds
-neural network rp k-means fit time: 0.119 seconds
+neural network rp k-means fit time: 0.188 seconds
 neural network rp k-means predict time: 0.000 seconds
-neural network rp gmm fit time: 0.056 seconds
+neural network rp gmm fit time: 0.157 seconds
 neural network rp gmm predict time: 0.000 seconds
-neural network lda k-means fit time: 0.150 seconds
-neural network lda k-means predict time: 0.001 seconds
-neural network lda gmm fit time: 0.122 seconds
+neural network lda k-means fit time: 0.147 seconds
+neural network lda k-means predict time: 0.000 seconds
+neural network lda gmm fit time: 0.111 seconds
 neural network lda gmm predict time: 0.000 seconds

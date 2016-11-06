@@ -103,7 +103,7 @@ class part3():
             t0 = time()
             self.gmm_lda_nba()
             text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
-            
+            '''
             t0 = time()
             self.wine_cluster_plots()
             text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
@@ -112,7 +112,7 @@ class part3():
             self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
             
-            '''
+            
             
             ##
             ## Generate files for best

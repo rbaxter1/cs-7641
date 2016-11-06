@@ -1,1 +1,1 @@
-nba_cluster_plots: 12.432 seconds
+kmeans_pca_wine: 36.558 secondskmeans_pca_nba: 1976.155 secondskmeans_ica_wine: 45.451 secondskmeans_ica_nba: 1923.900 secondskmeans_rp_wine: 44.839 secondskmeans_rp_nba: 1938.696 secondskmeans_lda_wine: 45.541 secondskmeans_lda_nba: 1924.638 secondsgmm_wine: 7.473 secondsgmm_nba: 24.581 secondsgmm_wine: 0.950 secondsgmm_nba: 30.915 secondsgmm_wine: 1.287 secondsgmm_nba: 24.910 secondsgmm_wine: 0.945 secondsgmm_nba: 8.866 secondswine_cluster_plots: 0.856 secondsnba_cluster_plots: 7.647 seconds

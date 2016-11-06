@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 
 import pylab
@@ -24,7 +25,7 @@ class plot_helper():
         ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         
         ax = plt.subplot()
-        ax.bar(np.arange(1, len(values)+1), values, align='center')
+        ax.bar(np.arange(1, len(values)+1), values, align='center', color=cm.viridis(np.linspace(0, 1, len(values))))
         ax.set_xticks(x)
         ax.set_xticklabels(labels)
 

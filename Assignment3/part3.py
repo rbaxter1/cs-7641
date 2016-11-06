@@ -29,6 +29,7 @@ from part1 import *
 '''
 class part3():
     def __init__(self):
+        self.save_dir = 'data'
         self.out_dir = 'output_part3'
         self.part1 = part1()
         self.part1.out_dir = self.out_dir
@@ -103,7 +104,6 @@ class part3():
             self.gmm_lda_nba()
             text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
             
-            '''
             t0 = time()
             self.wine_cluster_plots()
             text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
@@ -112,9 +112,216 @@ class part3():
             self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
             
-            ### TODO Need to save the best clusters
-            ### maybe build into cluster plots since
-            ### alread running the best
+            '''
+            
+            ##
+            ## Generate files for best
+            ##
+            
+            # only need wine for parts 4 and 5
+            self.best_pca_cluster_wine()
+            self.best_ica_cluster_wine()
+            self.best_rp_cluster_wine()
+            self.best_lda_cluster_wine()
+            
+            
+
+    def best_pca_cluster_wine(self):
+        dh = data_helper()
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_pca_best()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        ##
+        ## K-Means
+        ##
+        km = KMeans(n_clusters=3, algorithm='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_kmeans_pca_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_pca_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_pca_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_pca_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+        ##
+        ## GMM
+        ##
+        gmm = GaussianMixture(n_components=3, covariance_type='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_gmm_pca_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_pca_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_pca_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_pca_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+    def best_ica_cluster_wine(self):
+        dh = data_helper()
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_ica_best()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        ##
+        ## K-Means
+        ##
+        km = KMeans(n_clusters=3, algorithm='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_kmeans_ica_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_ica_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_ica_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_ica_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+        ##
+        ## GMM
+        ##
+        gmm = GaussianMixture(n_components=4, covariance_type='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_gmm_ica_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_ica_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_ica_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_ica_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+    def best_rp_cluster_wine(self):
+        dh = data_helper()
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_rp_best()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        ##
+        ## K-Means
+        ##
+        km = KMeans(n_clusters=5, algorithm='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_kmeans_rp_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_rp_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_rp_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_rp_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+        ##
+        ## GMM
+        ##
+        gmm = GaussianMixture(n_components=3, covariance_type='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_gmm_rp_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_rp_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_rp_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_rp_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+    
+    def best_lda_cluster_wine(self):
+        dh = data_helper()
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_lda_best()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        ##
+        ## K-Means
+        ##
+        km = KMeans(n_clusters=4, algorithm='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_kmeans_lda_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_lda_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_lda_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_kmeans_lda_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+        ##
+        ## GMM
+        ##
+        gmm = GaussianMixture(n_components=4, covariance_type='full')
+        X_train_transformed = km.fit_transform(X_train_scl)
+        X_test_transformed = km.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_gmm_lda_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_lda_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_lda_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_gmm_lda_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
         
     def wine_cluster_plots(self):
         dh = data_helper()

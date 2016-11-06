@@ -87,7 +87,7 @@ class part4():
                             max_iter=1000,
                             batch_size=60)
     
-        with open(self.nn_time_filename, 'w') as text_file:
+        with open(self.nn_time_filename, 'a') as text_file:
             t0 = time()
             clf.fit(X_train, y_train)
             text_file.write(analysis_name.lower() + ' fit time: %0.3f seconds\n' % (time() - t0))

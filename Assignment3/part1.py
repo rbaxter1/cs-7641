@@ -50,17 +50,17 @@ class part1():
         df.columns = x_col_names
         
         self.cluster_plot(df, 2, 'KMeans')
-	self.cluster_plot(df, 2, 'GaussianMixture')
+        self.cluster_plot(df, 2, 'GaussianMixture')
     
     def gmm_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20)
+        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 30)
     
     def gmm_nba(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20)
+        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 30)
         
     def kmeans_wine(self):
         dh = data_helper()

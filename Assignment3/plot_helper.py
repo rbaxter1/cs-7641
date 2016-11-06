@@ -12,10 +12,14 @@ class plot_helper():
     def __init__(self):
         pass
     
-    def extended_line_from_first_two_points(self, series):
-        r = series[1]-series[0]
+    def extended_line_from_first_two_points(self, series, p0_i, p1_i):
+        r = (series[p1_i]-series[p0_i]) / (p1_i-p0_i)
         lin = np.ones_like(series) * series[0]
-        for i in range(1, lin.shape[0]):
+        
+        for i in range(0, p1_i+1):
+            lin[i] = series[i]
+        
+        for i in range(p1_i+1, lin.shape[0]):
             new = lin[i] + i * r
             if new <= 0:
                 lin[i] = None

@@ -1,1 +1,1 @@
-gmm_wine: 1.105 secondsgmm_nba: 25.473 secondsgmm_wine: 0.921 secondsgmm_nba: 29.117 seconds
+gmm_wine: 1.122 secondsgmm_nba: 27.087 secondsgmm_wine: 0.919 secondsgmm_nba: 8.387 seconds

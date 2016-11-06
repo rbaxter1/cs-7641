@@ -580,35 +580,35 @@ def main():
         
         t0 = time()
         p.pca_wine()
-        print('pca_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('pca_wine: %0.3f seconds' % (time() - t0))
         
         t0 = time()
         p.pca_nba()
-        print('pca_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('pca_nba: %0.3f seconds' % (time() - t0))
         
         t0 = time()
         p.ica_wine()
-        print('ica_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('ica_wine: %0.3f seconds' % (time() - t0))
         
         t0 = time()
         p.ica_nba()
-        print('ica_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('ica_nba: %0.3f seconds' % (time() - t0))
         
         t0 = time()
         p.rp_wine()
-        print('rp_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('rp_wine: %0.3f seconds' % (time() - t0))
         
         t0 = time()
         p.rp_nba()
-        print('rp_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('rp_nba: %0.3f seconds' % (time() - t0))
         
         t0 = time()
         p.lda_nba()
-        print('lda_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('lda_nba: %0.3f seconds' % (time() - t0))
         
         t0 = time()
         p.lda_wine()
-        print('lda_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        text_file.write('lda_wine: %0.3f seconds' % (time() - t0))
         
     
     ##

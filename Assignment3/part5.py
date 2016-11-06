@@ -82,7 +82,7 @@ class part5():
         self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network LDA')
     
 def main():    
-    p = part4()
+    p = part5()
     p.run()
 
 if __name__== '__main__':

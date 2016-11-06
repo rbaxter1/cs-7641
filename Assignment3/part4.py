@@ -35,7 +35,7 @@ class part4():
         self.time_filename = './' + self.out_dir + '/time.txt'
 
     def run(self):
-        print('Running part 5')
+        print('Running part 4')
     
         with open(self.time_filename, 'w') as text_file:
             
@@ -113,7 +113,7 @@ class part4():
         
         
 def main():    
-    p = part5()
+    p = part4()
     p.run()
 
 if __name__== '__main__':

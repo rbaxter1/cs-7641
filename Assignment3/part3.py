@@ -33,86 +33,83 @@ class part3():
         self.out_dir = 'output_part3'
         self.part1 = part1()
         self.part1.out_dir = self.out_dir
+        self.time_filename = './' + self.out_dir + '/time.txt'
     
     def run(self):
         print('Running part 3')
-        filename = './' + self.out_dir + '/time.txt'
-        with open(filename, 'w') as text_file:
+        with open(self.time_filename, 'w') as text_file:
             
-            '''
             t0 = time()
             self.kmeans_pca_wine()
-            text_file.write('kmeans_pca_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_pca_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_pca_nba()
-            text_file.write('kmeans_pca_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_pca_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_ica_wine()
-            text_file.write('kmeans_ica_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_ica_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_ica_nba()
-            text_file.write('kmeans_ica_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_ica_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_rp_wine()
-            text_file.write('kmeans_rp_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_rp_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_rp_nba()
-            text_file.write('kmeans_rp_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_rp_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_lda_wine()
-            text_file.write('kmeans_lda_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_lda_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_lda_nba()
-            text_file.write('kmeans_lda_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_lda_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_pca_wine()
-            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_pca_nba()
-            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_ica_wine()
-            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_ica_nba()
-            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_rp_wine()
-            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_rp_nba()
-            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_lda_wine()
-            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_lda_nba()
-            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
-            '''
+            text_file.write('gmm_nba: %0.3f seconds\n' % (time() - t0))
+            
             t0 = time()
             self.wine_cluster_plots()
-            text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
+            text_file.write('wine_cluster_plots: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.nba_cluster_plots()
-            text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
-            
-            
+            text_file.write('nba_cluster_plots: %0.3f seconds\n' % (time() - t0))
             
             ##
             ## Generate files for best

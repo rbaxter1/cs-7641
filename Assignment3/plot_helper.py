@@ -57,13 +57,14 @@ class plot_helper():
         r = (series[p1_i]-series[p0_i]) / (p1_i-p0_i)
         lin = np.ones_like(series) * series[0]
         
-        for i in range(0, p1_i+1):
-            lin[i] = series[i]
+        #for i in range(0, p1_i+1):
+        #    lin[i] = series[i]
         
-        for i in range(p1_i+1, lin.shape[0]):
+        #for i in range(p1_i+1, lin.shape[0]):
+        for i in range(1, lin.shape[0]):
             new = lin[i] + i * r
             if new <= 0:
-                lin[i] = None
+                lin[i] = 0
             else:
                 lin[i] = new
                 

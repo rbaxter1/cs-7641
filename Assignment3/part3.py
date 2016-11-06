@@ -39,51 +39,51 @@ class part3():
         with open(filename, 'w') as text_file:
             
             t0 = time()
-            p.kmeans_pca_wine()
+            self.kmeans_pca_wine()
             text_file.write('kmeans_pca_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_pca_nba()
+            self.kmeans_pca_nba()
             text_file.write('kmeans_pca_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_ica_wine()
+            self.kmeans_ica_wine()
             text_file.write('kmeans_ica_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_ica_nba()
+            self.kmeans_ica_nba()
             text_file.write('kmeans_ica_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_rp_wine()
+            self.kmeans_rp_wine()
             text_file.write('kmeans_rp_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_rp_nba()
+            self.kmeans_rp_nba()
             text_file.write('kmeans_rp_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_lda_wine()
+            self.kmeans_lda_wine()
             text_file.write('kmeans_lda_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_lda_nba()
+            self.kmeans_lda_nba()
             text_file.write('kmeans_lda_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.gmm_wine()
+            self.gmm_wine()
             text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.gmm_nba()
+            self.gmm_nba()
             text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.wine_cluster_plots()
+            self.wine_cluster_plots()
             text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.nba_cluster_plots()
+            self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
         
         

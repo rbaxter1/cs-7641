@@ -40,35 +40,35 @@ class part2():
         with open(filename, 'w') as text_file:
             
             t0 = time()
-            p.pca_wine()
+            self.pca_wine()
             text_file.write('pca_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.pca_nba()
+            self.pca_nba()
             text_file.write('pca_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.ica_wine()
+            self.ica_wine()
             text_file.write('ica_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.ica_nba()
+            self.ica_nba()
             text_file.write('ica_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.rp_wine()
+            self.rp_wine()
             text_file.write('rp_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.rp_nba()
+            self.rp_nba()
             text_file.write('rp_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.lda_nba()
+            self.lda_nba()
             text_file.write('lda_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.lda_wine()
+            self.lda_wine()
             text_file.write('lda_wine: %0.3f seconds' % (time() - t0))
             
         
@@ -76,17 +76,17 @@ class part2():
         ## Generate files for best
         ##
         
-        p.best_pca_wine()
-        p.best_pca_nba()
+        self.best_pca_wine()
+        self.best_pca_nba()
         
-        p.best_ica_wine()
-        p.best_ica_nba()
+        self.best_ica_wine()
+        self.best_ica_nba()
         
-        p.best_rp_wine()
-        p.best_rp_nba()
+        self.best_rp_wine()
+        self.best_rp_nba()
         
-        p.best_lda_wine()
-        p.best_lda_nba()
+        self.best_lda_wine()
+        self.best_lda_nba()
         
 
     def best_pca_wine(self):

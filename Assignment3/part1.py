@@ -37,27 +37,27 @@ class part1():
         with open(filename, 'w') as text_file:
             
             t0 = time()
-            p.wine_cluster_plots()
+            self.wine_cluster_plots()
             text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.nba_cluster_plots()
+            self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.gmm_wine()
+            self.gmm_wine()
             text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.gmm_nba()
+            self.gmm_nba()
             text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_wine()
+            self.kmeans_wine()
             text_file.write('kmeans_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            p.kmeans_nba()
+            self.kmeans_nba()
             text_file.write('kmeans_nba: %0.3f seconds' % (time() - t0))
             
             

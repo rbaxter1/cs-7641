@@ -37,7 +37,7 @@ class part3():
         print('Running part 3')
         filename = './' + self.out_dir + '/time.txt'
         with open(filename, 'w') as text_file:
-            
+            '''
             t0 = time()
             self.kmeans_pca_wine()
             text_file.write('kmeans_pca_wine: %0.3f seconds' % (time() - t0))
@@ -70,12 +70,22 @@ class part3():
             self.kmeans_lda_nba()
             text_file.write('kmeans_lda_nba: %0.3f seconds' % (time() - t0))
             
+            '''
+            
             t0 = time()
-            self.gmm_wine()
+            self.gmm_pca_wine()
             text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
             
             t0 = time()
-            self.gmm_nba()
+            self.gmm_pca_nba()
+            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            self.gmm_ica_wine()
+            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            self.gmm_ica_nba()
             text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
             
             t0 = time()
@@ -83,9 +93,26 @@ class part3():
             text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
             
             t0 = time()
+            self.gmm_rp_wine()
+            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            self.gmm_rp_nba()
+            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            self.gmm_lda_wine()
+            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            self.gmm_lda_nba()
+            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            
+            '''
+            t0 = time()
             self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
-        
+            '''
         
     def kmeans_pca_wine(self):
         dh = data_helper()

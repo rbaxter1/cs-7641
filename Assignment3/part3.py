@@ -33,6 +33,60 @@ class part3():
         self.part1 = part1()
         self.part1.out_dir = self.save_dir
     
+    def run(self):
+        print('Running part 3')
+        filename = './' + self.save_dir + '/time.txt'
+        with open(filename, 'w') as text_file:
+            
+            t0 = time()
+            p.kmeans_pca_wine()
+            text_file.write('kmeans_pca_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_pca_nba()
+            text_file.write('kmeans_pca_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_ica_wine()
+            text_file.write('kmeans_ica_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_ica_nba()
+            text_file.write('kmeans_ica_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_rp_wine()
+            text_file.write('kmeans_rp_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_rp_nba()
+            text_file.write('kmeans_rp_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_lda_wine()
+            text_file.write('kmeans_lda_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_lda_nba()
+            text_file.write('kmeans_lda_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.gmm_wine()
+            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.gmm_nba()
+            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.wine_cluster_plots()
+            text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.nba_cluster_plots()
+            text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
+        
+        
     def kmeans_pca_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_pca_best()
@@ -114,60 +168,8 @@ class part3():
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM LDA')
         
 def main():    
-    print('Running part 3')
-    
     p = part3()
-    
-    filename = './' + self.save_dir + '/time.txt'
-    with open(filename, 'w') as text_file:
-        
-        t0 = time()
-        p.kmeans_pca_wine()
-        text_file.write('kmeans_pca_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_pca_nba()
-        text_file.write('kmeans_pca_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_ica_wine()
-        text_file.write('kmeans_ica_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_ica_nba()
-        text_file.write('kmeans_ica_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_rp_wine()
-        text_file.write('kmeans_rp_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_rp_nba()
-        text_file.write('kmeans_rp_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_lda_wine()
-        text_file.write('kmeans_lda_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_lda_nba()
-        text_file.write('kmeans_lda_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.gmm_wine()
-        text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.gmm_nba()
-        text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.wine_cluster_plots()
-        text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.nba_cluster_plots()
-        text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
+    p.run()
     
 if __name__== '__main__':
     main()

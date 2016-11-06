@@ -30,6 +30,37 @@ class part1():
     def __init__(self):
         self.out_dir = 'output_part1'
     
+    def run(self):
+        print('Running part 1')
+    
+        filename = './' + self.save_dir + '/time.txt'
+        with open(filename, 'w') as text_file:
+            
+            t0 = time()
+            p.wine_cluster_plots()
+            text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.nba_cluster_plots()
+            text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.gmm_wine()
+            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.gmm_nba()
+            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_wine()
+            text_file.write('kmeans_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.kmeans_nba()
+            text_file.write('kmeans_nba: %0.3f seconds' % (time() - t0))
+            
+            
     def wine_cluster_plots(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
@@ -359,38 +390,11 @@ class part1():
                     'Score',
                     filename)
         
-def main():    
-    print('Running part 1')
-    
+def main():
     p = part1()
+    p.run()
     
-    filename = './' + self.save_dir + '/time.txt'
-    with open(filename, 'w') as text_file:
-        
-        t0 = time()
-        p.wine_cluster_plots()
-        text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.nba_cluster_plots()
-        text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.gmm_wine()
-        text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.gmm_nba()
-        text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_wine()
-        text_file.write('kmeans_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.kmeans_nba()
-        text_file.write('kmeans_nba: %0.3f seconds' % (time() - t0))
-        
+    
 if __name__== '__main__':
     main()
     

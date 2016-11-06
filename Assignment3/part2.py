@@ -33,6 +33,62 @@ class part2():
         self.out_dir = 'output_part2'
         self.save_dir = 'data'
 
+    def run(self):
+        print('Running part 2')
+    
+        filename = './' + self.save_dir + '/time.txt'
+        with open(filename, 'w') as text_file:
+            
+            t0 = time()
+            p.pca_wine()
+            text_file.write('pca_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.pca_nba()
+            text_file.write('pca_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.ica_wine()
+            text_file.write('ica_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.ica_nba()
+            text_file.write('ica_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.rp_wine()
+            text_file.write('rp_wine: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.rp_nba()
+            text_file.write('rp_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.lda_nba()
+            text_file.write('lda_nba: %0.3f seconds' % (time() - t0))
+            
+            t0 = time()
+            p.lda_wine()
+            text_file.write('lda_wine: %0.3f seconds' % (time() - t0))
+            
+        
+        ##
+        ## Generate files for best
+        ##
+        
+        p.best_pca_wine()
+        p.best_pca_nba()
+        
+        p.best_ica_wine()
+        p.best_ica_nba()
+        
+        p.best_rp_wine()
+        p.best_rp_nba()
+        
+        p.best_lda_wine()
+        p.best_lda_nba()
+        
+
     def best_pca_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
@@ -570,64 +626,9 @@ class part2():
                            filename)
         
         
-def main():
-    print('Running part 2')
-    
+def main():    
     p = part2()
-    
-    filename = './' + self.save_dir + '/time.txt'
-    with open(filename, 'w') as text_file:
-        
-        t0 = time()
-        p.pca_wine()
-        text_file.write('pca_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.pca_nba()
-        text_file.write('pca_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.ica_wine()
-        text_file.write('ica_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.ica_nba()
-        text_file.write('ica_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.rp_wine()
-        text_file.write('rp_wine: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.rp_nba()
-        text_file.write('rp_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.lda_nba()
-        text_file.write('lda_nba: %0.3f seconds' % (time() - t0))
-        
-        t0 = time()
-        p.lda_wine()
-        text_file.write('lda_wine: %0.3f seconds' % (time() - t0))
-        
-    
-    ##
-    ## Generate files for best
-    ##
-    
-    p.best_pca_wine()
-    p.best_pca_nba()
-    
-    p.best_ica_wine()
-    p.best_ica_nba()
-    
-    p.best_rp_wine()
-    p.best_rp_nba()
-    
-    p.best_lda_wine()
-    p.best_lda_nba()
-    
-    print("done in %0.3f seconds" % (time() - t0))
+    p.run()
 
 if __name__== '__main__':
     main()

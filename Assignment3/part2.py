@@ -21,15 +21,24 @@ from data_helper import *
 from plot_nn import plot_validation_curve, plot_series
 
 
-
-
 '''
 2. Apply the dimensionality reduction algorithms to the two datasets and describe what you see.
-'''
+'''        
 class part2():
     def __init__(self):
         self.out_dir = 'output_part2'
 
+    def pca_wine(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 30)
+    
+    def ica_nba(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 30)
+        
+        
     def reconstruction_error(self, X_train_scl, cls):
         rng = range(1, X_train_scl.shape[1]+1)
         
@@ -38,9 +47,9 @@ class part2():
             mses = []
             for i in rng:
                 dr = cls(n_components=i)
-                X_train_dr = dr.fit_transform(X_train_scl)
+                dr.fit(X_train_scl)
                 
-                X_projected = dr.inverse_transform(X_train_dr)
+                X_projected = dr.inverse_transform(dr.labels_)
                 mse = mean_squared_error(X_train_scl, X_projected)
                 mses.append(mse)
                 print(i, mse)
@@ -280,13 +289,15 @@ class part2():
                     filename)
         
 def main():
-    
     print('Running part 2')
     p = part2()
-    p.ica_wine()
     
+    t0 = timer()
+    
+    p.ica_wine()
     p.pca_wine()
     
+    print("done in %0.3fs seconds" % (timer() - t0))
 
 if __name__== '__main__':
     main()

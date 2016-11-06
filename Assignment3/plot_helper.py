@@ -13,6 +13,7 @@ class plot_helper():
         pass
     
     def extended_line_from_first_two_points(self, series, p0_i, p1_i):
+        
         r = (series[p1_i]-series[p0_i]) / (p1_i-p0_i)
         lin = np.ones_like(series) * series[0]
         

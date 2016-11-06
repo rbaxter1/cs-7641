@@ -33,6 +33,7 @@ class part4():
     def __init__(self):
         self.out_dir = 'output_part4'
         self.time_filename = './' + self.out_dir + '/time.txt'
+        self.nn_time_filename = './' + self.out_dir + '/nn_time.txt'
 
     def run(self):
         print('Running part 4')
@@ -86,7 +87,7 @@ class part4():
                             max_iter=1000,
                             batch_size=60)
     
-        with open(self.time_filename, 'w') as text_file:
+        with open(self.nn_time_filename, 'w') as text_file:
             t0 = time()
             clf.fit(X_train, y_train)
             text_file.write(analysis_name.lower() + ' fit time: %0.3f seconds\n' % (time() - t0))

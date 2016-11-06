@@ -32,44 +32,43 @@ class part2():
     def __init__(self):
         self.out_dir = 'output_part2'
         self.save_dir = 'data'
+        self.time_filename = './' + self.out_dir + '/time.txt'
 
     def run(self):
         print('Running part 2')
-    
-        filename = './' + self.out_dir + '/time.txt'
-        with open(filename, 'w') as text_file:
+        with open(self.time_filename, 'w') as text_file:
             
             t0 = time()
             self.pca_wine()
-            text_file.write('pca_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('pca_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.pca_nba()
-            text_file.write('pca_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('pca_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.ica_wine()
-            text_file.write('ica_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('ica_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.ica_nba()
-            text_file.write('ica_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('ica_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.rp_wine()
-            text_file.write('rp_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('rp_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.rp_nba()
-            text_file.write('rp_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('rp_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.lda_nba()
-            text_file.write('lda_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('lda_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.lda_wine()
-            text_file.write('lda_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('lda_wine: %0.3f seconds\n' % (time() - t0))
             
         
         ##

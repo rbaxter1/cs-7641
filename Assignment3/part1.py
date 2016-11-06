@@ -29,36 +29,35 @@ from plot_helper import *
 class part1():
     def __init__(self):
         self.out_dir = 'output_part1'
+        self.time_filename = './' + self.out_dir + '/time.txt'
     
     def run(self):
         print('Running part 1')
-    
-        filename = './' + self.out_dir + '/time.txt'
-        with open(filename, 'w') as text_file:
+        with open(self.time_filename, 'w') as text_file:
             
             t0 = time()
             self.wine_cluster_plots()
-            text_file.write('wine_cluster_plots: %0.3f seconds' % (time() - t0))
+            text_file.write('wine_cluster_plots: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.nba_cluster_plots()
-            text_file.write('nba_cluster_plots: %0.3f seconds' % (time() - t0))
+            text_file.write('nba_cluster_plots: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_wine()
-            text_file.write('gmm_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.gmm_nba()
-            text_file.write('gmm_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('gmm_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_wine()
-            text_file.write('kmeans_wine: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.kmeans_nba()
-            text_file.write('kmeans_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('kmeans_nba: %0.3f seconds\n' % (time() - t0))
             
             
     def wine_cluster_plots(self):

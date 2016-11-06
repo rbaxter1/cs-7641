@@ -29,13 +29,13 @@ from part1 import *
 '''
 class part3():
     def __init__(self):
-        self.save_dir = 'output_part3'
+        self.out_dir = 'output_part3'
         self.part1 = part1()
-        self.part1.out_dir = self.save_dir
+        self.part1.out_dir = self.out_dir
     
     def run(self):
         print('Running part 3')
-        filename = './' + self.save_dir + '/time.txt'
+        filename = './' + self.out_dir + '/time.txt'
         with open(filename, 'w') as text_file:
             
             t0 = time()

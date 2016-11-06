@@ -33,7 +33,7 @@ class part1():
     def run(self):
         print('Running part 1')
     
-        filename = './' + self.save_dir + '/time.txt'
+        filename = './' + self.out_dir + '/time.txt'
         with open(filename, 'w') as text_file:
             
             t0 = time()

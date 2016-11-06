@@ -64,10 +64,10 @@ class part5():
     def nn_pca_cluster_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_kmeans_pca_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PDA K-Means')
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PCA K-Means')
         
         X_train, X_test, y_train, y_test = dh.get_wine_data_gmm_pca_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PDA GMM')
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PCA GMM')
         
     def nn_ica_cluster_wine(self):
         dh = data_helper()

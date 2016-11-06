@@ -60,7 +60,7 @@ class part4():
     def nn_pca_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_pca_best()
-        self.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PDA')
+        self.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PCA')
         
     def nn_ica_wine(self):
         dh = data_helper()

@@ -142,7 +142,7 @@ class part1():
         plt.savefig(filename)
         plt.close('all')
         
-    def cluster_plot(self, df, k, cls_type, data_set_name):
+    def cluster_plot(self, df, k, cls_type, data_set_name, analysis_name=None):
         for i in range(df.shape[1]):
             for j in range(df.shape[1]):
         
@@ -170,21 +170,29 @@ class part1():
                 y_pred = cls.predict(X_train_scl)
                 
                 # Clusters plot
+                if analysis_name != None:
+                    name = analysis_name.lower()
+                    title_name = analysis_name
+                else:
+                    name = cls_type.lower()
+                    title_name = cls_type
+                
+                title = title_name + ' Clusters: ' + str(f1) + ' vs ' + str(f2) + ', k=' + str(k) + ' (' + data_set_name + ')'    
+                filename = './' + self.out_dir + '/' + str(f1).lower() + '_' + str(f2).lower() + '_' + str(k) + '_' + name + '_' + data_set_name + '_cluster.png'
+
                 plt.clf()
                 plt.cla()
                 plt.scatter(X_train_scl[:,0], X_train_scl[:,1], c=y_pred)
                 
-                title = cls_type + ' Clusters: ' + f1 + ' vs ' + f2 + ', k=' + str(k) + ' (' + data_set_name + ')'
                 plt.title(title)
                 plt.xlabel(f1)
                 plt.ylabel(f2)
                 
-                fn = './' + self.out_dir + '/' + f1.lower() + '_' + f2.lower() + '_' + str(k) + '_' + cls_type.lower() + '_' + data_set_name + '_cluster.png'
-                plt.savefig(fn)
+                plt.savefig(filename)
                 plt.close('all')
                                 
     
-    def cluster_3d_plot(self, df, k, cls_type, data_set_name):
+    def cluster_3d_plot(self, df, k, cls_type, data_set_name, analysis_name=None):
         p = list(itertools.permutations(range(df.shape[1]), 3))
 
         print(p)
@@ -219,9 +227,15 @@ class part1():
             ##
             ## 3d Scatter Plot
             ##
-            title = cls_type + ' Clusters 3D: ' + f1 + '\nvs ' + f2 + ' vs ' + f3 + ', k=' + str(k)
-            name = data_set_name.lower() + '_' + cls_type.lower() + '3d_cluster'
-            filename = './' + self.out_dir + '/' + f1.lower() + '_' + f2.lower() + '_' + f3.lower() + '_' + str(k) + '_' + cls_type.lower() + '_' + data_set_name + '_cluster.png'
+            title = cls_type + ' Clusters 3D: ' + str(f1) + '\nvs ' + str(f2) + ' vs ' + str(f3) + ', k=' + str(k)
+            
+            if analysis_name != None:
+                name = analysis_name.lower()
+            else:
+                name = cls_type.lower()
+                
+            name = data_set_name.lower() + '_' + name + '3d_cluster'
+            filename = './' + self.out_dir + '/' + str(f1).lower() + '_' + str(f2).lower() + '_' + str(f3).lower() + '_' + str(k) + '_' + name + '_' + data_set_name + '_cluster.png'
             
             ph.plot_3d_scatter(X_train_scl[:,0], X_train_scl[:,1], X_train_scl[:,2], y_pred, f1, f2, f3, title, filename)
             

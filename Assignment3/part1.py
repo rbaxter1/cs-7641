@@ -364,18 +364,33 @@ def main():
     
     p = part1()
     
-    t0 = time()
-    
-    p.wine_cluster_plots()
-    p.nba_cluster_plots()
-    p.gmm_wine()
-    p.gmm_nba()
-    p.kmeans_wine()
-    p.kmeans_nba()
-    
-    
-    print("done in %0.3f seconds" % (time() - t0))
-    
+    filename = './' + self.save_dir + '/time.txt'
+    with open(filename, 'w') as text_file:
+        
+        t0 = time()
+        p.wine_cluster_plots()
+        print('wine_cluster_plots: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.nba_cluster_plots()
+        print('nba_cluster_plots: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.gmm_wine()
+        print('gmm_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.gmm_nba()
+        print('gmm_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_wine()
+        print('kmeans_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_nba()
+        print('kmeans_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
 if __name__== '__main__':
     main()
     

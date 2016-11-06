@@ -29,161 +29,145 @@ from part1 import *
 '''
 class part3():
     def __init__(self):
-        self.out_dir = 'output_part3'
+        self.save_dir = 'output_part3'
         self.part1 = part1()
+        self.part1.out_dir = self.save_dir
     
     def kmeans_pca_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM PCA')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_pca_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM PCA')
     
     def kmeans_pca_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM PCA')
+        X_train, X_test, y_train, y_test = dh.get_nba_data_pca_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM PCA')
         
     def kmeans_ica_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM ICA')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_ica_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM ICA')
     
     def kmeans_ica_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM ICA')
+        X_train, X_test, y_train, y_test = dh.get_nba_data_ica_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM ICA')
         
     def kmeans_rp_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM RP')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_rp_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM RP')
     
     def kmeans_rp_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM RP')
+        X_train, X_test, y_train, y_test = dh.get_nba_data_rp_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM RP')
         
     def kmeans_lda_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM LDA')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_lda_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM LDA')
     
     def kmeans_lda_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM LDA')
+        X_train, X_test, y_train, y_test = dh.get_nba_data_lda_best()
+        self.part1.kmeans_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM LDA')
         
     def gmm_pca_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_pca_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM PCA')
     
     def gmm_pca_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        X_train, X_test, y_train, y_test = dh.get_nba_data_pca_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM PCA')
         
     def gmm_ica_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_ica_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM ICA')
     
     def gmm_ica_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        X_train, X_test, y_train, y_test = dh.get_nba_data_ica_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM ICA')
         
     def gmm_rp_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_rp_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM RP')
     
     def gmm_rp_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        X_train, X_test, y_train, y_test = dh.get_nba_data_rp_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM RP')
         
     def gmm_lda_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        X_train, X_test, y_train, y_test = dh.get_wine_data_lda_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 20, 'GMM LDA')
     
     def gmm_lda_nba(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        X_train, X_test, y_train, y_test = dh.get_nba_data_lda_best()
         self.part1.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 20, 'GMM LDA')
-        
-
-
-
-
-        
-        
-    def wine_cluster_plots(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
-        
-        x_col_names = ['Alcohol', 'Volatile Acidity', 'Sulphates', 'pH']
-        df = pd.DataFrame(X_train)
-        df.columns = x_col_names
-        
-        self.cluster_plot(df, 5, 'KMeans', 'Wine')
-        self.cluster_plot(df, 3, 'GaussianMixture', 'Wine')
-        self.cluster_3d_plot(df, 5, 'KMeans', 'Wine')
-        self.cluster_3d_plot(df, 3, 'GaussianMixture', 'Wine')
-        
-    def nba_cluster_plots(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
-        
-        x_col_names = ['Shot Distance', 'Closest Defender Distance', 'Number Dribbles']
-        df = pd.DataFrame(X_train)
-        df.columns = x_col_names
-        
-        self.cluster_plot(df, 2, 'KMeans', 'NBA')
-        self.cluster_plot(df, 8, 'GaussianMixture', 'NBA')
-        self.cluster_3d_plot(df, 2, 'KMeans', 'NBA')
-        self.cluster_3d_plot(df, 8, 'GaussianMixture', 'NBA')
-    
-    def gmm_wine(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine', 30)
-    
-    def gmm_nba(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA', 30)
-        
-    
-    
         
 def main():    
     print('Running part 3')
     
-    p = part1()
+    p = part3()
     
-    t0 = time()
-    
-    p.kmeans_pca_wine()
-    p.kmeans_pca_nba()
-    
-    p.kmeans_ica_wine()
-    p.kmeans_ica_nba()
-    
-    p.kmeans_rp_wine()
-    p.kmeans_rp_nba()
-    
-    p.kmeans_lda_wine()
-    p.kmeans_lda_nba()
-    
-    
-    p.gmm_wine()
-    p.gmm_nba()
-    
-    p.wine_cluster_plots()
-    p.nba_cluster_plots()
-    
-    print("done in %0.3f seconds" % (time() - t0))
+    filename = './' + self.save_dir + '/time.txt'
+    with open(filename, 'w') as text_file:
+        
+        t0 = time()
+        p.kmeans_pca_wine()
+        print('kmeans_pca_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_pca_nba()
+        print('kmeans_pca_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_ica_wine()
+        print('kmeans_ica_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_ica_nba()
+        print('kmeans_ica_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_rp_wine()
+        print('kmeans_rp_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_rp_nba()
+        print('kmeans_rp_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_lda_wine()
+        print('kmeans_lda_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.kmeans_lda_nba()
+        print('kmeans_lda_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.gmm_wine()
+        print('gmm_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.gmm_nba()
+        print('gmm_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.wine_cluster_plots()
+        print('wine_cluster_plots: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.nba_cluster_plots()
+        print('nba_cluster_plots: %0.3f seconds' % (time() - t0), file=text_file)
     
 if __name__== '__main__':
     main()

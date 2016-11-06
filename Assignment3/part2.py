@@ -31,7 +31,253 @@ from plot_helper import *
 class part2():
     def __init__(self):
         self.out_dir = 'output_part2'
+        self.save_dir = 'data'
 
+    def best_pca_wine(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        pca = PCA(n_components=2)
+        X_train_transformed = pca.fit_transform(X_train_scl, y_train)
+        X_test_transformed = pca.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_pca_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_pca_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_pca_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_pca_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+    
+    def best_ica_wine(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        ica = FastICA(n_components=X_train_scl.shape[1])
+        X_train_transformed = ica.fit_transform(X_train_scl, y_train)
+        X_test_transformed = ica.transform(X_test_scl)
+        
+        ## top 1
+        kurt = kurtosis(X_train_transformed)
+        i = kurt.argsort()[::-1]
+        X_train_transformed_sorted = X_train_transformed[:, i]
+        X_train_transformed = X_train_transformed_sorted[:,0:1]
+        
+        kurt = kurtosis(X_test_transformed)
+        i = kurt.argsort()[::-1]
+        X_test_transformed_sorted = X_test_transformed[:, i]
+        X_test_transformed = X_test_transformed_sorted[:,0:1]
+        
+        # save
+        filename = './' + self.save_dir + '/wine_ica_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_ica_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_ica_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_ica_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+    
+    def best_rp_wine(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        rp = GaussianRandomProjection(n_components=X_train_scl.shape[1])
+        X_train_transformed = rp.fit_transform(X_train_scl, y_train)
+        X_test_transformed = rp.transform(X_test_scl)
+        
+        ## top 2
+        kurt = kurtosis(X_train_transformed)
+        i = kurt.argsort()[::-1]
+        X_train_transformed_sorted = X_train_transformed[:, i]
+        X_train_transformed = X_train_transformed_sorted[:,0:2]
+        
+        kurt = kurtosis(X_test_transformed)
+        i = kurt.argsort()[::-1]
+        X_test_transformed_sorted = X_test_transformed[:, i]
+        X_test_transformed = X_test_transformed_sorted[:,0:2]
+
+        # save
+        filename = './' + self.save_dir + '/wine_rp_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_rp_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_rp_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_rp_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+
+    def best_lda_wine(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        lda = LinearDiscriminantAnalysis(n_components=2)
+        X_train_transformed = lda.fit_transform(X_train_scl, y_train)
+        X_test_transformed = lda.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/wine_lda_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_lda_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_lda_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/wine_lda_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+        
+    def best_pca_nba(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        pca = PCA(n_components=2)
+        X_train_transformed = pca.fit_transform(X_train_scl, y_train)
+        X_test_transformed = pca.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/nba_pca_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_pca_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_pca_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_pca_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+    def best_ica_nba(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        ica = FastICA(n_components=X_train_scl.shape[1])
+        X_train_transformed = ica.fit_transform(X_train_scl, y_train)
+        X_test_transformed = ica.transform(X_test_scl)
+        
+        ## top 2
+        kurt = kurtosis(X_train_transformed)
+        i = kurt.argsort()[::-1]
+        X_train_transformed_sorted = X_train_transformed[:, i]
+        X_train_transformed = X_train_transformed_sorted[:,0:2]
+        
+        kurt = kurtosis(X_test_transformed)
+        i = kurt.argsort()[::-1]
+        X_test_transformed_sorted = X_test_transformed[:, i]
+        X_test_transformed = X_test_transformed_sorted[:,0:2]
+        
+        # save
+        filename = './' + self.save_dir + '/nba_ica_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_ica_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_ica_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_ica_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+
+    def best_rp_nba(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        rp = GaussianRandomProjection(n_components=X_train_scl.shape[1])
+        X_train_transformed = rp.fit_transform(X_train_scl, y_train)
+        X_test_transformed = rp.transform(X_test_scl)
+        
+        ## top 2
+        kurt = kurtosis(X_train_transformed)
+        i = kurt.argsort()[::-1]
+        X_train_transformed_sorted = X_train_transformed[:, i]
+        X_train_transformed = X_train_transformed_sorted[:,0:2]
+        
+        kurt = kurtosis(X_test_transformed)
+        i = kurt.argsort()[::-1]
+        X_test_transformed_sorted = X_test_transformed[:, i]
+        X_test_transformed = X_test_transformed_sorted[:,0:2]
+        
+        # save
+        filename = './' + self.save_dir + '/nba_rp_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_rp_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_rp_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_rp_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+        
+    def best_lda_nba(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_nba_data()
+        
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        lda = LinearDiscriminantAnalysis(n_components=2)
+        X_train_transformed = lda.fit_transform(X_train_scl, y_train)
+        X_test_transformed = lda.transform(X_test_scl)
+        
+        # save
+        filename = './' + self.save_dir + '/nba_lda_x_train.txt'
+        pd.DataFrame(X_train_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_lda_x_test.txt'
+        pd.DataFrame(X_test_transformed).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_lda_y_train.txt'
+        pd.DataFrame(y_train).to_csv(filename, header=False, index=False)
+        
+        filename = './' + self.save_dir + '/nba_lda_y_test.txt'
+        pd.DataFrame(y_test).to_csv(filename, header=False, index=False)
+    
     def pca_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
@@ -326,21 +572,60 @@ class part2():
         
 def main():
     print('Running part 2')
+    
     p = part2()
     
-    t0 = time()
+    filename = './' + self.save_dir + '/time.txt'
+    with open(filename, 'w') as text_file:
+        
+        t0 = time()
+        p.pca_wine()
+        print('pca_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.pca_nba()
+        print('pca_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.ica_wine()
+        print('ica_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.ica_nba()
+        print('ica_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.rp_wine()
+        print('rp_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.rp_nba()
+        print('rp_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.lda_nba()
+        print('lda_nba: %0.3f seconds' % (time() - t0), file=text_file)
+        
+        t0 = time()
+        p.lda_wine()
+        print('lda_wine: %0.3f seconds' % (time() - t0), file=text_file)
+        
     
-    p.pca_wine()
-    p.pca_nba()
+    ##
+    ## Generate files for best
+    ##
     
-    p.ica_wine()
-    p.ica_nba()
+    p.best_pca_wine()
+    p.best_pca_nba()
     
-    p.rp_wine()
-    p.rp_nba()
+    p.best_ica_wine()
+    p.best_ica_nba()
     
-    p.lda_nba()
-    p.lda_wine()
+    p.best_rp_wine()
+    p.best_rp_nba()
+    
+    p.best_lda_wine()
+    p.best_lda_nba()
     
     print("done in %0.3f seconds" % (time() - t0))
 

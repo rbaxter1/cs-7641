@@ -42,35 +42,19 @@ class part4():
             
             t0 = time()
             self.nn_pca_wine()
-            text_file.write('nn_pca_wine: %0.3f seconds' % (time() - t0))
-            
-            t0 = time()
-            self.nn_pca_nba()
-            text_file.write('nn_pca_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('nn_pca_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.nn_ica_wine()
-            text_file.write('nn_ica_wine: %0.3f seconds' % (time() - t0))
-            
-            t0 = time()
-            self.nn_ica_nba()
-            text_file.write('nn_ica_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('nn_ica_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.nn_rp_wine()
-            text_file.write('nn_rp_wine: %0.3f seconds' % (time() - t0))
-            
-            t0 = time()
-            self.nn_rp_nba()
-            text_file.write('nn_rp_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('nn_rp_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
             self.nn_lda_wine()
-            text_file.write('nn_lda_wine: %0.3f seconds' % (time() - t0))
-            
-            t0 = time()
-            self.nn_lda_nba()
-            text_file.write('nn_lda_nba: %0.3f seconds' % (time() - t0))
+            text_file.write('nn_lda_wine: %0.3f seconds\n' % (time() - t0))
             
         
     def nn_pca_wine(self):
@@ -78,41 +62,21 @@ class part4():
         X_train, X_test, y_train, y_test = dh.get_wine_data_pca_best()
         self.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PDA')
         
-    def nn_pca_nba(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data_pca_best()
-        self.nn_analysis(X_train, X_test, y_train, y_test, 'NBA', 'Neural Network PDA')
-        
     def nn_ica_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_ica_best()
         self.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network IDA')
-        
-    def nn_ica_nba(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data_ica_best()
-        self.nn_analysis(X_train, X_test, y_train, y_test, 'NBA', 'Neural Network IDA')
         
     def nn_rp_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_rp_best()
         self.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network RP')
         
-    def nn_rp_nba(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data_rp_best()
-        self.nn_analysis(X_train, X_test, y_train, y_test, 'NBA', 'Neural Network RP')
-        
     def nn_lda_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_lda_best()
         self.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network LDA')
     
-    def nn_lda_nba(self):
-        dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_nba_data_lda_best()
-        self.nn_analysis(X_train, X_test, y_train, y_test, 'NBA', 'Neural Network LDA')
-        
     def nn_analysis(self, X_train, X_test, y_train, y_test, data_set_name, analysis_name='Neural Network'):
         
         ##
@@ -130,10 +94,21 @@ class part4():
                             max_iter=500,
                             batch_size=60)
     
+    
+        with open(filename, 'w') as text_file:
+            t0 = time()
+            clf.fit(X_train, y_train)
+            text_file.write(analysis_name.lower() + ' fit time: %0.3f seconds\n' % (time() - t0))
+            
+            t0 = time()
+            y_pred = clf.predict(X_test)
+            text_file.write(analysis_name.lower() + ' predict time: %0.3f seconds\n' % (time() - t0))
+            
+            
         cv = StratifiedShuffleSplit(n_splits=100, test_size=0.2, random_state=0)
         
-        name = data_set_name.lower() + '_' + analysis_name.lower() + 'nn'
-        filename = './' + self.out_dir + '/' + name + '.png'
+        name = data_set_name.lower() + '_' + analysis_name.lower() + '_nn.png'
+        filename = './' + self.out_dir + '/' + name
         
         ##
         ## Plots

@@ -331,8 +331,9 @@ class part3():
         
         self.part1.cluster_plot(df, 3, 'KMeans', 'Wine', 'K-Means PCA')
         self.part1.cluster_plot(df, 3, 'GaussianMixture', 'Wine', 'K-Means PCA')
-        self.part1.cluster_3d_plot(df, 3, 'KMeans', 'Wine', 'K-Means PCA')
-        self.part1.cluster_3d_plot(df, 3, 'GaussianMixture', 'Wine', 'K-Means PCA')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 3, 'KMeans', 'Wine', 'K-Means PCA')
+            self.part1.cluster_3d_plot(df, 3, 'GaussianMixture', 'Wine', 'K-Means PCA')
         
         
         X_train, X_test, y_train, y_test = dh.get_wine_data_ica_best()
@@ -341,8 +342,9 @@ class part3():
         
         self.part1.cluster_plot(df, 3, 'KMeans', 'Wine', 'K-Means ICA')
         self.part1.cluster_plot(df, 4, 'GaussianMixture', 'Wine', 'K-Means ICA')
-        self.part1.cluster_3d_plot(df, 3, 'KMeans', 'Wine', 'K-Means ICA')
-        self.part1.cluster_3d_plot(df, 4, 'GaussianMixture', 'Wine', 'K-Means ICA')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 3, 'KMeans', 'Wine', 'K-Means ICA')
+            self.part1.cluster_3d_plot(df, 4, 'GaussianMixture', 'Wine', 'K-Means ICA')
         
         
         X_train, X_test, y_train, y_test = dh.get_wine_data_lda_best()
@@ -351,8 +353,9 @@ class part3():
         
         self.part1.cluster_plot(df, 4, 'KMeans', 'Wine', 'K-Means LDA')
         self.part1.cluster_plot(df, 4, 'GaussianMixture', 'Wine', 'K-Means LDA')
-        self.part1.cluster_3d_plot(df, 4, 'KMeans', 'Wine', 'K-Means LDA')
-        self.part1.cluster_3d_plot(df, 4, 'GaussianMixture', 'Wine', 'K-Means LDA')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 4, 'KMeans', 'Wine', 'K-Means LDA')
+            self.part1.cluster_3d_plot(df, 4, 'GaussianMixture', 'Wine', 'K-Means LDA')
         
         
         X_train, X_test, y_train, y_test = dh.get_wine_data_rp_best()
@@ -361,8 +364,9 @@ class part3():
         
         self.part1.cluster_plot(df, 5, 'KMeans', 'Wine', 'K-Means RP')
         self.part1.cluster_plot(df, 3, 'GaussianMixture', 'Wine', 'K-Means RP')
-        self.part1.cluster_3d_plot(df, 5, 'KMeans', 'Wine', 'K-Means RP')
-        self.part1.cluster_3d_plot(df, 3, 'GaussianMixture', 'Wine', 'K-Means RP')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 5, 'KMeans', 'Wine', 'K-Means RP')
+            self.part1.cluster_3d_plot(df, 3, 'GaussianMixture', 'Wine', 'K-Means RP')
         
         
     def nba_cluster_plots(self):
@@ -373,8 +377,9 @@ class part3():
         
         self.part1.cluster_plot(df, 3, 'KMeans', 'NBA', 'K-Means PCA')
         self.part1.cluster_plot(df, 8, 'GaussianMixture', 'NBA', 'K-Means PCA')
-        self.part1.cluster_3d_plot(df, 3, 'KMeans', 'NBA', 'K-Means PCA')
-        self.part1.cluster_3d_plot(df, 8, 'GaussianMixture', 'NBA', 'K-Means PCA')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 3, 'KMeans', 'NBA', 'K-Means PCA')
+            self.part1.cluster_3d_plot(df, 8, 'GaussianMixture', 'NBA', 'K-Means PCA')
         
         
         X_train, X_test, y_train, y_test = dh.get_nba_data_ica_best()
@@ -383,8 +388,9 @@ class part3():
         
         self.part1.cluster_plot(df, 3, 'KMeans', 'NBA', 'K-Means ICA')
         self.part1.cluster_plot(df, 5, 'GaussianMixture', 'NBA', 'K-Means ICA')
-        self.part1.cluster_3d_plot(df, 3, 'KMeans', 'NBA', 'K-Means ICA')
-        self.part1.cluster_3d_plot(df, 5, 'GaussianMixture', 'NBA', 'K-Means ICA')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 3, 'KMeans', 'NBA', 'K-Means ICA')
+            self.part1.cluster_3d_plot(df, 5, 'GaussianMixture', 'NBA', 'K-Means ICA')
         
         
         X_train, X_test, y_train, y_test = dh.get_nba_data_lda_best()
@@ -393,8 +399,9 @@ class part3():
         
         self.part1.cluster_plot(df, 4, 'KMeans', 'NBA', 'K-Means LDA')
         self.part1.cluster_plot(df, 3, 'GaussianMixture', 'NBA', 'K-Means LDA')
-        self.part1.cluster_3d_plot(df, 4, 'KMeans', 'NBA', 'K-Means LDA')
-        self.part1.cluster_3d_plot(df, 3, 'GaussianMixture', 'NBA', 'K-Means LDA')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 4, 'KMeans', 'NBA', 'K-Means LDA')
+            self.part1.cluster_3d_plot(df, 3, 'GaussianMixture', 'NBA', 'K-Means LDA')
         
         
         X_train, X_test, y_train, y_test = dh.get_nba_data_rp_best()
@@ -403,8 +410,9 @@ class part3():
         
         self.part1.cluster_plot(df, 4, 'KMeans', 'NBA', 'K-Means RP')
         self.part1.cluster_plot(df, 5, 'GaussianMixture', 'NBA', 'K-Means RP')
-        self.part1.cluster_3d_plot(df, 4, 'KMeans', 'NBA', 'K-Means RP')
-        self.part1.cluster_3d_plot(df, 5, 'GaussianMixture', 'NBA', 'K-Means RP')
+        if df.shape[1] >=3:
+            self.part1.cluster_3d_plot(df, 4, 'KMeans', 'NBA', 'K-Means RP')
+            self.part1.cluster_3d_plot(df, 5, 'GaussianMixture', 'NBA', 'K-Means RP')
         
         
     def kmeans_pca_wine(self):

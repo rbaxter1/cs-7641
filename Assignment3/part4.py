@@ -32,13 +32,12 @@ already done this) and rerun your neural network learner on the newly projected 
 class part4():
     def __init__(self):
         self.out_dir = 'output_part4'
-        self.save_dir = 'data'
+        self.time_filename = './' + self.out_dir + '/time.txt'
 
     def run(self):
-        print('Running part 4')
+        print('Running part 5')
     
-        filename = './' + self.out_dir + '/time.txt'
-        with open(filename, 'w') as text_file:
+        with open(self.time_filename, 'w') as text_file:
             
             t0 = time()
             self.nn_pca_wine()
@@ -79,23 +78,15 @@ class part4():
     
     def nn_analysis(self, X_train, X_test, y_train, y_test, data_set_name, analysis_name='Neural Network'):
         
-        ##
-        ## Learning Curve
-        ##
-        title = 'Learning Curve (' + analysis_name + ') for ' + data_set_name
-        name = data_set_name.lower() + '_' + analysis_name.lower() + '_learn_curve'
-        filename = './' + self.out_dir + '/' + name + '.png'
-        
         clf = MLPClassifier(activation='relu',
                             learning_rate='constant',
                             shuffle=True,
                             solver='adam',
                             random_state=0,
-                            max_iter=500,
+                            max_iter=1000,
                             batch_size=60)
     
-    
-        with open(filename, 'w') as text_file:
+        with open(self.time_filename, 'w') as text_file:
             t0 = time()
             clf.fit(X_train, y_train)
             text_file.write(analysis_name.lower() + ' fit time: %0.3f seconds\n' % (time() - t0))
@@ -104,9 +95,9 @@ class part4():
             y_pred = clf.predict(X_test)
             text_file.write(analysis_name.lower() + ' predict time: %0.3f seconds\n' % (time() - t0))
             
-            
         cv = StratifiedShuffleSplit(n_splits=100, test_size=0.2, random_state=0)
         
+        title = 'Learning Curve (' + analysis_name + ') for ' + data_set_name
         name = data_set_name.lower() + '_' + analysis_name.lower() + '_nn.png'
         filename = './' + self.out_dir + '/' + name
         
@@ -115,11 +106,14 @@ class part4():
         ##
         ph = plot_helper()
         
+        ##
+        ## Learning Curve
+        ##
         ph.plot_learning_curve(clf, title, X_train, y_train, ylim=None, cv=cv, n_jobs=-1, filename=filename)
         
         
 def main():    
-    p = part4()
+    p = part5()
     p.run()
 
 if __name__== '__main__':

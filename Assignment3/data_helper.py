@@ -8,6 +8,9 @@ class data_helper:
         self.data_dir = 'data'
         pass
     
+    ##
+    ## Original Data
+    ##
     def get_nba_data(self):
         df = pd.read_csv('./data/shot_logs.csv', sep=',')
         
@@ -53,8 +56,10 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
-    def get_wine_data_lda_best(self):
-        
+    ##
+    ## Dimension Reduction Data
+    ##
+    def get_wine_data_lda_best(self):    
         filename = './' + self.data_dir + '/wine_lda_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -74,8 +79,8 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
-    def get_wine_data_pca_best(self):
-        
+    
+    def get_wine_data_pca_best(self):        
         filename = './' + self.data_dir + '/wine_pca_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -95,8 +100,8 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
-    def get_wine_data_rp_best(self):
-        
+    
+    def get_wine_data_rp_best(self):        
         filename = './' + self.data_dir + '/wine_rp_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -116,8 +121,8 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
         
-    def get_wine_data_ica_best(self):
         
+    def get_wine_data_ica_best(self):
         filename = './' + self.data_dir + '/wine_ica_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -137,8 +142,8 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
         
-    def get_nba_data_lda_best(self):
         
+    def get_nba_data_lda_best(self):
         filename = './' + self.data_dir + '/nba_lda_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -158,8 +163,8 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
+    
     def get_nba_data_pca_best(self):
-        
         filename = './' + self.data_dir + '/nba_pca_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -179,8 +184,8 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
     
+    
     def get_nba_data_rp_best(self):
-        
         filename = './' + self.data_dir + '/nba_rp_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -200,8 +205,8 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
         
-    def get_nba_data_ica_best(self):
         
+    def get_nba_data_ica_best(self):
         filename = './' + self.data_dir + '/nba_ica_x_train.txt'
         df1 = pd.read_csv(filename, sep=',')
         
@@ -221,5 +226,169 @@ class data_helper:
         
         return X_train, X_test, y_train, y_test
         
+    ##
+    ## Dimension Reduction plus Clustering Data
+    ##
+    def get_wine_data_kmeans_pca_best(self):
+        filename = './' + self.data_dir + '/wine_kmeans_pca_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_pca_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_pca_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_pca_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
+    
+    def get_wine_data_gmm_pca_best(self):
+        filename = './' + self.data_dir + '/wine_gmm_pca_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_pca_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_pca_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_pca_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
+    def get_wine_data_kmeans_ica_best(self):
+        filename = './' + self.data_dir + '/wine_kmeans_ica_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_ica_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_ica_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_ica_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
+    def get_wine_data_gmm_ica_best(self):
+        filename = './' + self.data_dir + '/wine_gmm_ica_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_ica_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_ica_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_ica_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
+    def get_wine_data_kmeans_rp_best(self):
+        filename = './' + self.data_dir + '/wine_kmeans_rp_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_rp_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_rp_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_rp_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
+    def get_wine_data_gmm_rp_best(self):
+        filename = './' + self.data_dir + '/wine_gmm_rp_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_rp_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_rp_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_rp_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
+    def get_wine_data_kmeans_lda_best(self):
+        filename = './' + self.data_dir + '/wine_kmeans_lda_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_lda_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_lda_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_kmeans_lda_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
+    def get_wine_data_gmm_lda_best(self):
+        filename = './' + self.data_dir + '/wine_gmm_lda_x_train.txt'
+        df1 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_lda_x_test.txt'
+        df2 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_lda_y_train.txt'
+        df3 = pd.read_csv(filename, sep=',')
+        
+        filename = './' + self.data_dir + '/wine_gmm_lda_y_test.txt'
+        df4 = pd.read_csv(filename, sep=',')
+
+        X_train = df1.values
+        X_test = df2.values
+        y_train = df3.values
+        y_test = df4.values
+        
+        return X_train, X_test, y_train, y_test
+    
 if __name__== '__main__':
     print(1)

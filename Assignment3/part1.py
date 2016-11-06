@@ -49,7 +49,8 @@ class part1():
         df = pd.DataFrame(X_train)
         df.columns = x_col_names
         
-        self.cluster_plot(df, 2, KMeans)
+        self.cluster_plot(df, 2, 'KMeans')
+	self.cluster_plot(df, 2, 'GaussianMixture')
     
     def gmm_wine(self):
         dh = data_helper()

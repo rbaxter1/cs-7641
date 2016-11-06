@@ -1,0 +1,1 @@
+wine_cluster_plots: 22.652 secondsnba_cluster_plots: 79.368 secondsgmm_wine: 5.673 secondsgmm_nba: 93.481 secondskmeans_wine: 41.263 secondskmeans_nba: 2124.934 seconds

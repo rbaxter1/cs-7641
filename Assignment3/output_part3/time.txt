@@ -1,0 +1,1 @@
+kmeans_pca_wine: 44.049 secondskmeans_pca_nba: 2023.178 secondskmeans_ica_wine: 43.893 secondskmeans_ica_nba: 1890.791 secondskmeans_rp_wine: 44.175 secondskmeans_rp_nba: 1960.721 secondskmeans_lda_wine: 44.182 secondskmeans_lda_nba: 1880.152 seconds

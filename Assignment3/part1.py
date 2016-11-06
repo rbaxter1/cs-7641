@@ -14,7 +14,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.metrics import *
-        
+
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 
@@ -148,7 +148,7 @@ class part1():
                 plt.xlabel(f1)
                 plt.ylabel(f2)
                 
-                fn = './' + self.out_dir + '/' + f1 + '_' + f2 + '_' + str(k) + '_' + cls_type.lower() + '_' + data_set_name + '_cluster.png'
+                fn = './' + self.out_dir + '/' + f1.lower() + '_' + f2.lower() + '_' + str(k) + '_' + cls_type.lower() + '_' + data_set_name + '_cluster.png'
                 plt.savefig(fn)
                 plt.close('all')
                                 
@@ -189,8 +189,8 @@ class part1():
             ## 3d Scatter Plot
             ##
             title = cls_type + ' Clusters 3D: ' + f1 + '\nvs ' + f2 + ' vs ' + f3 + ', k=' + str(k)
-            name = data_set_name.lower() + '_' + cls_type + '3d_cluster'
-            filename = './' + self.out_dir + '/' + name + '.png'
+            name = data_set_name.lower() + '_' + cls_type.lower() + '3d_cluster'
+            filename = './' + self.out_dir + '/' + f1.lower() + '_' + f2.lower() + '_' + f3.lower() + '_' + str(k) + '_' + cls_type.lower() + '_' + data_set_name + '_cluster.png'
             
             ph.plot_3d_scatter(X_train_scl[:,0], X_train_scl[:,1], X_train_scl[:,2], y_pred, f1, f2, f3, title, filename)
             

@@ -15,6 +15,26 @@ class plot_helper():
     def __init__(self):
         pass
     
+    def plot_simple_bar(self, x, values, labels, xlab, ylab, title, filename):
+        plt.clf()
+        plt.cla()
+        
+        fig, ax = plt.subplots()
+        
+        ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+        
+        ax = plt.subplot()
+        ax.bar(np.arange(1, len(values)+1), values, align='center')
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels)
+
+        plt.grid()
+        plt.title(title)
+        plt.xlabel(xlab)
+        plt.ylabel(ylab)
+        
+        plt.savefig(filename)
+        
     def plot_3d_scatter(self, x, y, z, y_pred, title, xlab, ylab, zlab, filename):
         plt.clf()
         plt.cla()

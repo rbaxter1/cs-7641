@@ -4,6 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import matplotlib.cm as cm
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, Imputer, OneHotEncoder, RobustScaler
 from sklearn.decomposition import PCA, FastICA, RandomizedPCA, IncrementalPCA
@@ -11,7 +12,11 @@ from sklearn.random_projection import GaussianRandomProjection
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import StratifiedShuffleSplit
-from sklearn.metrics import mean_squared_error
+from sklearn import cross_validation
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.cross_validation import KFold
+from sklearn.metrics import *
+
 
 from scipy.stats import kurtosis
 
@@ -35,17 +40,17 @@ class part2():
     def ica_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine')
+        self.ica_analysis(X_train, X_test, y_train, y_test, 'Wine')
     
-    def rca_wine(self):
+    def rp_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine')
+        self.rp_analysis(X_train, X_test, y_train, y_test, 'Wine')
 
     def lda_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'Wine')
+        self.lda_analysis(X_train, X_test, y_train, y_test, 'Wine')
     
     def pca_nba(self):
         dh = data_helper()
@@ -55,17 +60,17 @@ class part2():
     def ica_nba(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA')
+        self.ica_analysis(X_train, X_test, y_train, y_test, 'NBA')
 
-    def rca_nba(self):
+    def rp_nba(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA')
+        self.rp_analysis(X_train, X_test, y_train, y_test, 'NBA')
         
     def lda_nba(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_nba_data()
-        self.gmm_analysis(X_train, X_test, y_train, y_test, 'NBA')
+        self.lda_analysis(X_train, X_test, y_train, y_test, 'NBA')
 
     def reconstruction_error(self, X_train_scl, cls):
         rng = range(1, X_train_scl.shape[1]+1)
@@ -105,7 +110,6 @@ class part2():
         plt.close('all')
 
     def plot_explained_variance(self, pca, title, filename):
-        
         plt.clf()
         plt.cla()
         fig, ax = plt.subplots()
@@ -127,8 +131,6 @@ class part2():
         
         plt.xlabel('Principal Components')
         plt.ylabel('Explained Variance Ratio')
-        
-        
         plt.savefig(filename)
         plt.close('all')
     
@@ -137,16 +139,82 @@ class part2():
         X_train_scl = scl.fit_transform(X_train)
         X_test_scl = scl.transform(X_test)
         
-    def rca_analysis(self, X_train, X_test, y_train, y_test, data_set_name):
-        scl = RobustScaler()
-        X_train_scl = scl.fit_transform(X_train)
-        X_test_scl = scl.transform(X_test)
+        ##
+        ## Plots
+        ##
+        ph = plot_helper()
         
-    def ica_analysis(self, X_train, X_test, y_train, y_test, data_set_name):
+        scores = []
+        rng = range(1, X_train_scl.shape[1]+1)
+        for i in rng:
+            lda = LinearDiscriminantAnalysis(n_components=i)
+            cv = KFold(X_train_scl.shape[0], 3, shuffle=True)
+            
+            # cross validation
+            cv_scores = []
+            for (train, test) in cv:
+                lda.fit(X_train_scl[train], y_train[train])
+                score = lda.score(X_train_scl[test], y_train[test])
+                cv_scores.append(score)
+                
+            mean_score = np.mean(cv_scores)
+            scores.append(mean_score)
+            print(i, mean_score)
+            
+        ##
+        ## Score Plot
+        ##
+        title = 'Score Summary Plot (LDA) for ' + data_set_name
+        name = data_set_name.lower() + '_lda_score'
+        filename = './' + self.out_dir + '/' + name + '.png'
+                    
+        ph.plot_series(rng,
+                       [scores],
+                       [None],
+                       ['cross validation score'],
+                       cm.viridis(np.linspace(0, 1, 1)),
+                       ['o'],
+                       title,
+                       'n_components',
+                       'Score',
+                       filename)
+        
+        
+    def rp_analysis(self, X_train, X_test, y_train, y_test, data_set_name):
         scl = RobustScaler()
         X_train_scl = scl.fit_transform(X_train)
-        X_test_scl = scl.transform(X_test)
-                
+        
+        ks = []
+        for i in range(1000):
+            ##
+            ## Random Projection
+            ##
+            rp = GaussianRandomProjection(n_components=X_train_scl.shape[1])
+            rp.fit(X_train_scl)
+            X_train_rp = rp.transform(X_train_scl)
+            
+            ks.append(kurtosis(X_train_rp))
+            
+        mean_k = np.mean(ks, 0)
+            
+        ##
+        ## Plots
+        ##
+        ph = plot_helper()
+        
+        title = 'Kurtosis (Randomized Projection) for ' + data_set_name
+        name = data_set_name.lower() + '_rp_kurt'
+        filename = './' + self.out_dir + '/' + name + '.png'
+        
+        ph.plot_simple_bar(np.arange(1, len(mean_k)+1, 1),
+                           mean_k,
+                           np.arange(1, len(mean_k)+1, 1).astype('str'),
+                           'Feature Index',
+                           'Kurtosis',
+                           title,
+                           filename)
+        
+        
     def pca_analysis(self, X_train, X_test, y_train, y_test, data_set_name):
         scl = RobustScaler()
         X_train_scl = scl.fit_transform(X_train)
@@ -190,6 +258,27 @@ class part2():
                     'Mean Squared Error',
                     filename)
         
+        
+        ##
+        ## Manually compute eigenvalues
+        ## 
+        cov_mat = np.cov(X_train_scl.T)
+        eigen_values, eigen_vectors = np.linalg.eig(cov_mat)
+        print(eigen_values)
+        sorted_eigen_values = sorted(eigen_values, reverse=True)
+
+        title = 'Eigen Values (PCA) for ' + data_set_name
+        name = data_set_name.lower() + '_pca_eigen'
+        filename = './' + self.out_dir + '/' + name + '.png'
+        
+        ph.plot_simple_bar(np.arange(1, len(sorted_eigen_values)+1, 1),
+                           sorted_eigen_values,
+                           np.arange(1, len(sorted_eigen_values)+1, 1).astype('str'),
+                           'Principal Components',
+                           'Eigenvalue',
+                           title,
+                           filename)
+        
         ## TODO Factor this out to new method
         ##
         ## Scatter
@@ -214,32 +303,25 @@ class part2():
         ica = FastICA(n_components=X_train_scl.shape[1])
         X_ica = ica.fit_transform(X_train_scl)
         
+        ##
+        ## Plots
+        ##
+        ph = plot_helper()
+
         kurt = kurtosis(X_ica)
         print(kurt)
-        i = kurt.argsort()[::-1]
-         
-        X_ica_sorted = X_ica[:, i]
         
-        # top 2
-        X_ica_top2 = X_ica_sorted[:,0:2]
-        
-        
-        all_mses, rng = self.reconstruction_error(X_ica_top2, FastICA)
-        
-        title = "Reconstruction Error (FastICA)"
-        name = 'ica_rec_err'
+        title = 'Kurtosis (FastICA) for ' + data_set_name
+        name = data_set_name.lower() + '_ica_kurt'
         filename = './' + self.out_dir + '/' + name + '.png'
         
-        plot_series(rng,
-                    [all_mses.mean(0)],
-                    [all_mses.std(0)],
-                    ['mean square error'],
-                    ['red'],
-                    ['o'],
-                    title,
-                    'Number of Features',
-                    'Mean Square Error',
-                    filename)
+        ph.plot_simple_bar(np.arange(1, len(kurt)+1, 1),
+                           kurt,
+                           np.arange(1, len(kurt)+1, 1).astype('str'),
+                           'Feature Index',
+                           'Kurtosis',
+                           title,
+                           filename)
         
         
 def main():
@@ -250,16 +332,15 @@ def main():
     
     p.pca_wine()
     p.pca_nba()
-    '''
+    
     p.ica_wine()
     p.ica_nba()
     
-    p.rca_wine()
-    p.rca_nba()
+    p.rp_wine()
+    p.rp_nba()
     
     p.lda_nba()
     p.lda_wine()
-    '''
     
     print("done in %0.3f seconds" % (time() - t0))
 

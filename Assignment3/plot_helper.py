@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from mpl_toolkits.mplot3d import Axes3D
+
+import pylab
 
 from sklearn.model_selection import learning_curve, ShuffleSplit, StratifiedShuffleSplit, validation_curve
 from sklearn.preprocessing import MinMaxScaler
@@ -12,6 +15,23 @@ class plot_helper():
     def __init__(self):
         pass
     
+    def plot_3d_scatter(self, x, y, z, y_pred, title, xlab, ylab, zlab, filename):
+        plt.clf()
+        plt.cla()
+        
+        fig = pylab.figure()
+        ax = Axes3D(fig)
+        
+        ax.scatter(x, y, z, c=y_pred)
+        ax.set_xlabel(xlab)
+        ax.set_ylabel(ylab)
+        ax.set_zlabel(zlab)
+        ax.set_title(title)
+        #plt.title(title)
+        plt.savefig(filename)
+        plt.close('all')
+        
+
     def extended_line_from_first_two_points(self, series, p0_i, p1_i):
         
         r = (series[p1_i]-series[p0_i]) / (p1_i-p0_i)

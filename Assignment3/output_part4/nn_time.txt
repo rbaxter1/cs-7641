@@ -1,0 +1,2 @@
+neural network lda fit time: 0.086 seconds
+neural network lda predict time: 0.000 seconds

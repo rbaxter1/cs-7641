@@ -122,7 +122,6 @@ class part4():
         name = data_set_name.lower() + '_' + analysis_name.lower() + '_learn_curve'
         filename = './' + self.out_dir + '/' + name + '.png'
         
-        
         clf = MLPClassifier(activation='relu',
                             learning_rate='constant',
                             shuffle=True,
@@ -133,11 +132,15 @@ class part4():
     
         cv = StratifiedShuffleSplit(n_splits=100, test_size=0.2, random_state=0)
         
-        out_dir = 'output_part4'
-        name = 'nn_pca_km'
-        fn = './' + out_dir + '/' + name + '.png'
+        name = data_set_name.lower() + '_' + analysis_name.lower() + 'nn'
+        filename = './' + self.out_dir + '/' + name + '.png'
         
-        plot_learning_curve(clf, title, X_train, y_train, ylim=None, cv=cv, n_jobs=4, filename=fn)
+        ##
+        ## Plots
+        ##
+        ph = plot_helper()
+        
+        ph.plot_learning_curve(clf, title, X_train, y_train, ylim=None, cv=cv, n_jobs=-1, filename=filename)
         
         
 def main():    

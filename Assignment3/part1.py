@@ -195,7 +195,7 @@ class part1():
             ph.plot_3d_scatter(X_train_scl[:,0], X_train_scl[:,1], X_train_scl[:,2], y_pred, f1, f2, f3, title, filename)
             
                     
-    def kmeans_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters):
+    def kmeans_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters, analysis_name='K-Means'):
         scl = RobustScaler()
         X_train_scl = scl.fit_transform(X_train)
         X_test_scl = scl.transform(X_test)
@@ -231,8 +231,8 @@ class part1():
             ##
             ## Silhouette Plot
             ##
-            title = 'Silhouette Plot (K-Means, k=' + str(k) + ') for ' + data_set_name
-            name = data_set_name.lower() + '_kmean_silhouette_' + str(k)
+            title = 'Silhouette Plot (' + analysis_name + ', k=' + str(k) + ') for ' + data_set_name
+            name = data_set_name.lower() + '_' + analysis_name.lower() + '_silhouette_' + str(k)
             filename = './' + self.out_dir + '/' + name + '.png'
             
             self.silhouette_plot(X_train_scl, km.labels_, title, filename)
@@ -245,8 +245,8 @@ class part1():
         ##
         ## Elbow Plot
         ##
-        title = 'Elbow Plot (K-Means) for ' + data_set_name
-        name = data_set_name.lower() + '_kmean_elbow'
+        title = 'Elbow Plot (' + analysis_name + ') for ' + data_set_name
+        name = data_set_name.lower() + '_' + analysis_name.lower() + '_elbow'
         filename = './' + self.out_dir + '/' + name + '.png'
         
         # line to help visualize the elbow
@@ -266,8 +266,8 @@ class part1():
         ##
         ## Score Plot
         ##
-        title = 'Score Summary Plot (K-Means) for ' + data_set_name
-        name = data_set_name.lower() + '_kmean_score'
+        title = 'Score Summary Plot (' + analysis_name + ') for ' + data_set_name
+        name = data_set_name.lower() + '_' + analysis_name.lower() + '_score'
         filename = './' + self.out_dir + '/' + name + '.png'
                     
         ph.plot_series(cluster_range,
@@ -281,7 +281,7 @@ class part1():
                     'Score',
                     filename)
         
-    def gmm_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters):
+    def gmm_analysis(self, X_train, X_test, y_train, y_test, data_set_name, max_clusters, analysis_name='GMM'):
         scl = RobustScaler()
         X_train_scl = scl.fit_transform(X_train)
         X_test_scl = scl.transform(X_test)
@@ -293,8 +293,6 @@ class part1():
         em_measure_score = []
         em_adjusted_rand_score = []
         em_adjusted_mutual_info_score = []
-        
-        
         
         cluster_range = np.arange(2, max_clusters+1, 1)
         for k in cluster_range:
@@ -328,8 +326,8 @@ class part1():
         ##
         ## BIC/AIC Plot
         ##
-        title = 'Information Criterion Plot (EM) for ' + data_set_name
-        name = data_set_name.lower() + '_em_ic'
+        title = 'Information Criterion Plot (' + analysis_name + ') for ' + data_set_name
+        name = data_set_name.lower() + '_' + analysis_name.lower() + '_ic'
         filename = './' + self.out_dir + '/' + name + '.png'
         
         ph.plot_series(cluster_range,
@@ -346,8 +344,8 @@ class part1():
         ##
         ## Score Plot
         ##
-        title = 'Score Summary Plot (EM) for ' + data_set_name
-        name = data_set_name.lower() + '_em_score'
+        title = 'Score Summary Plot (' + analysis_name + ') for ' + data_set_name
+        name = data_set_name.lower() + '_' + analysis_name.lower() + '_score'
         filename = './' + self.out_dir + '/' + name + '.png'
                     
         ph.plot_series(cluster_range,

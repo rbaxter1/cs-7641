@@ -33,7 +33,7 @@ class part1():
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data()
         
-        x_col_names = ['alcohol', 'volatile acidity', 'sulphates', 'pH']
+        x_col_names = ['Alcohol', 'Volatile Acidity', 'Sulphates', 'pH']
         df = pd.DataFrame(X_train)
         df.columns = x_col_names
         
@@ -45,7 +45,7 @@ class part1():
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_nba_data()
         
-        x_col_names = ['SHOT_DIST', 'CLOSE_DEF_DIST', 'DRIBBLES']
+        x_col_names = ['Shot Distance', 'Closest Defender Distance', 'Number Dribbles']
         df = pd.DataFrame(X_train)
         df.columns = x_col_names
         
@@ -204,7 +204,7 @@ class part1():
         filename = './' + self.out_dir + '/' + name + '.png'
         
         # line to help visualize the elbow
-        lin = ph.extended_line_from_first_two_points(km_inertias)
+        lin = ph.extended_line_from_first_two_points(km_inertias, 0, 2)
         
         ph.plot_series(cluster_range,
                     [km_inertias, lin],

@@ -63,24 +63,36 @@ class part5():
         
     def nn_pca_cluster_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data_pca_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PDA')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_kmeans_pca_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PDA K-Means')
+        
+        X_train, X_test, y_train, y_test = dh.get_wine_data_gmm_pca_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network PDA GMM')
         
     def nn_ica_cluster_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data_ica_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network IDA')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_ica_kmeans_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network IDA K-Means')
+        
+        X_train, X_test, y_train, y_test = dh.get_wine_data_ica_gmm_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network IDA GMM')
         
     def nn_rp_cluster_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data_rp_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network RP')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_rp_kmeans_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network RP K-Means')
+        
+        X_train, X_test, y_train, y_test = dh.get_wine_data_rp_gmm_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network RP GMM')
         
     def nn_lda_wine(self):
         dh = data_helper()
-        X_train, X_test, y_train, y_test = dh.get_wine_data_lda_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network LDA')
+        X_train, X_test, y_train, y_test = dh.get_wine_data_lda_kmeans_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network LDA K-Means')
     
+        X_train, X_test, y_train, y_test = dh.get_wine_data_lda_gmm_best()
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network LDA GMM')
+        
 def main():    
     p = part5()
     p.run()

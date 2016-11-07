@@ -1,5 +1,5 @@
-nn_pca_wine: 11.761 seconds
-nn_ica_wine: 8.458 seconds
-nn_rp_wine: 11.909 seconds
-nn_lda_wine: 8.294 seconds
-nn_wine_orig: 18.470 seconds
+nn_pca_wine: 12.067 seconds
+nn_ica_wine: 8.074 seconds
+nn_rp_wine: 11.542 seconds
+nn_lda_wine: 8.598 seconds
+nn_wine_orig: 18.226 seconds

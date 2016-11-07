@@ -16,3 +16,21 @@ neural network lda gmm fit time: 0.099 seconds
 neural network lda gmm predict time: 0.000 seconds
 neural network original fit time: 0.635 seconds
 neural network original predict time: 0.001 seconds
+neural network pca k-means fit time: 0.121 seconds
+neural network pca k-means predict time: 0.000 seconds
+neural network pca gmm fit time: 0.125 seconds
+neural network pca gmm predict time: 0.001 seconds
+neural network ida k-means fit time: 0.094 seconds
+neural network ida k-means predict time: 0.000 seconds
+neural network ida gmm fit time: 0.097 seconds
+neural network ida gmm predict time: 0.000 seconds
+neural network rp k-means fit time: 0.179 seconds
+neural network rp k-means predict time: 0.000 seconds
+neural network rp gmm fit time: 0.187 seconds
+neural network rp gmm predict time: 0.001 seconds
+neural network lda k-means fit time: 0.159 seconds
+neural network lda k-means predict time: 0.000 seconds
+neural network lda gmm fit time: 0.113 seconds
+neural network lda gmm predict time: 0.001 seconds
+neural network original fit time: 0.640 seconds
+neural network original predict time: 0.000 seconds

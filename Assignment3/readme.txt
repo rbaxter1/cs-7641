@@ -1,3 +1,0 @@
-I used python and latest development version of scikit-learn for assignment 3. The main file names correspond to each part, for example, the code for analysis and plotting in part 1 is found in file part1.py. Similarly, the output for each part can be found in its corresponding directory; e.g., part 1 plots and run times are found in output_part1. There are two helper files, plot_helper.py for plotting and data_helper.py for data management. To run everything, execute the command python run.py. This will take a long time. On the gatech buffet servers, it takes a couple hours.
-
-If you prefer, you could get my code via github at: https://github.com/rbaxter1/CS7641.git

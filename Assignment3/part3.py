@@ -38,7 +38,7 @@ class part3():
     def run(self):
         print('Running part 3')
         with open(self.time_filename, 'w') as text_file:
-            '''
+            
             t0 = time()
             self.kmeans_pca_wine()
             text_file.write('kmeans_pca_wine: %0.3f seconds\n' % (time() - t0))
@@ -102,15 +102,15 @@ class part3():
             t0 = time()
             self.gmm_lda_nba()
             text_file.write('gmm_nba: %0.3f seconds\n' % (time() - t0))
-            '''
+            
             t0 = time()
             self.wine_cluster_plots()
             text_file.write('wine_cluster_plots: %0.3f seconds\n' % (time() - t0))
-            '''
+            
             t0 = time()
             self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds\n' % (time() - t0))
-            '''
+            
             ##
             ## Generate files for best
             ##

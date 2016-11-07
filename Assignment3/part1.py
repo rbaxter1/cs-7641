@@ -35,8 +35,6 @@ class part1():
         print('Running part 1')
         with open(self.time_filename, 'w') as text_file:
             
-            '''
-            
             t0 = time()
             self.gmm_wine()
             text_file.write('gmm_wine: %0.3f seconds\n' % (time() - t0))
@@ -53,18 +51,18 @@ class part1():
             self.kmeans_nba()
             text_file.write('kmeans_nba: %0.3f seconds\n' % (time() - t0))
             
-            '''
+            
             ##
             ## Use the best
             ##
             t0 = time()
             self.wine_cluster_plots()
             text_file.write('wine_cluster_plots: %0.3f seconds\n' % (time() - t0))
-            '''
+            
             t0 = time()
             self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds\n' % (time() - t0))
-            '''
+            
             
             
     def wine_cluster_plots(self):

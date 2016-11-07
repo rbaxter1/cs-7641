@@ -87,9 +87,6 @@ class part4():
                             max_iter=1000,
                             batch_size=60)
         
-        #pipeline = Pipeline([('scl', RobustScaler()),
-        #                     ('clf', clf)])
-        
         with open(self.nn_time_filename, 'a+') as text_file:
             t0 = time()
             clf.fit(X_train, y_train)

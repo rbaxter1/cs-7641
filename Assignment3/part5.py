@@ -88,10 +88,10 @@ class part5():
     def nn_ica_cluster_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_kmeans_ica_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network IDA K-Means')
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network ICA K-Means')
         
         X_train, X_test, y_train, y_test = dh.get_wine_data_gmm_ica_best()
-        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network IDA GMM')
+        self.part4.nn_analysis(X_train, X_test, y_train, y_test, 'Wine', 'Neural Network ICA GMM')
         
     def nn_rp_cluster_wine(self):
         dh = data_helper()

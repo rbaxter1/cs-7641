@@ -1,2 +1,1 @@
-wine_cluster_plots: 7.482 seconds
-nba_cluster_plots: 17.083 seconds
+wine_cluster_plots: 8.776 seconds

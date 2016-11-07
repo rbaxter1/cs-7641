@@ -125,16 +125,16 @@ class part2():
         X_train_transformed = ica.fit_transform(X_train_scl, y_train)
         X_test_transformed = ica.transform(X_test_scl)
         
-        ## top 1
+        ## top 2
         kurt = kurtosis(X_train_transformed)
         i = kurt.argsort()[::-1]
         X_train_transformed_sorted = X_train_transformed[:, i]
-        X_train_transformed = X_train_transformed_sorted[:,0:1]
+        X_train_transformed = X_train_transformed_sorted[:,0:2]
         
         kurt = kurtosis(X_test_transformed)
         i = kurt.argsort()[::-1]
         X_test_transformed_sorted = X_test_transformed[:, i]
-        X_test_transformed = X_test_transformed_sorted[:,0:1]
+        X_test_transformed = X_test_transformed_sorted[:,0:2]
         
         # save
         filename = './' + self.save_dir + '/wine_ica_x_train.txt'

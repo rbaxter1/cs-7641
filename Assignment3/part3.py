@@ -106,11 +106,11 @@ class part3():
             t0 = time()
             self.wine_cluster_plots()
             text_file.write('wine_cluster_plots: %0.3f seconds\n' % (time() - t0))
-            
+            '''
             t0 = time()
             self.nba_cluster_plots()
             text_file.write('nba_cluster_plots: %0.3f seconds\n' % (time() - t0))
-            
+            '''
             ##
             ## Generate files for best
             ##

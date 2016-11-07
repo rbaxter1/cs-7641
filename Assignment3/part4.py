@@ -90,7 +90,7 @@ class part4():
         #pipeline = Pipeline([('scl', RobustScaler()),
         #                     ('clf', clf)])
         
-        with open(self.nn_time_filename, 'a') as text_file:
+        with open(self.nn_time_filename, 'a+') as text_file:
             t0 = time()
             clf.fit(X_train, y_train)
             text_file.write(analysis_name.lower() + ' fit time: %0.3f seconds\n' % (time() - t0))

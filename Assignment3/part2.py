@@ -96,7 +96,7 @@ class part2():
         X_train_scl = scl.fit_transform(X_train)
         X_test_scl = scl.transform(X_test)
         
-        pca = PCA(n_components=2)
+        pca = PCA(n_components=3)
         X_train_transformed = pca.fit_transform(X_train_scl, y_train)
         X_test_transformed = pca.transform(X_test_scl)
         
@@ -193,7 +193,7 @@ class part2():
         X_train_scl = scl.fit_transform(X_train)
         X_test_scl = scl.transform(X_test)
         
-        lda = LinearDiscriminantAnalysis(n_components=2)
+        lda = LinearDiscriminantAnalysis(n_components=1)
         X_train_transformed = lda.fit_transform(X_train_scl, y_train)
         X_test_transformed = lda.transform(X_test_scl)
         
@@ -219,7 +219,7 @@ class part2():
         X_train_scl = scl.fit_transform(X_train)
         X_test_scl = scl.transform(X_test)
         
-        pca = PCA(n_components=2)
+        pca = PCA(n_components=1)
         X_train_transformed = pca.fit_transform(X_train_scl, y_train)
         X_test_transformed = pca.transform(X_test_scl)
         
@@ -446,6 +446,7 @@ class part2():
         ph = plot_helper()
         
         scores = []
+        train_scores = []
         rng = range(1, X_train_scl.shape[1]+1)
         for i in rng:
             lda = LinearDiscriminantAnalysis(n_components=i)
@@ -457,9 +458,16 @@ class part2():
                 lda.fit(X_train_scl[train], y_train[train])
                 score = lda.score(X_train_scl[test], y_train[test])
                 cv_scores.append(score)
-                
+            
             mean_score = np.mean(cv_scores)
             scores.append(mean_score)
+            
+            # train score
+            lda = LinearDiscriminantAnalysis(n_components=i)
+            lda.fit(X_train_scl, y_train)
+            train_score = lda.score(X_train_scl, y_train)
+            train_scores.append(train_score)
+            
             print(i, mean_score)
             
         ##
@@ -470,11 +478,11 @@ class part2():
         filename = './' + self.out_dir + '/' + name + '.png'
                     
         ph.plot_series(rng,
-                       [scores],
-                       [None],
-                       ['cross validation score'],
-                       cm.viridis(np.linspace(0, 1, 1)),
-                       ['o'],
+                       [scores, train_scores],
+                       [None, None],
+                       ['cross validation score', 'training score'],
+                       cm.viridis(np.linspace(0, 1, 2)),
+                       ['o', '*'],
                        title,
                        'n_components',
                        'Score',

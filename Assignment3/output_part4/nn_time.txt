@@ -46,3 +46,11 @@ neural network lda k-means fit time: 0.099 seconds
 neural network lda k-means predict time: 0.000 seconds
 neural network lda gmm fit time: 0.118 seconds
 neural network lda gmm predict time: 0.000 seconds
+neural network pca fit time: 0.463 seconds
+neural network pca predict time: 0.001 seconds
+neural network ida fit time: 0.024 seconds
+neural network ida predict time: 0.000 seconds
+neural network rp fit time: 0.304 seconds
+neural network rp predict time: 0.000 seconds
+neural network lda fit time: 0.097 seconds
+neural network lda predict time: 0.000 seconds

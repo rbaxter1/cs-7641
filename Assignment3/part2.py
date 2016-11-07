@@ -37,7 +37,7 @@ class part2():
     def run(self):
         print('Running part 2')
         with open(self.time_filename, 'w') as text_file:
-            
+            '''
             t0 = time()
             self.pca_wine()
             text_file.write('pca_wine: %0.3f seconds\n' % (time() - t0))
@@ -69,7 +69,7 @@ class part2():
             t0 = time()
             self.lda_wine()
             text_file.write('lda_wine: %0.3f seconds\n' % (time() - t0))
-            
+            '''
         
         ##
         ## Generate files for best

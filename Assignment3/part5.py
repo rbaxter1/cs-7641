@@ -37,6 +37,8 @@ class part5():
         self.out_dir = 'output_part5'
         self.part4 = part4()
         self.part4.out_dir = self.out_dir
+        self.part4.time_filename = './' + self.out_dir + '/time2.txt'
+        self.part4.nn_time_filename = './' + self.out_dir + '/nn_time.txt'
 
     def run(self):
         print('Running part 5')
@@ -60,7 +62,21 @@ class part5():
             self.nn_lda_cluster_wine()
             text_file.write('nn_lda_wine: %0.3f seconds\n' % (time() - t0))
             
+            t0 = time()
+            self.nn_wine_orig()
+            text_file.write('nn_wine_orig: %0.3f seconds\n' % (time() - t0))
+            
+            
+    def nn_wine_orig(self):
+        dh = data_helper()
+        X_train, X_test, y_train, y_test = dh.get_wine_data()
         
+        scl = RobustScaler()
+        X_train_scl = scl.fit_transform(X_train)
+        X_test_scl = scl.transform(X_test)
+        
+        self.part4.nn_analysis(X_train_scl, X_test_scl, y_train, y_test, 'Wine', 'Neural Network Original')
+
     def nn_pca_cluster_wine(self):
         dh = data_helper()
         X_train, X_test, y_train, y_test = dh.get_wine_data_kmeans_pca_best()

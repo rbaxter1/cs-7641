@@ -1,0 +1,8 @@
+pca_wine: 1.038 seconds
+pca_nba: 5.265 seconds
+ica_wine: 0.230 seconds
+ica_nba: 0.760 seconds
+rp_wine: 0.848 seconds
+rp_nba: 4.520 seconds
+lda_nba: 0.830 seconds
+lda_wine: 0.217 seconds

@@ -78,3 +78,11 @@ neural network rp fit time: 0.255 seconds
 neural network rp predict time: 0.000 seconds
 neural network lda fit time: 0.085 seconds
 neural network lda predict time: 0.000 seconds
+neural network pca fit time: 0.457 seconds
+neural network pca predict time: 0.000 seconds
+neural network ida fit time: 0.250 seconds
+neural network ida predict time: 0.000 seconds
+neural network rp fit time: 0.322 seconds
+neural network rp predict time: 0.000 seconds
+neural network lda fit time: 0.093 seconds
+neural network lda predict time: 0.000 seconds

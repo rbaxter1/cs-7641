@@ -40,7 +40,7 @@ class part1():
             text_file.write('gmm_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
-            self.gmm_nba()
+            #self.gmm_nba()
             text_file.write('gmm_nba: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
@@ -48,7 +48,7 @@ class part1():
             text_file.write('kmeans_wine: %0.3f seconds\n' % (time() - t0))
             
             t0 = time()
-            self.kmeans_nba()
+            #self.kmeans_nba()
             text_file.write('kmeans_nba: %0.3f seconds\n' % (time() - t0))
             
             

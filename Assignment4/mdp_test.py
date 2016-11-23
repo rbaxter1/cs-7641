@@ -286,59 +286,63 @@ class part1():
         print(vi.iter)
         '''
         
-        fn = './input/grid1.csv'
-        grid = pd.read_csv(fn, header=None).values
-        ph = plot_helper()
-        
-        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid Layout'
-        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
-        ph.plot_layout(grid, title, fn)
-        
-        for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
-            for d in [False, True]:
-                
-                T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
+        for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
             
-                rar = 0.9
-                q = QLearningEx(T, R, grid, start, goals, n_restarts=1000, alpha = 0.2, gamma = 0.9, rar = rar, radr = 0.99, n_iter=100000)
-                q.run()
-                print(q.Q)
-                
-                p = np.array(q.policy)
-                p.shape = grid.shape
-                p = p
-                
-                v = np.array(q.V)[::-1]
-                v.shape = grid.shape
-                v = v
-                if d:
-                    d_str = 'dir'
-                else:
-                    d_str = 'non-dir'
-                    
-                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Tracker\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'tracker_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
-                #tracker = normalize(q.tracker[::-1], axis=1, norm='l1')
-                ph.plot_heatmap_simple(q.tracker[::-1], title, fn)
-                
-                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Iterations\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'iterations_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
-                ph.plot_series(range(len(q.episode_iterations)),
-                            [q.episode_iterations],
-                            [None],
-                            ['iterations'],
-                            cm.viridis(np.linspace(0, 1, 1)),
-                            [''],
-                            title,
-                            'Iterations',
-                            'Episodes',
-                            fn)
-                
-                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
-                ph.plot_heatmap(v, grid[::-1], p, title, fn)
-                
-        print('done qlearner')
+            #fn = './input/grid1.csv'
+            grid = pd.read_csv(grid_file, header=None).values
+            ph = plot_helper()
+            
+            title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid Layout'
+            fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
+            ph.plot_layout(grid, title, fn)
+            
+            for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
+                for d in [False, True]:
+                    for alpha in [0.1, 0.2, 0.3]:
+                        for gamma in [1.0, 0.9, 0.8]:
+                            for rar in [1.0, 0.9, 0.8, 0.7]:
+                                T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
+                            
+                                #rar = 0.9
+                                q = QLearningEx(T, R, grid, start, goals, n_restarts=1000, alpha = alpha, gamma = gamma, rar = rar, radr = 0.99, n_iter=100000)
+                                q.run()
+                                print(q.Q)
+                                
+                                p = np.array(q.policy)
+                                p.shape = grid.shape
+                                p = p
+                                
+                                v = np.array(q.V)[::-1]
+                                v.shape = grid.shape
+                                v = v
+                                if d:
+                                    d_str = 'dir'
+                                else:
+                                    d_str = 'non-dir'
+                                    
+                                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Tracker\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+                                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'tracker_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                                #tracker = normalize(q.tracker[::-1], axis=1, norm='l1')
+                                ph.plot_heatmap_simple(q.tracker[::-1], title, fn)
+                                
+                                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Iterations\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+                                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'iterations_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                                ph.plot_series(range(len(q.episode_iterations)),
+                                            [q.episode_iterations],
+                                            [None],
+                                            ['iterations'],
+                                            cm.viridis(np.linspace(0, 1, 1)),
+                                            [''],
+                                            title,
+                                            'Iterations',
+                                            'Episodes',
+                                            fn)
+                                
+                                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+                                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                                ph.plot_heatmap(v, grid[::-1], p, title, fn)
+                            
+            print('done qlearner')
         
         '''
         ## qlearning

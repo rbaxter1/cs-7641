@@ -5,6 +5,7 @@ import numpy as np
 from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 from matplotlib._png import read_png
 import matplotlib.colors as colors
+import matplotlib.ticker as ticker
 
 class plot_helper():
     def __init__(self):
@@ -37,6 +38,34 @@ class plot_helper():
         #                                                    ['green','white','red'],
         #                                                    256)
         #return cm = cm.viridis()
+        
+    def plot_series(self, x, y, y_std, y_lab, colors, markers, title, xlab, ylab, filename):
+        
+        plt.clf()
+        plt.cla()
+        fig, ax = plt.subplots()
+        
+        #ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+        
+        for i in range(len(y)):
+            plt.plot(x, y[i],
+                     color=colors[i], marker=markers[i],
+                     markersize=5,
+                     label=y_lab[i])
+            
+            if None != y_std[i]:
+                plt.fill_between(x,
+                                 y[i] + y_std[i],
+                                 y[i] - y_std[i],
+                                 alpha=0.15, color=colors[i])
+        
+        plt.grid()
+        plt.title(title)
+        plt.xlabel(xlab)
+        plt.ylabel(ylab)
+        plt.legend(loc='best')
+        
+        plt.savefig(filename)
         
     def plot_layout(self, grid, title, filename):
         plt.clf()

@@ -314,12 +314,25 @@ class part1():
                     d_str = 'non-dir'
                     
                 title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Tracker\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                fn = './output/tracker_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'tracker_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
                 #tracker = normalize(q.tracker[::-1], axis=1, norm='l1')
                 ph.plot_heatmap_simple(q.tracker[::-1], title, fn)
                 
+                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Iterations\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'iterations_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                ph.plot_series(range(len(q.episode_iterations)),
+                            [q.episode_iterations],
+                            [None],
+                            ['iterations'],
+                            cm.viridis(np.linspace(0, 1, 1)),
+                            [''],
+                            title,
+                            'Iterations',
+                            'Episodes',
+                            fn)
+                
                 title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                fn = './output/qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
                 ph.plot_heatmap(v, grid[::-1], p, title, fn)
                 
         print('done qlearner')

@@ -209,6 +209,9 @@ class QLearningEx(mdptoolbox.mdp.MDP):
         
     def run(self):
         
+        self.episode_reward = []
+        self.episode_iterations = []
+                
         # restart logic
         for i in range(self.n_restarts):
             
@@ -219,11 +222,13 @@ class QLearningEx(mdptoolbox.mdp.MDP):
             a = self.__querysetstate(s)
             
             c = 0
+            er = 0
             while (s not in self.goals) & (c < self.max_iter):
                 c += 1
                 
                 # get next state and reward based on action
                 s_prime, r = self.__move(s, a)
+                er += r
                 
                 # convert to grid pos
                 pos = divmod(s, self.ncols)
@@ -238,8 +243,15 @@ class QLearningEx(mdptoolbox.mdp.MDP):
                 s = s_prime
                 
                 if s in self.goals:
-                    print('goal! iterations: ', c)
+                    print('goal! iterations: ', c, 'reward: ', er)
+                    self.episode_reward.append(er)
+                    self.episode_iterations.append(c)
                 
+                elif c >= self.max_iter:
+                    print('timeout!')
+                    self.episode_reward.append(er)
+                    self.episode_iterations.append(c)
+                    
                 # compute the value function and the policy
                 self.V = self.Q.max(axis=1)
                 self.policy = self.Q.argmax(axis=1)

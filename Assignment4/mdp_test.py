@@ -1,4 +1,5 @@
 from mdp import *
+from sklearn.preprocessing import normalize
 
 import mdptoolbox, mdptoolbox.example
 import numpy as np
@@ -20,8 +21,9 @@ class part1():
         self.space_goal = 2
         self.space_void = 3
         self.space_quicksand = 4
+        self.space_bonus = 5
         
-        self.rewards = [-1, -1, 1, None, -100]
+        self.rewards = [-1, -1, 1, 0, -100, +1000]
         
         ## action definitions
         self.action_up = 0
@@ -30,12 +32,12 @@ class part1():
         self.action_right = 3
         self.action_total_num = 4
         
-        self.actions = [(-1,0), (1,0), (0,-1), (0,1)]
-        
+        self.actions = [(1,0), (-1,0), (0,-1), (0,1)]
         
         ## random grid config
         self.max_void_coverage = 0.25
         self.max_quicksand_coverage = 0.25
+        self.move_success_pct = 0.9
     
     def __get_unused_position(self, used, rows, cols, max_tries=100):
         i = 0
@@ -110,7 +112,7 @@ class part1():
         start_index = np.where(flat_grid == self.space_start_free)
         assert len(start_index) == 1, "Only 1 starting position is allowed."
         start = int(start_index[0])
-        goal_indices = np.where(flat_grid == self.space_goal)
+        goal_indices = np.where(np.logical_or(flat_grid == self.space_goal, flat_grid == self.space_bonus))
         assert len(goal_indices) <= 1, "Must have at least 1 goal position."
         goals = goal_indices[0].tolist()
         
@@ -128,7 +130,47 @@ class part1():
         
         return r
     
-    def __convert_grid_to_mdp(self, grid, chance_wrong_action=0.):
+    def __get_stochastic_action(self, a, success_pct=0.9, directional=True):
+        # 0 = up
+        # 1 = down
+        # 2 = left
+        # 3 = right
+        
+        if success_pct == 1.:
+            other = 0.
+        elif directional:
+            other = (1. - success_pct) / 2.
+            #offset = 1. - (success_pct + other + other)
+            #success_pct += offset
+        else:
+            other = (1. - success_pct) / 3.
+            #offset = 1. - (success_pct + other + other + other)
+            #print('offset: ', offset)
+            #success_pct += offset
+        
+        
+        if a == 0:
+            if directional:
+                return [success_pct, 0.00, other, other]
+            else:
+                return [success_pct, other, other, other]
+        if a == 1:
+            if directional:
+                return [0.00, success_pct, other, other]
+            else:
+                return [other, success_pct, other, other]
+        if a == 2:
+            if directional:
+                return [other, other, success_pct, 0.00]
+            else:
+                return [other, other, success_pct, other]
+        if a == 3:
+            if directional:
+                return [other, other, 0.00, success_pct]
+            else:
+                return [other, other, other, success_pct]
+        
+    def __convert_grid_to_mdp(self, grid, action_success_pct=1.0, directional=True):
         rows, cols = grid.shape
         num_states = rows * cols
         
@@ -138,8 +180,6 @@ class part1():
         T = np.zeros((len(self.actions), num_states, num_states))
         ## rewards (A, S, S)
         R = np.zeros((len(self.actions), num_states, num_states))
-        ## rewards (S, A)
-        R2 = np.zeros((num_states, len(self.actions)))
         
         # for the A, S, S reward matrix, just copy the grid rewards to 
         # each A, S... not very pythonic
@@ -157,38 +197,25 @@ class part1():
                 #r = np.zeros(grid.shape)
                 
                 if grid[pos] == self.space_goal:
-                    #t[pos] = 0.
-                    
                     t[pos] = 1.
-                    #r[pos] = 1. # not sure
-                    R2[s,i] = 1.
-                else:
-                    
-                    # TODO insert randomness
-                    #if rand.uniform(0.0, 1.0) <= chance_wrong_action:
-                    #    a = rand.randint(0, len(self.actions)-1)
-                    #    print('random action')
-                    #else:
+                else:            
                     a = i
-        
                     # try move
-                    newpos = self.test_move(pos, grid, a)
-                    if newpos != None:
-                        t[newpos] = 1.
-                        #r[newpos] = self.rewards[int(grid[newpos])]
-                        R2[s,i] = self.rewards[int(grid[newpos])]
-                    else:
-                        t[pos] = 1. # can't move
-                        #r[pos] = self.rewards[0]
-                        R2[s,i] = -1
+                    stochastic_action = self.__get_stochastic_action(a, action_success_pct, directional)
+                    assert np.sum(stochastic_action) == 1., 'not stochastic'
+
+                    for f in range(len(stochastic_action)):
+                        newpos = self.test_move(pos, grid, f)
+                        if newpos != None:
+                            t[newpos] += stochastic_action[f]
+                        else:
+                            t[pos] += stochastic_action[f] # can't move
                         
                 # reshape
                 t.shape = num_states
-                #r.shape = num_states
                 T[i, s] = t
-                #R[i, s] = r
                
-        return T, R, R2, start, goals
+        return T, R, start, goals
     
     def run2(self):
         fn = './input/grid1.csv'
@@ -258,24 +285,44 @@ class part1():
         
         fn = './input/grid1.csv'
         grid = pd.read_csv(fn, header=None).values
-        
-        T, R, R2, start, goals = self.__convert_grid_to_mdp(grid)
-        
-        rar = 0.9
-        q = QLearningEx(T, R, start, goals, n_restarts=1000, alpha = 0.2, gamma = 0.9, rar = rar, radr = 0.99, n_iter=100000)
-        q.run()
-        print(q.Q)
-        
-        p = np.array(q.policy)
-        p.shape = grid.shape
-        
-        v = np.array(q.V)
-        v.shape = grid.shape
-        
         ph = plot_helper()
-        fn = 'qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '.png'
-        title = '10x10 Quicksand Grid QLearner\nalpha: ' + str(q.alpha) + ', gamma: ' + str(q.gamma) + ', rar: ' + str(q.orig_rar) + ', radr: ' + str(q.radr)
-        ph.plot_heatmap(v, grid, p, title, fn)
+        
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid Layout'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
+        ph.plot_layout(grid, title, fn)
+        
+        for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
+            for d in [False, True]:
+                
+                T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
+            
+                rar = 0.9
+                q = QLearningEx(T, R, grid, start, goals, n_restarts=1000, alpha = 0.2, gamma = 0.9, rar = rar, radr = 0.99, n_iter=100000)
+                q.run()
+                print(q.Q)
+                
+                p = np.array(q.policy)
+                p.shape = grid.shape
+                p = p
+                
+                v = np.array(q.V)[::-1]
+                v.shape = grid.shape
+                v = v
+                if d:
+                    d_str = 'dir'
+                else:
+                    d_str = 'non-dir'
+                    
+                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Tracker\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+                fn = './output/tracker_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                #tracker = normalize(q.tracker[::-1], axis=1, norm='l1')
+                ph.plot_heatmap_simple(q.tracker[::-1], title, fn)
+                
+                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+                fn = './output/qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+                ph.plot_heatmap(v, grid[::-1], p, title, fn)
+                
+        print('done qlearner')
         
         '''
         ## qlearning
@@ -311,10 +358,9 @@ class part1():
         p = np.array(vi.policy)
         p.shape = grid.shape
         
-        fn = 'policyiter_' + str(pi.discount) + '.png'
-        title = '10x10 Quicksand Grid Policy Iteration\ndiscount: ' + str(pi.discount)
+        fn = 'valueiter_' + str(pi.discount) + '.png'
+        title = '10x10 Quicksand Grid Value Iteration\ndiscount: ' + str(pi.discount)
         ph.plot_heatmap(v, grid, p, title, fn)
-        
         
         
         

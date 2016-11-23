@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+
 from mdp import *
 from sklearn.preprocessing import normalize
 
@@ -349,7 +352,7 @@ class part1():
         fn = 'qlearner_' + str(q.discount) + '.png'
         title = '10x10 Quicksand Grid Q-Learning\ndiscount: ' + str(q.discount)
         ph.plot_heatmap(v, grid, p, title, fn)
-        '''
+        
         
         ## policy iteration
         pi = mdptoolbox.mdp.PolicyIteration(T, R, 0.9, max_iter=1000)
@@ -487,47 +490,8 @@ class part1():
 
 
 
-        
-        mdp = GridMDP([[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                       [-1,-100,-100,-100,-100,-100,-100,-100,-100,-100],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,1],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-                       [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]],
-                      terminals=[(9, 5)],
-                      init=(0, 5))
         '''
-        mdp = GridMDP([[-0.01, -0.01, -0.01, +1.00],
-                       [-0.01, None,  -0.01, -0.01],
-                       [-0.01, -0.01, -0.01, -0.01]],
-                      terminals=[(3, 1)])
 
-        mdp = GridMDP([[-1.0, +1.0]],
-                      terminals=[(0,0),(1,0)])
-        '''
-        
-        vi = value_iteration(mdp, .01)
-        print(vi)
-        
-        pi = policy_iteration(mdp)
-        print(pi)
-        
-        b = best_policy(mdp, vi)
-        print(b)
-        
-        print('done')
-        
-        #{(3, 2): 1.0, (3, 1): -1.0,
-        # (3, 0): 0.12958868267972745, (0, 1): 0.39810203830605462,
-        # (0, 2): 0.50928545646220924, (1, 0): 0.25348746162470537,
-        # (0, 0): 0.29543540628363629, (1, 2): 0.64958064617168676,
-        # (2, 0): 0.34461306281476806, (2, 1): 0.48643676237737926,
-        # (2, 2): 0.79536093684710951}
-        
 
 def main():
     p = part1()

@@ -1,7 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 
-from mdp import *
+#from mdp import *
 from sklearn.preprocessing import normalize
 
 import mdptoolbox, mdptoolbox.example

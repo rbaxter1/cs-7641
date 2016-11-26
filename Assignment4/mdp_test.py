@@ -1,5 +1,5 @@
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 
 #from mdp import *
 from sklearn.preprocessing import normalize
@@ -409,7 +409,7 @@ class part1():
         
         #self.__test_movement()
         
-        for grid_file in ['./input/grid2.csv', './input/grid1.csv']:
+        for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
             
             #fn = './input/grid1.csv'
             grid = pd.read_csv(grid_file, header=None).values
@@ -421,9 +421,10 @@ class part1():
             
             self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
 
-            #self.run_value_iteration_and_plot(grid, k=1.0, d=True)
+            self.run_value_iteration_and_plot(grid, k=1.0, d=True)
             
-            #self.run_policy_iteration_and_plot(grid, k=1.0, d=True)
+            self.run_policy_iteration_and_plot(grid, k=1.0, d=True)
+            
             
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
                 for d in [False, True]:

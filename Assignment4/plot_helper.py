@@ -341,7 +341,10 @@ class plot_helper():
                 print(str(x), str(y), txt)
 
             #ax.text(x, y, fmt % value, ha="center", va="center", color=color, **kw)
-            ax.text(x, y, txt, ha="center", va="center", color=color, **kw)
+            
+            #ax.text(x, y, txt, ha="center", va="center", color=color, **kw)
+            ax.text(x, y, txt, horizontalalignment="center", verticalalignment="center", color=color, **kw)
+            
     
     def cm2inch(self, *tupl):
         '''

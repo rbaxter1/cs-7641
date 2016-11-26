@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 
 #from mdp import *
 from sklearn.preprocessing import normalize
@@ -26,22 +26,28 @@ class part1():
         self.space_quicksand = 4
         self.space_bonus = 5
         
-        self.rewards = [-1, -1, 1, 0, -100, +1000]
+        self.rewards = [-1, -1, +1, 0, -100, +1000000]
         
         ## action definitions
         self.action_up = 0
         self.action_down = 1
         self.action_left = 2
         self.action_right = 3
-        self.action_total_num = 4
+        self.action_total_num = 5
         
-        self.actions = [(1,0), (-1,0), (0,-1), (0,1)]
+        self.actions = [(-1,0), (1,0), (0,-1), (0,1)]
         
         ## random grid config
         self.max_void_coverage = 0.25
         self.max_quicksand_coverage = 0.25
         self.move_success_pct = 0.9
     
+    def __test_movement(self):
+        grid = pd.read_csv('./input/grid6.csv', header=None).values
+        
+        newpos = tuple(map(sum, zip((0,0), self.actions[self.action_up])))
+        
+        
     def __get_unused_position(self, used, rows, cols, max_tries=100):
         i = 0
         while True:
@@ -107,7 +113,7 @@ class part1():
             return None
         if grid[newpos] == self.space_void:
             return None
-        
+                
         return newpos
     
     def __get_grid_terminals(self, grid):
@@ -143,14 +149,8 @@ class part1():
             other = 0.
         elif directional:
             other = (1. - success_pct) / 2.
-            #offset = 1. - (success_pct + other + other)
-            #success_pct += offset
         else:
             other = (1. - success_pct) / 3.
-            #offset = 1. - (success_pct + other + other + other)
-            #print('offset: ', offset)
-            #success_pct += offset
-        
         
         if a == 0:
             if directional:
@@ -172,7 +172,7 @@ class part1():
                 return [other, other, 0.00, success_pct]
             else:
                 return [other, other, other, success_pct]
-        
+            
     def __convert_grid_to_mdp(self, grid, action_success_pct=1.0, directional=True):
         rows, cols = grid.shape
         num_states = rows * cols
@@ -267,6 +267,127 @@ class part1():
         b = best_policy(mdp, vi)
         print(b)
         
+    def run_value_iteration_and_plot(self, grid, k, d):
+        ## policy iteration
+        T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
+        vi = mdptoolbox.mdp.ValueIteration(T, R, 0.9, max_iter=1000)
+        vi.run()
+        
+        p = np.array(vi.policy)
+        p.shape = grid.shape
+        p = p
+        
+        v = np.array(vi.V)
+        v.shape = grid.shape
+        v = v
+        if d:
+            d_str = 'dir'
+        else:
+            d_str = 'non-dir'
+        
+        ph = plot_helper()
+        
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\nr: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'valueiter_' + str(k) + '_' + d_str + '.png'
+        ph.plot_results2(v, grid, p, title, fn)
+        
+        #ph.plot_heatmap(v, grid, p, title, fn)
+        #ph.plot_heatmap_simple(v[::-1], title, fn)
+        print('done')
+        
+    def run_policy_iteration_and_plot(self, grid, k, d):
+        ## policy iteration
+        T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
+        pi = mdptoolbox.mdp.PolicyIteration(T, R, 0.9, max_iter=1000)
+        pi.run()
+                
+        p = np.array(pi.policy)
+        p.shape = grid.shape
+        p = p
+        
+        v = np.array(pi.V)
+        v.shape = grid.shape
+        v = v
+        if d:
+            d_str = 'dir'
+        else:
+            d_str = 'non-dir'
+            
+        ph = plot_helper()
+        
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\nr: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'policyiter_' + str(k) + '_' + d_str + '.png'
+        #ph.plot_heatmap(v, grid, p, title, fn)
+        ph.plot_results2(v, grid, p, title, fn)
+        
+        #ph.plot_heatmap_simple(v[::-1], title, fn)
+        print('done')
+
+        
+        
+    def run_and_plot_qlearner(self, grid, d, k, alpha, gamma, rar, rard=0.99, n_restarts=1000, n_iter=100000):
+        T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
+                
+        q = QLearningEx(T, R, grid, start, goals, n_restarts=n_restarts, alpha = alpha, gamma = gamma, rar = rar, radr = rard, n_iter=n_iter)
+        #q = mdptoolbox.mdp.QLearning(T, R, 0.9)
+        q.run()
+        print(q.Q)
+        
+        p = np.array(q.policy)
+        p.shape = grid.shape
+        p = p
+        
+        v = np.array(q.V)
+        v.shape = grid.shape
+        v = v
+        if d:
+            d_str = 'dir'
+        else:
+            d_str = 'non-dir'
+            
+        ph = plot_helper()
+        
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Tracker\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'tracker_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+        #tracker = normalize(q.tracker[::-1], axis=1, norm='l1')
+        ph.plot_heatmap_simple(q.tracker[::-1], title, fn)
+        
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Iterations\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'iterations_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+        ph.plot_series(range(len(q.episode_iterations)),
+                    [q.episode_iterations],
+                    [None],
+                    ['iterations'],
+                    cm.viridis(np.linspace(0, 1, 1)),
+                    [''],
+                    title,
+                    'Iterations',
+                    'Episodes',
+                    fn)
+        
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Rewards\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'rewards_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+        ph.plot_series(range(len(q.episode_reward)),
+                    [q.episode_reward],
+                    [None],
+                    ['rewards'],
+                    cm.viridis(np.linspace(0, 1, 1)),
+                    [''],
+                    title,
+                    'Rewards',
+                    'Episodes',
+                    fn)
+        
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+        #ph.plot_heatmap(v, grid[::-1], p, title, fn)
+        ph.plot_results2(v, grid, p, title, fn)
+        
+        '''
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\nr: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'qlearn_' + str(k) + '_' + d_str + '.png'
+        ph.plot_results2(v, grid, p, title, fn)
+        '''
         
     def run(self):
         print('Running part 1')
@@ -286,7 +407,9 @@ class part1():
         print(vi.iter)
         '''
         
-        for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
+        #self.__test_movement()
+        
+        for grid_file in ['./input/grid2.csv', './input/grid1.csv']:
             
             #fn = './input/grid1.csv'
             grid = pd.read_csv(grid_file, header=None).values
@@ -296,51 +419,18 @@ class part1():
             fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
             ph.plot_layout(grid, title, fn)
             
+            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
+
+            #self.run_value_iteration_and_plot(grid, k=1.0, d=True)
+            
+            #self.run_policy_iteration_and_plot(grid, k=1.0, d=True)
+            
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
                 for d in [False, True]:
-                    for alpha in [0.1, 0.2, 0.3]:
-                        for gamma in [1.0, 0.9, 0.8]:
-                            for rar in [1.0, 0.9, 0.8, 0.7]:
-                                T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
-                            
-                                #rar = 0.9
-                                q = QLearningEx(T, R, grid, start, goals, n_restarts=1000, alpha = alpha, gamma = gamma, rar = rar, radr = 0.99, n_iter=100000)
-                                q.run()
-                                print(q.Q)
-                                
-                                p = np.array(q.policy)
-                                p.shape = grid.shape
-                                p = p
-                                
-                                v = np.array(q.V)[::-1]
-                                v.shape = grid.shape
-                                v = v
-                                if d:
-                                    d_str = 'dir'
-                                else:
-                                    d_str = 'non-dir'
-                                    
-                                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Tracker\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'tracker_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
-                                #tracker = normalize(q.tracker[::-1], axis=1, norm='l1')
-                                ph.plot_heatmap_simple(q.tracker[::-1], title, fn)
-                                
-                                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Iterations\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'iterations_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
-                                ph.plot_series(range(len(q.episode_iterations)),
-                                            [q.episode_iterations],
-                                            [None],
-                                            ['iterations'],
-                                            cm.viridis(np.linspace(0, 1, 1)),
-                                            [''],
-                                            title,
-                                            'Iterations',
-                                            'Episodes',
-                                            fn)
-                                
-                                title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
-                                fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
-                                ph.plot_heatmap(v, grid[::-1], p, title, fn)
+                    for alpha in [0.1, 0.3, 0.5, 0.7, 0.9]:
+                        for gamma in [1.0, 0.8, 0.6, 0.4, 0.2]:
+                            for rard in [0.99, 0.9999, 0.999999]:
+                                self.run_and_plot_qlearner(grid, d, k, alpha, gamma, rar=0.99, rard=rard)
                             
             print('done qlearner')
         

@@ -102,7 +102,7 @@ class QLearningEx(mdptoolbox.mdp.MDP):
         # The following check won't be done in MDP()'s initialisation, so let's
         # do it here
         self.max_iter = int(n_iter)
-        assert self.max_iter >= 10000, "'n_iter' should be greater than 10000." 
+        #assert self.max_iter >= 10000, "'n_iter' should be greater than 10000." 
 
         # We don't want to send this to MDP because _computePR should not be
         # run on it, so check that it defines an MDP
@@ -168,9 +168,10 @@ class QLearningEx(mdptoolbox.mdp.MDP):
         s = np.random.binomial(1, self.rar, 1)[0]
         if s == 1:
             a = np.random.randint(0, self.A) # -1
+            print('random action')
         else:
             a = np.argmax(self.Q[s_prime,:])
-        
+            print('best action')
         return a
     
     def __move(self, s, a):

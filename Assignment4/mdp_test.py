@@ -425,7 +425,7 @@ class part1():
             
             self.run_policy_iteration_and_plot(grid, k=1.0, d=True)
             
-            
+            '''
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
                 for d in [False, True]:
                     for alpha in [0.1, 0.3, 0.5, 0.7, 0.9]:
@@ -434,7 +434,8 @@ class part1():
                                 self.run_and_plot_qlearner(grid, d, k, alpha, gamma, rar=0.99, rard=rard)
                             
             print('done qlearner')
-        
+            '''
+            
         '''
         ## qlearning
         q = mdptoolbox.mdp.QLearning(T, R, 0.9)

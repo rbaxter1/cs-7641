@@ -358,7 +358,8 @@ class part1():
                     [q.episode_iterations],
                     [None],
                     ['iterations'],
-                    cm.viridis(np.linspace(0, 1, 1)),
+                    #cm.viridis(np.linspace(0, 1, 1)),
+                    ['black'],
                     [''],
                     title,
                     'Iterations',
@@ -371,7 +372,8 @@ class part1():
                     [q.episode_reward],
                     [None],
                     ['rewards'],
-                    cm.viridis(np.linspace(0, 1, 1)),
+                    #cm.viridis(np.linspace(0, 1, 1)),
+                    ['black'],
                     [''],
                     title,
                     'Rewards',
@@ -419,13 +421,13 @@ class part1():
             fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
             ph.plot_layout(grid, title, fn)
             
-            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
+            #self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
 
             self.run_value_iteration_and_plot(grid, k=1.0, d=True)
             
             self.run_policy_iteration_and_plot(grid, k=1.0, d=True)
             
-            '''
+            
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
                 for d in [False, True]:
                     for alpha in [0.1, 0.3, 0.5, 0.7, 0.9]:
@@ -434,7 +436,7 @@ class part1():
                                 self.run_and_plot_qlearner(grid, d, k, alpha, gamma, rar=0.99, rard=rard)
                             
             print('done qlearner')
-            '''
+            
             
         '''
         ## qlearning

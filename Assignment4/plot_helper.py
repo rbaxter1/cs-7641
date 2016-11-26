@@ -307,6 +307,8 @@ class plot_helper():
                 color = (0.0, 0.0, 0.0)
             else:
                 color = (1.0, 1.0, 1.0)
+            x = int(x)
+            y = int(y)
             print(str(grid[(x,y)]))
             print(str(policy[(x,y)]))
             print(str(value))

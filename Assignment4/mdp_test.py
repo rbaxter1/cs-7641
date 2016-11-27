@@ -456,8 +456,8 @@ class part1():
         
         #self.__test_movement()
         
-        for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
-        #for grid_file in ['./input/grid2.csv']:
+        #for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
+        for grid_file in ['./input/grid1.csv']:
             
             #fn = './input/grid1.csv'
             grid = pd.read_csv(grid_file, header=None).values
@@ -467,7 +467,7 @@ class part1():
             fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
             ph.plot_layout(grid, title, fn)
             
-            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.99999, n_restarts=50000, n_iter=1000000)
+            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.99, n_restarts=50000, n_iter=1000000)
             #self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
             #self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
             

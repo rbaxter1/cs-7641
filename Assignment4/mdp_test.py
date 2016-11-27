@@ -386,11 +386,11 @@ class part1():
         fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'rewards_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
         ph.plot_series(range(len(q.episode_reward)),
                     [q.episode_reward, q.episode_iterations],
-                    [None],
+                    [None, None],
                     ['rewards', 'iterations'],
                     #cm.viridis(np.linspace(0, 1, 1)),
                     ['black', 'blue'],
-                    [''],
+                    ['', ''],
                     title,
                     'Episodes',
                     'Rewards/Iterations',

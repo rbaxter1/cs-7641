@@ -398,16 +398,16 @@ class part1():
         
         title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Timing\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
         fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'timing_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
-        ph.plot_series(range(len(q.episode_reward)),
+        ph.plot_series(range(len(q.episode_times)),
                     [q.episode_times],
                     [None],
-                    ['rewards'],
+                    ['seconds'],
                     #cm.viridis(np.linspace(0, 1, 1)),
                     ['black'],
                     [''],
                     title,
-                    'Rewards',
-                    'Episodes',
+                    'Time in seconds',
+                    'Iterations',
                     fn)
         
         title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'

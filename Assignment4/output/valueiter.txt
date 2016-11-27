@@ -1,1 +1,1 @@
-ValueIteration: 0.422 seconds. Iters: 196
+ValueIteration: 0.069 seconds. Iters: 196

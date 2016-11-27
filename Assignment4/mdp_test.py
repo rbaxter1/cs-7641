@@ -306,7 +306,7 @@ class part1():
     def run_policy_iteration_and_plot(self, grid, k, d, discount):
         ## policy iteration
         T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
-        pi = mdptoolbox.mdp.PolicyIteration(T, R, discount, max_iter=100000)
+        pi = mdptoolbox.mdp.PolicyIteration(T, R, discount, max_iter=1000000)
         
         with open('./output/policyiter.txt', 'a') as text_file:            
             t0 = time()
@@ -424,7 +424,8 @@ class part1():
         
         #self.__test_movement()
         
-        for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
+        #for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
+        for grid_file in ['./input/grid2.csv']:
             
             #fn = './input/grid1.csv'
             grid = pd.read_csv(grid_file, header=None).values
@@ -435,7 +436,7 @@ class part1():
             ph.plot_layout(grid, title, fn)
             
             #self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
-            self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9)
+            #self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9)
             self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9)
             
             '''

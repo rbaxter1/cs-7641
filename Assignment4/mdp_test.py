@@ -457,7 +457,7 @@ class part1():
         #self.__test_movement()
         
         #for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
-        for grid_file in ['./input/grid1.csv']:
+        for grid_file in ['./input/grid2.csv']:
             
             #fn = './input/grid1.csv'
             grid = pd.read_csv(grid_file, header=None).values

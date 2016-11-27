@@ -276,7 +276,7 @@ class part1():
         
         vi = mdptoolbox.mdp.ValueIteration(T, R, discount, max_iter=1000)
         
-        with open('./output/valueiter.txt', 'w+') as text_file:            
+        with open('./output/valueiter.txt', 'a') as text_file:            
             t0 = time()
             vi.run()
             text_file.write('ValueIteration: %0.3f seconds. Iters: %i\n' % (time() - t0, vi.iter))
@@ -308,7 +308,7 @@ class part1():
         T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
         pi = mdptoolbox.mdp.PolicyIteration(T, R, discount, max_iter=100000)
         
-        with open('./output/policyiter.txt', 'w+') as text_file:            
+        with open('./output/policyiter.txt', 'a') as text_file:            
             t0 = time()
             pi.run()
             text_file.write('PolicyIteration: %0.3f seconds. Iters: %i\n' % (time() - t0, pi.iter))

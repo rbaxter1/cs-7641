@@ -287,7 +287,7 @@ class part1():
         
         ph = plot_helper()
         
-        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\nr: ' + str(k) + '(' + d_str + '), discount: ', str(discount)
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid r: ' + str(k) + '(' + d_str + '), discount: ', str(discount)
         fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'valueiter_' + str(k) + '_' + d_str + '_' + str(discount) + '.png' '.png'
         ph.plot_results2(v, grid, p, title, fn)
         
@@ -315,7 +315,7 @@ class part1():
             
         ph = plot_helper()
         
-        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\nr: ' + str(k) + '(' + d_str + '), discount: ', str(discount)
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid r: ' + str(k) + '(' + d_str + '), discount: ', str(discount)
         fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'policyiter_' + str(k) + '_' + d_str + '_' + str(discount) + '.png'
         #ph.plot_heatmap(v, grid, p, title, fn)
         ph.plot_results2(v, grid, p, title, fn)
@@ -422,7 +422,10 @@ class part1():
             ph.plot_layout(grid, title, fn)
             
             #self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
-
+            self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9)
+            self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9)
+            
+            '''
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
                 for d in [False, True]:
                     for discount in [0.9, 0.8, 0.7, 0.6]:
@@ -432,7 +435,7 @@ class part1():
                 for d in [False, True]:
                     for discount in [0.9, 0.8, 0.7, 0.6]:
                         self.run_policy_iteration_and_plot(grid, k=k, d=d, discount=discount)
-            
+            '''
             '''
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
                 for d in [False, True]:

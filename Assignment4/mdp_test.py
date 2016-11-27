@@ -269,12 +269,12 @@ class part1():
         b = best_policy(mdp, vi)
         print(b)
         
-    def run_value_iteration_and_plot(self, grid, k, d, discount):
+    def run_value_iteration_and_plot(self, grid, k, d, discount, epsilon=0.001):
         ## policy iteration
         T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
         
         
-        vi = mdptoolbox.mdp.ValueIteration(T, R, discount, max_iter=1000)
+        vi = mdptoolbox.mdp.ValueIteration(T, R, discount, epsilon=epsilon, max_iter=1000)
         
         with open('./output/valueiter.txt', 'a') as text_file:            
             t0 = time()
@@ -303,10 +303,13 @@ class part1():
         #ph.plot_heatmap_simple(v[::-1], title, fn)
         print('done')
         
-    def run_policy_iteration_and_plot(self, grid, k, d, discount):
+    def run_policy_iteration_and_plot(self, grid, k, d, discount, epsilon=0.001):
         ## policy iteration
         T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
-        pi = mdptoolbox.mdp.PolicyIteration(T, R, discount, max_iter=1000000)
+        #pi = mdptoolbox.mdp.PolicyIteration(T, R, discount, max_iter=1000000)
+        pi = mdptoolbox.mdp.PolicyIterationModified(T, R, discount, epsilon=epsilon, max_iter=1000000)
+        
+        
         
         with open('./output/policyiter.txt', 'a') as text_file:            
             t0 = time()
@@ -424,8 +427,8 @@ class part1():
         
         #self.__test_movement()
         
-        #for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
-        for grid_file in ['./input/grid2.csv']:
+        for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
+        #for grid_file in ['./input/grid2.csv']:
             
             #fn = './input/grid1.csv'
             grid = pd.read_csv(grid_file, header=None).values
@@ -436,8 +439,8 @@ class part1():
             ph.plot_layout(grid, title, fn)
             
             #self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
-            #self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9)
-            self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9)
+            self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
+            self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
             
             '''
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:

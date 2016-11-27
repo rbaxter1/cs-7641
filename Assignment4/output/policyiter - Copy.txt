@@ -1,0 +1,7 @@
+PolicyIteration: 0.003 seconds. Iters: 7
+PolicyIteration: 643.991 seconds. Iters: 100000
+PolicyIteration: 7289.266 seconds. Iters: 1000000
+PolicyIteration: 0.065 seconds. Iters: 24
+PolicyIteration: 0.074 seconds. Iters: 24
+PolicyIteration: 0.004 seconds. Iters: 9
+PolicyIteration: 0.090 seconds. Iters: 24

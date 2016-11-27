@@ -14,6 +14,8 @@ from plot_helper import *
 from QLearner import QLearningEx
 from QLearning import QLearning
 
+from timeit import default_timer as time
+
 class part1():
     def __init__(self):
         self.out_dir = 'output'
@@ -270,8 +272,14 @@ class part1():
     def run_value_iteration_and_plot(self, grid, k, d, discount):
         ## policy iteration
         T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
+        
+        
         vi = mdptoolbox.mdp.ValueIteration(T, R, discount, max_iter=1000)
+        
+        t0 = time()
         vi.run()
+        print('ValueIteration: %0.3f seconds\n' % (time() - t0))
+        print('Iters:',  vi.iter)
         
         p = np.array(vi.policy)
         p.shape = grid.shape
@@ -298,9 +306,13 @@ class part1():
     def run_policy_iteration_and_plot(self, grid, k, d, discount):
         ## policy iteration
         T, R, start, goals = self.__convert_grid_to_mdp(grid, k, d)
-        pi = mdptoolbox.mdp.PolicyIteration(T, R, discount, max_iter=1000)
+        pi = mdptoolbox.mdp.PolicyIteration(T, R, discount, max_iter=100000)
+        
+        t0 = time()
         pi.run()
-                
+        print('PolicyIteration: %0.3f seconds\n' % (time() - t0))
+        print('Iters:',  pi.iter)
+        
         p = np.array(pi.policy)
         p.shape = grid.shape
         p = p

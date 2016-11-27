@@ -343,7 +343,9 @@ class plot_helper():
             #ax.text(x, y, fmt % value, ha="center", va="center", color=color, **kw)
             
             #ax.text(x, y, txt, ha="center", va="center", color=color, **kw)
-            ax.text(x + 0.5, y + 0.5, txt, horizontalalignment="center", verticalalignment="center", color=color, **kw)
+            ax.text(x + 0.5, y + 0.5, txt, horizontalalignment="center",
+                    verticalalignment="center", color=color,
+                    fontsize=8, **kw)
             
             #0.5*(left+right), 0.5*(bottom+top)
             
@@ -405,8 +407,11 @@ class plot_helper():
     
         # resize 
         fig = plt.gcf()
-        fig.set_size_inches(self.cm2inch(30, 20))
-    
+        
+        if grid.shape[0] < 10:
+            fig.set_size_inches(self.cm2inch(30, 20))
+        else:
+            fig.set_size_inches(self.cm2inch(60, 40))
     
     
     def plot_results2(self, value, grid,  policy, title, filename):

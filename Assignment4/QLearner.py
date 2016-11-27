@@ -248,17 +248,19 @@ class QLearningEx(mdptoolbox.mdp.MDP):
                 # update s for this loop
                 s = s_prime
                 
-                self.episode_times.append(time() - t0)
+                
                 
                 if s in self.goals:
                     print('goal! iterations: ', c, 'reward: ', er)
                     self.episode_reward.append(er)
                     self.episode_iterations.append(c)
+                    self.episode_times.append(time() - t0)
                 
                 elif c >= self.max_iter:
                     print('timeout!')
                     self.episode_reward.append(er)
                     self.episode_iterations.append(c)
+                    self.episode_times.append(time() - t0)
                     
                 # compute the value function and the policy
                 self.V = self.Q.max(axis=1)

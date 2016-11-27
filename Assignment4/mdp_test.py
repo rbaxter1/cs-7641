@@ -378,8 +378,8 @@ class part1():
                     ['black'],
                     [''],
                     title,
-                    'Iterations',
                     'Episodes',
+                    'Iterations',
                     fn)
         
         title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Rewards\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
@@ -392,8 +392,8 @@ class part1():
                     ['black'],
                     [''],
                     title,
-                    'Rewards',
                     'Episodes',
+                    'Rewards',
                     fn)
         
         title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Timing\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
@@ -406,8 +406,8 @@ class part1():
                     ['black'],
                     [''],
                     title,
-                    'Time in seconds',
                     'Iterations',
+                    'Time in seconds',
                     fn)
         
         title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'

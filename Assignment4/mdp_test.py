@@ -396,6 +396,20 @@ class part1():
                     'Episodes',
                     fn)
         
+        title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Timing\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
+        fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'timing_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
+        ph.plot_series(range(len(q.episode_reward)),
+                    [q.episode_times],
+                    [None],
+                    ['rewards'],
+                    #cm.viridis(np.linspace(0, 1, 1)),
+                    ['black'],
+                    [''],
+                    title,
+                    'Rewards',
+                    'Episodes',
+                    fn)
+        
         title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Grid\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
         fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'qlearn_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
         #ph.plot_heatmap(v, grid[::-1], p, title, fn)
@@ -438,9 +452,9 @@ class part1():
             fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
             ph.plot_layout(grid, title, fn)
             
-            #self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=1.00, rard=0.999999, n_restarts=10000, n_iter=1000000)
-            self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
-            self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
+            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.99999, n_restarts=10000, n_iter=1000000)
+            #self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
+            #self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
             
             '''
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:

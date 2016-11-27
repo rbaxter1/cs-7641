@@ -13,6 +13,8 @@ import random as rand
 import mdptoolbox.util as _util
 import mdptoolbox.mdp
 
+from timeit import default_timer as time
+
 ## from mdptoolbox.mdp
 def _computeDimensions(transition):
     A = len(transition)
@@ -212,7 +214,10 @@ class QLearningEx(mdptoolbox.mdp.MDP):
         
         self.episode_reward = []
         self.episode_iterations = []
-                
+        self.episode_times = []
+        
+        t0 = time()
+        
         # restart logic
         for i in range(self.n_restarts):
             
@@ -242,6 +247,8 @@ class QLearningEx(mdptoolbox.mdp.MDP):
                 
                 # update s for this loop
                 s = s_prime
+                
+                self.episode_times.append(time() - t0)
                 
                 if s in self.goals:
                     print('goal! iterations: ', c, 'reward: ', er)

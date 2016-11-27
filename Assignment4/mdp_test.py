@@ -382,8 +382,6 @@ class part1():
                     'Iterations',
                     fn)
         
-        if grid.shape[0] > 10:
-            q.episode_reward = q.episode_reward - 100000
             
         title = str(grid.shape[0]) + 'x' + str(grid.shape[1]) + ' Rewards/Iterations\na: ' + str(q.alpha) + ', g: ' + str(q.gamma) + ', d: ' + str(q.orig_rar) + '@' + str(q.radr) + ', r: ' + str(k) + '(' + d_str + ')'
         fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + 'rewards_iterations_' + str(q.alpha) + '_' + str(q.gamma) + '_' + str(q.orig_rar) + '_' + str(q.radr) + '_' + str(k) + '_' + d_str + '.png'
@@ -470,7 +468,7 @@ class part1():
             fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
             ph.plot_layout(grid, title, fn)
             
-            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.99999, n_restarts=1000, n_iter=1000000)
+            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.999, n_restarts=30000, n_iter=1000000)
             #self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
             #self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
             

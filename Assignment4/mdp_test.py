@@ -2,7 +2,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 #from mdp import *
-from sklearn.preprocessing import normalize
+#from sklearn.preprocessing import normalize
 
 import mdptoolbox, mdptoolbox.example
 import numpy as np
@@ -12,7 +12,7 @@ import math
 from plot_helper import *
 
 from QLearner import QLearningEx
-from QLearning import QLearning
+#from QLearning import QLearning
 
 from timeit import default_timer as time
 
@@ -457,9 +457,8 @@ class part1():
         
         #self.__test_movement()
         
-        #for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
-        for grid_file in ['./input/grid2.csv']:
-            
+        for grid_file in ['./input/grid1.csv', './input/grid2.csv']:
+        
             #fn = './input/grid1.csv'
             grid = pd.read_csv(grid_file, header=None).values
             ph = plot_helper()
@@ -468,10 +467,15 @@ class part1():
             fn = './output/' + str(grid.shape[0]) + 'x' + str(grid.shape[1]) + '_layout.png'        
             ph.plot_layout(grid, title, fn)
             
-            self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.999999, n_restarts=5000, n_iter=1000000)
-            #self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
-            #self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
+            self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
+            self.run_policy_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
             
+            self.run_value_iteration_and_plot(grid, k=1.0, d=True, discount=0.9, epsilon=0.00001)
+            self.run_value_iteration_and_plot(grid, k=0.9, d=True, discount=0.9, epsilon=0.00001)
+            self.run_value_iteration_and_plot(grid, k=0.8, d=True, discount=0.9, epsilon=0.00001)
+
+            #self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.999999, n_restarts=5000, n_iter=1000000)
+        
             '''
             for k in [1.00, 0.90, 0.85, 0.80, 0.75]:
                 for d in [False, True]:
@@ -492,6 +496,22 @@ class part1():
                                 self.run_and_plot_qlearner(grid, d, k, alpha, gamma, rar=0.99, rard=rard)
             '''
             print('done qlearner')
+            
+            
+            
+        grid_file = './input/grid1.csv'
+        grid = pd.read_csv(grid_file, header=None).values
+
+        self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.99, n_restarts=100, n_iter=1000000)
+        
+        
+        grid_file = './input/grid2.csv'
+        grid = pd.read_csv(grid_file, header=None).values
+        
+        self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.99, n_restarts=300, n_iter=1000000)
+        
+        self.run_and_plot_qlearner(grid, d=True, k=1.0, alpha=0.2, gamma=0.8, rar=0.99, rard=0.999999, n_restarts=5000, n_iter=1000000)
+            
             
             
         '''

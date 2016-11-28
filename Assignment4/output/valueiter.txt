@@ -1,0 +1,8 @@
+ValueIteration: 0.000 seconds. Iters: 10
+ValueIteration: 0.000 seconds. Iters: 10
+ValueIteration: 0.003 seconds. Iters: 134
+ValueIteration: 0.003 seconds. Iters: 129
+ValueIteration: 0.093 seconds. Iters: 262
+ValueIteration: 0.095 seconds. Iters: 262
+ValueIteration: 0.094 seconds. Iters: 261
+ValueIteration: 0.092 seconds. Iters: 260
